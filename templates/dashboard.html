@@ -28,25 +28,27 @@
         <!-- STUDENT PROFILE WITH GOOGLE PROFILE PHOTO -->
         <div class="student-profile" style="text-align: center;">
 
-            <!-- USER PROFILE PHOTO / AVATAR CODE -->
             <div class="profile-avatar-wrapper"
                 style="display: flex; justify-content: center; margin-bottom: 15px;">
 
                 <img id="dashboardProfilePhoto"
-                     src=""
-                     alt="User Profile"
-                     style="
+                    src=""
+                    alt="User Profile"
+                    style="
                         width: 85px;
                         height: 85px;
                         border-radius: 50%;
                         object-fit: cover;
                         border: 3px solid #6366f1;
                         box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
-                     ">
+                    ">
             </div>
 
             <h1 class="student-name">
-                Welcome,<span id="dashboardUserName">{{ student.name }}</span> 
+                Welcome,
+                <span id="dashboardUserName">
+                    {{ student.name }}
+                </span>
             </h1>
 
             <p class="student-text" id="dashboardUserEmail">
@@ -113,31 +115,71 @@
     </div>
     
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-    const photoElement =
-        document.getElementById("dashboardProfilePhoto");
-
-    const savedPhoto =
-        localStorage.getItem("user_profile_photo");
+    /* =========================
+       GET SAVED PROFILE DATA
+    ========================= */
 
     const savedName =
         localStorage.getItem("user_profile_name");
 
-    if (savedPhoto) {
+    const savedEmail =
+        localStorage.getItem("user_profile_email");
 
-        // Profile page se uploaded photo
+    const savedPhoto =
+        localStorage.getItem("user_profile_photo");
+
+
+    /* =========================
+       UPDATE NAME
+    ========================= */
+
+    const nameElement =
+        document.getElementById("dashboardUserName");
+
+    if (savedName && nameElement) {
+        nameElement.innerText = savedName;
+    }
+
+
+    /* =========================
+       UPDATE EMAIL
+    ========================= */
+
+    const emailElement =
+        document.getElementById("dashboardUserEmail");
+
+    if (savedEmail && emailElement) {
+
+        emailElement.innerHTML =
+            savedEmail +
+            "<br>" +
+            "Start your Vedic Mathematics learning journey 🚀";
+    }
+
+
+    /* =========================
+       UPDATE PROFILE PHOTO
+    ========================= */
+
+    const photoElement =
+        document.getElementById("dashboardProfilePhoto");
+
+    if (savedPhoto && photoElement) {
+
         photoElement.src = savedPhoto;
 
-    } else {
+    } else if (photoElement) {
 
-        // Backend student.photo
         {% if student.photo %}
+
             photoElement.src = "{{ student.photo }}";
+
         {% else %}
 
-            // Name based avatar
-            const name = savedName || "{{ student.name }}";
+            const name =
+                savedName || "{{ student.name }}";
 
             photoElement.src =
                 "https://ui-avatars.com/api/?name=" +
@@ -147,65 +189,7 @@
         {% endif %}
     }
 
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-
-        const savedName = localStorage.getItem("user_profile_name");
-        const savedEmail = localStorage.getItem("user_profile_email");
-        const savedPhoto = localStorage.getItem("user_profile_photo");
-
-        /* =========================
-           UPDATE DASHBOARD NAME
-        ========================= */
-
-        if (savedName) {
-            const nameElement =
-                document.getElementById("dashboardUserName");
-
-            if (nameElement) {
-                nameElement.innerText = savedName;
-            }
-        }
-
-
-        /* =========================
-           UPDATE DASHBOARD EMAIL
-        ========================= */
-
-        if (savedEmail) {
-            const emailElement =
-                document.getElementById("dashboardUserEmail");
-
-            if (emailElement) {
-                emailElement.innerText = savedEmail;
-            }
-        }
-
-
-        /* =========================
-           UPDATE DASHBOARD PHOTO
-        ========================= */
-
-        if (savedPhoto) {
-
-            const avatar =
-                document.getElementById("dashboardAvatar");
-
-            if (avatar) {
-                avatar.innerHTML =
-                    `<img src="${savedPhoto}"
-                          alt="Profile"
-                          style="
-                            width:100%;
-                            height:100%;
-                            border-radius:50%;
-                            object-fit:cover;
-                          ">`;
-            }
-        }
-
-    });
+});
 </script>
 
 
