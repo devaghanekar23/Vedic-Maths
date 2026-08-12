@@ -1,0 +1,2533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | Vedic Maths</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: #ffffff;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 15% 15%,
+                    rgba(99, 102, 241, 0.14),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 85% 75%,
+                    rgba(168, 85, 247, 0.12),
+                    transparent 30%
+                ),
+                #080c16;
+        }
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+            background: rgba(10, 15, 28, 0.92);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #f8fafc !important;
+        }
+
+        .brand-icon {
+            color: #38bdf8;
+        }
+
+        /* =====================================================
+           MAIN CONTAINER
+        ===================================================== */
+
+        .profile-container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 45px 20px 70px;
+        }
+
+        /* =====================================================
+           PROFILE HERO
+        ===================================================== */
+
+        .profile-hero {
+            position: relative;
+            overflow: hidden;
+
+            padding: 38px;
+
+            border-radius: 25px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(99,102,241,0.14),
+                    rgba(168,85,247,0.08)
+                );
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            box-shadow:
+                0 25px 70px rgba(0,0,0,0.35);
+
+            margin-bottom: 25px;
+        }
+
+        .profile-hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            right: -100px;
+            top: -150px;
+
+            background: #6366f1;
+
+            filter: blur(130px);
+
+            opacity: 0.12;
+        }
+
+        .profile-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* =====================================================
+           AVATAR
+        ===================================================== */
+
+        .avatar-wrapper {
+            position: relative;
+
+            width: 130px;
+            height: 130px;
+
+            margin: auto;
+        }
+
+        .avatar {
+            width: 130px;
+            height: 130px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+
+            cursor: pointer;
+
+            font-size: 3.2rem;
+            font-weight: 700;
+
+            color: #fff;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #a855f7
+                );
+
+            border: 4px solid rgba(255,255,255,0.18);
+
+            box-shadow:
+                0 0 0 7px rgba(99,102,241,0.08),
+                0 0 35px rgba(168,85,247,0.35);
+
+            transition: 0.3s ease;
+        }
+
+        .avatar:hover {
+            transform: scale(1.04);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-btn {
+            position: absolute;
+
+            right: -2px;
+            bottom: 2px;
+
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            color: #fff;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #a855f7
+                );
+
+            border: 3px solid #080c16;
+
+            z-index: 5;
+
+            transition: 0.3s;
+        }
+
+        .camera-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* =====================================================
+           PROFILE TEXT
+        ===================================================== */
+
+        .profile-name {
+            margin-top: 20px;
+
+            font-size: 1.9rem;
+
+            font-weight: 700;
+        }
+
+        .profile-role {
+            color: #94a3b8;
+
+            margin-top: 5px;
+            margin-bottom: 12px;
+        }
+
+        .level-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 7px 14px;
+
+            border-radius: 30px;
+
+            background: rgba(168,85,247,0.12);
+
+            border: 1px solid rgba(168,85,247,0.25);
+
+            color: #c084fc;
+
+            font-size: 0.82rem;
+
+            font-weight: 600;
+        }
+
+        /* =====================================================
+           STATS
+        ===================================================== */
+
+        .stats-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+            margin-top: 32px;
+        }
+
+        .stat-card {
+            padding: 20px 10px;
+
+            text-align: center;
+
+            border-radius: 16px;
+
+            background: rgba(255,255,255,0.035);
+
+            border: 1px solid rgba(255,255,255,0.07);
+
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+
+            border-color: rgba(168,85,247,0.35);
+
+            background: rgba(255,255,255,0.055);
+        }
+
+        .stat-icon {
+            color: #38bdf8;
+
+            margin-bottom: 7px;
+        }
+
+        .stat-number {
+            font-size: 1.6rem;
+
+            font-weight: 700;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #818cf8,
+                    #c084fc
+                );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+
+            font-size: 0.78rem;
+
+            margin-top: 4px;
+        }
+
+        /* =====================================================
+           GLASS CARD
+        ===================================================== */
+
+        .glass-card {
+            height: 100%;
+
+            padding: 23px;
+
+            border-radius: 18px;
+
+            background: rgba(255,255,255,0.035);
+
+            border: 1px solid rgba(255,255,255,0.07);
+
+            transition: 0.3s;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(168,85,247,0.25);
+        }
+
+        .section-title {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 18px;
+
+            font-size: 1rem;
+
+            font-weight: 700;
+        }
+
+        .section-title i {
+            color: #38bdf8;
+        }
+
+        /* =====================================================
+           PROGRESS
+        ===================================================== */
+
+        .progress {
+            height: 9px;
+
+            border-radius: 20px;
+
+            background: rgba(255,255,255,0.07);
+        }
+
+        .progress-bar {
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #6366f1,
+                    #a855f7
+                );
+
+            box-shadow:
+                0 0 12px rgba(168,85,247,0.4);
+        }
+
+        .progress-info {
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 8px;
+
+            color: #94a3b8;
+
+            font-size: 0.82rem;
+        }
+
+        /* =====================================================
+           STREAK
+        ===================================================== */
+
+        .streak-number {
+            font-size: 2.4rem;
+
+            font-weight: 800;
+
+            color: #fb923c;
+        }
+
+        .streak-fire {
+            color: #fb923c;
+        }
+
+        /* =====================================================
+           GOAL
+        ===================================================== */
+
+        .goal-card {
+            height: 100%;
+
+            padding: 23px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(56,189,248,0.08),
+                    rgba(99,102,241,0.08)
+                );
+
+            border: 1px solid rgba(56,189,248,0.15);
+        }
+
+        .goal-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 13px;
+
+            color: #38bdf8;
+
+            background: rgba(56,189,248,0.1);
+        }
+
+        /* =====================================================
+           ACTIVITY
+        ===================================================== */
+
+        .activity-item {
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+
+            padding: 13px 0;
+
+            border-bottom:
+                1px solid rgba(255,255,255,0.06);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            color: #c084fc;
+
+            background: rgba(168,85,247,0.1);
+        }
+
+        .activity-title {
+            font-size: 0.87rem;
+
+            font-weight: 600;
+        }
+
+        .activity-time {
+            margin-top: 2px;
+
+            color: #64748b;
+
+            font-size: 0.75rem;
+        }
+
+        /* =====================================================
+           ACHIEVEMENTS
+        ===================================================== */
+
+        .achievement-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 12px;
+        }
+
+        .achievement {
+            padding: 15px 5px;
+
+            text-align: center;
+
+            border-radius: 14px;
+
+            background: rgba(255,255,255,0.025);
+
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .achievement-icon {
+            width: 48px;
+            height: 48px;
+
+            margin: auto auto 8px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            color: #f59e0b;
+
+            background: rgba(245,158,11,0.1);
+        }
+
+        .achievement-title {
+            color: #cbd5e1;
+
+            font-size: 0.72rem;
+        }
+
+        .locked {
+            opacity: 0.35;
+        }
+
+        /* =====================================================
+           ACCOUNT INFORMATION
+        ===================================================== */
+
+        .info-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            padding: 12px 0;
+
+            border-bottom:
+                1px solid rgba(255,255,255,0.06);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #64748b;
+
+            font-size: 0.82rem;
+        }
+
+        .info-value {
+            color: #e2e8f0;
+
+            font-size: 0.82rem;
+
+            font-weight: 600;
+        }
+
+        /* =====================================================
+           BUTTON
+        ===================================================== */
+
+        .btn-gradient {
+            border: none;
+
+            color: #fff;
+
+            padding: 11px 22px;
+
+            border-radius: 12px;
+
+            font-weight: 600;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #a855f7
+                );
+
+            transition: 0.3s;
+        }
+
+        .btn-gradient:hover {
+            color: #fff;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 25px rgba(168,85,247,0.3);
+        }
+
+        /* =====================================================
+           MODAL
+        ===================================================== */
+
+        .modal-content {
+            background: #151b2b;
+
+            color: #fff;
+
+            border:
+                1px solid rgba(255,255,255,0.08);
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 25px 70px rgba(0,0,0,0.55);
+        }
+
+        .modal-header {
+            padding: 20px 22px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,0.08);
+        }
+
+        .modal-footer {
+            padding: 16px 22px;
+
+            border-top:
+                1px solid rgba(255,255,255,0.08);
+        }
+
+        .modal-title {
+            font-weight: 700;
+        }
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .form-label {
+            color: #cbd5e1;
+
+            font-size: 0.85rem;
+
+            font-weight: 600;
+
+            margin-bottom: 7px;
+        }
+
+        .form-control,
+        .form-select {
+            width: 100%;
+
+            color: #fff !important;
+
+            background: #0f172a !important;
+
+            border:
+                1px solid rgba(255,255,255,0.1) !important;
+
+            border-radius: 10px;
+
+            padding: 11px 13px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            color: #fff !important;
+
+            background: #0f172a !important;
+
+            border-color: #a855f7 !important;
+
+            box-shadow:
+                0 0 0 3px rgba(168,85,247,0.1);
+        }
+
+        .form-control::placeholder {
+            color: #64748b;
+        }
+
+        .form-select option {
+            background: #0f172a;
+
+            color: #fff;
+        }
+
+        /* =====================================================
+           PASSWORD
+        ===================================================== */
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-control {
+            padding-right: 45px;
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            right: 14px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #64748b;
+
+            border: none;
+
+            background: transparent;
+
+            cursor: pointer;
+        }
+
+        .password-toggle:hover {
+            color: #c084fc;
+        }
+
+        /* =====================================================
+           PROFILE PHOTO MODAL
+        ===================================================== */
+
+        #modalPhotoContainer img {
+            max-width: 100%;
+
+            max-height: 65vh;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 0 30px rgba(168,85,247,0.35);
+        }
+
+        /* =====================================================
+           ALERT
+        ===================================================== */
+
+        .form-error {
+            display: none;
+
+            margin-top: 5px;
+
+            color: #f87171;
+
+            font-size: 0.75rem;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 768px) {
+
+            .profile-container {
+                padding:
+                    25px 15px 50px;
+            }
+
+            .profile-hero {
+                padding: 25px 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .achievement-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 450px) {
+
+            .profile-name {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 15px 5px;
+            }
+
+            .stat-number {
+                font-size: 1.35rem;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="navbar navbar-dark">
+
+    <div class="container py-2">
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="navbar-brand">
+
+            <i class="fa-solid fa-calculator brand-icon me-2"></i>
+
+            Vedic Maths
+
+        </a>
+
+
+        <div>
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="btn btn-outline-light btn-sm rounded-pill me-2">
+
+                <i class="fa-solid fa-house me-1"></i>
+
+                Dashboard
+
+            </a>
+
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="btn btn-danger btn-sm rounded-pill">
+
+                <i class="fa-solid fa-right-from-bracket me-1"></i>
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<div class="profile-container">
+
+
+    <!-- =====================================================
+         PROFILE HERO
+    ====================================================== -->
+
+    <div class="profile-hero">
+
+        <div class="profile-content text-center">
+
+
+            <!-- PROFILE PHOTO -->
+
+            <div class="avatar-wrapper">
+
+                <div
+                    class="avatar"
+                    id="avatarDisplay"
+                    onclick="openPhotoModal()">
+
+                    {% if student and student.name %}
+
+                        {{ student.name[0] | upper }}
+
+                    {% else %}
+
+                        U
+
+                    {% endif %}
+
+                </div>
+
+
+                <label
+                    for="photoUpload"
+                    class="camera-btn"
+                    title="Change Profile Picture">
+
+                    <i class="fa-solid fa-camera"></i>
+
+                </label>
+
+
+                <input
+                    type="file"
+                    id="photoUpload"
+                    accept="image/*"
+                    class="d-none"
+                    onchange="previewPhoto(event)">
+
+            </div>
+
+
+            <!-- NAME -->
+
+            <div
+                class="profile-name"
+                id="userNameDisplay">
+
+                {{ student.name if student else 'Student Name' }}
+
+            </div>
+
+
+            <div class="profile-role">
+
+                Vedic Maths Learner
+
+            </div>
+
+
+            <div class="level-badge">
+
+                <i class="fa-solid fa-star"></i>
+
+                <span id="levelDisplay">
+                    Intermediate
+                </span>
+
+            </div>
+
+
+            <!-- EDIT PROFILE BUTTON -->
+
+            <div class="mt-3">
+
+                <button
+                    class="btn btn-sm btn-outline-light rounded-pill"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editProfileModal">
+
+                    <i class="fa-solid fa-pen-to-square me-1"></i>
+
+                    Edit Profile
+
+                </button>
+
+            </div>
+
+
+            <!-- STATS -->
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+
+                    <div class="stat-number">
+                        16
+                    </div>
+
+                    <div class="stat-label">
+                        Sutras Mastered
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+
+                    <div class="stat-number">
+                        85%
+                    </div>
+
+                    <div class="stat-label">
+                        Accuracy
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+
+                    <div class="stat-number">
+                        120+
+                    </div>
+
+                    <div class="stat-label">
+                        Problems Solved
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+
+                    <div class="stat-number">
+                        7
+                    </div>
+
+                    <div class="stat-label">
+                        Day Streak
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PROGRESS + STREAK
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- PROGRESS -->
+
+        <div class="col-lg-7">
+
+            <div class="glass-card">
+
+                <div class="section-title">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    Learning Progress
+
+                </div>
+
+
+                <div class="progress-info">
+
+                    <span>
+                        Overall Course Progress
+                    </span>
+
+                    <strong>
+                        72%
+                    </strong>
+
+                </div>
+
+
+                <div class="progress mb-4">
+
+                    <div
+                        class="progress-bar"
+                        style="width:72%">
+                    </div>
+
+                </div>
+
+
+                <div class="progress-info">
+
+                    <span>
+                        Sutras Mastered
+                    </span>
+
+                    <strong>
+                        16 / 20
+                    </strong>
+
+                </div>
+
+
+                <div class="progress mb-4">
+
+                    <div
+                        class="progress-bar"
+                        style="width:80%">
+                    </div>
+
+                </div>
+
+
+                <div class="progress-info">
+
+                    <span>
+                        Practice Accuracy
+                    </span>
+
+                    <strong>
+                        85%
+                    </strong>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="width:85%">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STREAK -->
+
+        <div class="col-lg-5">
+
+            <div class="glass-card">
+
+                <div class="section-title">
+
+                    <i class="fa-solid fa-fire streak-fire"></i>
+
+                    Learning Streak
+
+                </div>
+
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="streak-number">
+
+                        7
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Days in a row!
+                        </strong>
+
+                        <div class="small text-secondary">
+                            Keep learning every day 🔥
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="mt-4">
+
+                    <div class="progress-info">
+
+                        <span>
+                            Weekly Goal
+                        </span>
+
+                        <strong>
+                            5 / 7 days
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress">
+
+                        <div
+                            class="progress-bar"
+                            style="width:71%">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         GOAL + ACTIVITY
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- GOAL -->
+
+        <div class="col-lg-5">
+
+            <div class="goal-card">
+
+                <div class="section-title">
+
+                    <i class="fa-solid fa-bullseye"></i>
+
+                    Current Learning Goal
+
+                </div>
+
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="goal-icon">
+
+                        <i class="fa-solid fa-brain"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong id="goalDisplay">
+
+                            Improve Calculation Speed
+
+                        </strong>
+
+                        <div class="small text-secondary">
+
+                            16 of 20 sutras completed
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="progress mt-4">
+
+                    <div
+                        class="progress-bar"
+                        style="width:80%">
+                    </div>
+
+                </div>
+
+
+                <div class="small text-secondary mt-2">
+
+                    Only 4 more sutras to reach your goal 🎯
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVITY -->
+
+        <div class="col-lg-7">
+
+            <div class="glass-card">
+
+                <div class="section-title">
+
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+
+                    Recent Learning Activity
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon">
+
+                        <i class="fa-solid fa-check"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="activity-title">
+
+                            Completed multiplication practice
+
+                        </div>
+
+                        <div class="activity-time">
+
+                            Today • 10 minutes ago
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon">
+
+                        <i class="fa-solid fa-book-open"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="activity-title">
+
+                            Learned Nikhilam Sutra
+
+                        </div>
+
+                        <div class="activity-time">
+
+                            Yesterday
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon">
+
+                        <i class="fa-solid fa-trophy"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="activity-title">
+
+                            Earned Practice Champion badge
+
+                        </div>
+
+                        <div class="activity-time">
+
+                            2 days ago
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACHIEVEMENTS
+    ====================================================== -->
+
+    <div class="glass-card mb-4">
+
+        <div class="section-title">
+
+            <i class="fa-solid fa-award"></i>
+
+            Achievements & Badges
+
+        </div>
+
+
+        <div class="achievement-grid">
+
+
+            <div class="achievement">
+
+                <div class="achievement-icon">
+
+                    <i class="fa-solid fa-bolt"></i>
+
+                </div>
+
+                <div class="achievement-title">
+
+                    Quick Starter
+
+                </div>
+
+            </div>
+
+
+            <div class="achievement">
+
+                <div class="achievement-icon">
+
+                    <i class="fa-solid fa-crown"></i>
+
+                </div>
+
+                <div class="achievement-title">
+
+                    Sutra Master
+
+                </div>
+
+            </div>
+
+
+            <div class="achievement">
+
+                <div class="achievement-icon">
+
+                    <i class="fa-solid fa-fire"></i>
+
+                </div>
+
+                <div class="achievement-title">
+
+                    7 Day Streak
+
+                </div>
+
+            </div>
+
+
+            <div class="achievement locked">
+
+                <div class="achievement-icon">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                </div>
+
+                <div class="achievement-title">
+
+                    30 Day Streak
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACCOUNT INFORMATION
+    ====================================================== -->
+
+    <div class="glass-card mb-4">
+
+        <div class="section-title">
+
+            <i class="fa-solid fa-user"></i>
+
+            Account Information
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span class="info-label">
+                <i class="fa-solid fa-id-card me-2"></i>
+                Student ID
+            </span>
+
+            <span class="info-value">
+
+                #{{ student.id if student else '000' }}
+
+            </span>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span class="info-label">
+                <i class="fa-solid fa-user me-2"></i>
+                Full Name
+            </span>
+
+            <span
+                class="info-value"
+                id="infoName">
+
+                {{ student.name if student else 'N/A' }}
+
+            </span>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span class="info-label">
+                <i class="fa-solid fa-envelope me-2"></i>
+                Email
+            </span>
+
+            <span
+                class="info-value"
+                id="infoEmail">
+
+                {{ student.email if student else 'N/A' }}
+
+            </span>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span class="info-label">
+                <i class="fa-solid fa-phone me-2"></i>
+                Phone
+            </span>
+
+            <span
+                class="info-value"
+                id="infoPhone">
+
+                Not added
+
+            </span>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span class="info-label">
+                <i class="fa-solid fa-circle me-2 text-success"
+                   style="font-size:8px;">
+                </i>
+
+                Account Status
+
+            </span>
+
+            <span class="info-value text-success">
+
+                Active
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONTINUE -->
+
+    <div class="text-center">
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="btn btn-gradient">
+
+            <i class="fa-solid fa-graduation-cap me-2"></i>
+
+            Continue Learning
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     EDIT PROFILE MODAL
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="editProfileModal"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="fa-solid fa-user-pen me-2"></i>
+
+                    Edit Profile
+
+                </h5>
+
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="modal-body p-4">
+
+                <form id="editProfileForm">
+
+
+                    <!-- PROFILE PHOTO -->
+
+                    <div class="text-center mb-4">
+
+                        <div
+                            class="avatar-wrapper"
+                            style="width:90px;height:90px;">
+
+                            <div
+                                class="avatar"
+                                id="modalAvatar"
+                                style="
+                                    width:90px;
+                                    height:90px;
+                                    font-size:2rem;
+                                ">
+
+                                {% if student and student.name %}
+                                    {{ student.name[0] | upper }}
+                                {% else %}
+                                    U
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-light rounded-pill mt-2"
+                            onclick="document.getElementById('photoUpload').click()">
+
+                            <i class="fa-solid fa-camera me-1"></i>
+
+                            Change Photo
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+
+                        <!-- FULL NAME -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="inputName"
+                                class="form-label">
+
+                                Full Name
+
+                            </label>
+
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="inputName"
+                                value="{{ student.name if student else '' }}"
+                                placeholder="Enter your full name">
+
+                            <div
+                                id="nameError"
+                                class="form-error">
+
+                                Please enter your full name.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="inputEmail"
+                                class="form-label">
+
+                                Email Address
+
+                            </label>
+
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="inputEmail"
+                                value="{{ student.email if student else '' }}"
+                                placeholder="Enter email">
+
+                            <div
+                                id="emailError"
+                                class="form-error">
+
+                                Please enter a valid email.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PHONE -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="inputPhone"
+                                class="form-label">
+
+                                Phone Number
+
+                            </label>
+
+
+                            <input
+                                type="tel"
+                                class="form-control"
+                                id="inputPhone"
+                                placeholder="Enter phone number"
+                                maxlength="15">
+
+                        </div>
+
+
+                        <!-- LEVEL -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="inputLevel"
+                                class="form-label">
+
+                                Learning Level
+
+                            </label>
+
+
+                            <select
+                                class="form-select"
+                                id="inputLevel">
+
+                                <option value="Beginner">
+                                    Beginner
+                                </option>
+
+                                <option value="Intermediate" selected>
+                                    Intermediate
+                                </option>
+
+                                <option value="Advanced">
+                                    Advanced
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- GOAL -->
+
+                        <div class="col-12">
+
+                            <label
+                                for="inputGoal"
+                                class="form-label">
+
+                                Learning Goal
+
+                            </label>
+
+
+                            <select
+                                class="form-select"
+                                id="inputGoal">
+
+                                <option value="Learn Vedic Maths">
+
+                                    Learn Vedic Maths
+
+                                </option>
+
+                                <option
+                                    value="Improve Calculation Speed"
+                                    selected>
+
+                                    Improve Calculation Speed
+
+                                </option>
+
+                                <option value="Improve Accuracy">
+
+                                    Improve Accuracy
+
+                                </option>
+
+                                <option value="Exam Preparation">
+
+                                    Exam Preparation
+
+                                </option>
+
+                                <option value="Master Advanced Sutras">
+
+                                    Master Advanced Sutras
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- PASSWORD SECTION -->
+
+                    <hr
+                        class="border-secondary my-4">
+
+
+                    <h6 class="fw-bold mb-3">
+
+                        <i class="fa-solid fa-lock me-2 text-info"></i>
+
+                        Change Password
+
+                    </h6>
+
+
+                    <p class="small text-secondary mb-3">
+
+                        Leave these fields empty if you don't want to
+                        change your password.
+
+                    </p>
+
+
+                    <div class="row g-3">
+
+
+                        <!-- CURRENT PASSWORD -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+
+                                Current Password
+
+                            </label>
+
+
+                            <div class="password-wrapper">
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="currentPassword"
+                                    placeholder="Current password">
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    onclick="togglePassword(
+                                        'currentPassword',
+                                        this
+                                    )">
+
+                                    <i class="fa-solid fa-eye"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NEW PASSWORD -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+
+                                New Password
+
+                            </label>
+
+
+                            <div class="password-wrapper">
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="newPassword"
+                                    placeholder="New password">
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    onclick="togglePassword(
+                                        'newPassword',
+                                        this
+                                    )">
+
+                                    <i class="fa-solid fa-eye"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CONFIRM PASSWORD -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+
+                                Confirm Password
+
+                            </label>
+
+
+                            <div class="password-wrapper">
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="confirmPassword"
+                                    placeholder="Confirm password">
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    onclick="togglePassword(
+                                        'confirmPassword',
+                                        this
+                                    )">
+
+                                    <i class="fa-solid fa-eye"></i>
+
+                                </button>
+
+                            </div>
+
+
+                            <div
+                                id="passwordError"
+                                class="form-error">
+
+                                Passwords do not match.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary rounded-pill"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn btn-gradient"
+                    onclick="saveProfile()">
+
+                    <i class="fa-solid fa-check me-1"></i>
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     PHOTO VIEW MODAL
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="previewImageModal"
+    tabindex="-1">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="fa-solid fa-image me-2"></i>
+
+                    Profile Picture
+
+                </h5>
+
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div
+                class="modal-body text-center p-4"
+                id="modalPhotoContainer">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+    /* =====================================================
+       PHOTO UPLOAD
+    ===================================================== */
+
+    function previewPhoto(event) {
+
+        const file =
+            event.target.files[0];
+
+        if (!file) {
+            return;
+        }
+
+
+        if (!file.type.startsWith("image/")) {
+
+            alert("Please select a valid image.");
+
+            return;
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function(e) {
+
+                const image =
+                    e.target.result;
+
+
+                document.getElementById(
+                    "avatarDisplay"
+                ).innerHTML =
+
+                    `<img
+                        src="${image}"
+                        alt="Profile Picture">`;
+
+
+                document.getElementById(
+                    "modalAvatar"
+                ).innerHTML =
+
+                    `<img
+                        src="${image}"
+                        alt="Profile Picture">`;
+
+
+                localStorage.setItem(
+                    "user_profile_photo",
+                    image
+                );
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    }
+
+
+    /* =====================================================
+       OPEN PHOTO
+    ===================================================== */
+
+    function openPhotoModal() {
+
+        const avatar =
+            document.getElementById(
+                "avatarDisplay"
+            );
+
+        const container =
+            document.getElementById(
+                "modalPhotoContainer"
+            );
+
+
+        const image =
+            avatar.querySelector("img");
+
+
+        if (image) {
+
+            container.innerHTML =
+
+                `<img
+                    src="${image.src}"
+                    alt="Profile Picture">`;
+
+        }
+
+        else {
+
+            const letter =
+                avatar.innerText.trim();
+
+
+            container.innerHTML =
+
+                `<div
+                    style="
+                        width:190px;
+                        height:190px;
+                        margin:auto;
+
+                        border-radius:50%;
+
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+
+                        font-size:5rem;
+                        font-weight:700;
+
+                        background:
+                            linear-gradient(
+                                135deg,
+                                #6366f1,
+                                #a855f7
+                            );
+                    ">
+
+                    ${letter}
+
+                </div>`;
+
+        }
+
+
+        const modal =
+            new bootstrap.Modal(
+                document.getElementById(
+                    "previewImageModal"
+                )
+            );
+
+
+        modal.show();
+
+    }
+
+
+    /* =====================================================
+       PASSWORD SHOW/HIDE
+    ===================================================== */
+
+    function togglePassword(
+        inputId,
+        button
+    ) {
+
+        const input =
+            document.getElementById(
+                inputId
+            );
+
+
+        const icon =
+            button.querySelector("i");
+
+
+        if (input.type === "password") {
+
+            input.type = "text";
+
+            icon.classList.remove(
+                "fa-eye"
+            );
+
+            icon.classList.add(
+                "fa-eye-slash"
+            );
+
+        }
+
+        else {
+
+            input.type = "password";
+
+            icon.classList.remove(
+                "fa-eye-slash"
+            );
+
+            icon.classList.add(
+                "fa-eye"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       SAVE PROFILE
+    ===================================================== */
+
+    function saveProfile() {
+
+    const newName = document.getElementById("inputName").value.trim();
+
+    if (newName === "") {
+        alert("Please enter your full name.");
+        return;
+    }
+
+    // Update profile name
+    document.getElementById("userNameDisplay").innerText = newName;
+    document.getElementById("infoName").innerText = newName;
+
+    // Save name
+    localStorage.setItem("user_profile_name", newName);
+
+    // Success message
+    alert("Profile updated successfully!");
+
+    // Close Edit Profile Modal after clicking OK
+    const modalElement = document.getElementById("editProfileModal");
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    modal.hide();
+    
+    }
+
+
+    /* =====================================================
+       LOAD SAVED PROFILE
+    ===================================================== */
+
+    window.addEventListener(
+        "load",
+        function() {
+
+
+            /* PHOTO */
+
+            const savedPhoto =
+                localStorage.getItem(
+                    "user_profile_photo"
+                );
+
+
+            if (savedPhoto) {
+
+                document.getElementById(
+                    "avatarDisplay"
+                ).innerHTML =
+
+                    `<img
+                        src="${savedPhoto}"
+                        alt="Profile Picture">`;
+
+
+                document.getElementById(
+                    "modalAvatar"
+                ).innerHTML =
+
+                    `<img
+                        src="${savedPhoto}"
+                        alt="Profile Picture">`;
+
+            }
+
+
+            /* NAME */
+
+            const savedName =
+                localStorage.getItem(
+                    "user_profile_name"
+                );
+
+
+            if (savedName) {
+
+                document.getElementById(
+                    "userNameDisplay"
+                ).innerText =
+                    savedName;
+
+
+                document.getElementById(
+                    "infoName"
+                ).innerText =
+                    savedName;
+
+
+                document.getElementById(
+                    "inputName"
+                ).value =
+                    savedName;
+
+            }
+
+
+            /* EMAIL */
+
+            const savedEmail =
+                localStorage.getItem(
+                    "user_profile_email"
+                );
+
+
+            if (savedEmail) {
+
+                document.getElementById(
+                    "infoEmail"
+                ).innerText =
+                    savedEmail;
+
+
+                document.getElementById(
+                    "inputEmail"
+                ).value =
+                    savedEmail;
+
+            }
+
+
+            /* PHONE */
+
+            const savedPhone =
+                localStorage.getItem(
+                    "user_profile_phone"
+                );
+
+
+            if (savedPhone) {
+
+                document.getElementById(
+                    "infoPhone"
+                ).innerText =
+                    savedPhone;
+
+
+                document.getElementById(
+                    "inputPhone"
+                ).value =
+                    savedPhone;
+
+            }
+
+
+            /* LEVEL */
+
+            const savedLevel =
+                localStorage.getItem(
+                    "user_learning_level"
+                );
+
+
+            if (savedLevel) {
+
+                document.getElementById(
+                    "levelDisplay"
+                ).innerText =
+                    savedLevel;
+
+
+                document.getElementById(
+                    "inputLevel"
+                ).value =
+                    savedLevel;
+
+            }
+
+
+            /* GOAL */
+
+            const savedGoal =
+                localStorage.getItem(
+                    "user_learning_goal"
+                );
+
+
+            if (savedGoal) {
+
+                document.getElementById(
+                    "goalDisplay"
+                ).innerText =
+                    savedGoal;
+
+
+                document.getElementById(
+                    "inputGoal"
+                ).value =
+                    savedGoal;
+
+            }
+
+        }
+
+    );
+
+</script>
+
+
+<!-- Bootstrap JS -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

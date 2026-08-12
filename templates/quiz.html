@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedic Mathematics Quiz</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="quiz-page">
+
+<!-- ================= HEADER ================= -->
+
+<header class="quiz-header">
+
+    <div class="quiz-logo">
+        🧮 Vedic Mathematics
+    </div>
+
+    <nav class="quiz-nav">
+
+        <a href="{{ url_for('dashboard') }}" class="back-btn">
+            ← Dashboard
+        </a>
+
+    </nav>
+
+</header>
+
+
+<!-- ================= MAIN CONTAINER ================= -->
+
+<main class="quiz-container">
+
+
+<!-- ================= HERO ================= -->
+
+<section class="quiz-hero">
+
+    <div class="hero-content">
+
+        <span class="hero-tag">
+            PROFESSIONAL QUIZ
+        </span>
+
+        <h1>
+            🏆 Vedic Mathematics Challenge
+        </h1>
+
+        <p>
+            Test your knowledge of the 16 Vedic Sutras through an interactive
+            multiple choice quiz.
+        </p>
+
+        <div class="hero-features">
+
+            <div class="feature">
+                📚
+                <span>50 Questions</span>
+            </div>
+
+            <div class="feature">
+                🎯
+                <span>MCQ Based</span>
+            </div>
+
+            <div class="feature">
+                🏅
+                <span>Instant Result</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= STATS ================= -->
+
+<section class="quiz-stats">
+
+    <div class="stat-card">
+
+        <div class="icon">
+            📚
+        </div>
+
+        <h2>50</h2>
+
+        <p>Total Questions</p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="icon">
+            ✅
+        </div>
+
+        <h2 id="attempted">0</h2>
+
+        <p>Attempted</p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="icon">
+            ⭕
+        </div>
+
+        <h2 id="remaining">50</h2>
+
+        <p>Remaining</p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="icon">
+            🎓
+        </div>
+
+        <h2 id="completionStatus">
+            0%
+        </h2>
+
+        <p>Completed</p>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PROGRESS ================= -->
+
+<section class="progress-section">
+
+    <div class="progress-info">
+
+        <span>
+            Quiz Progress
+        </span>
+
+        <span id="progressText">
+            0%
+        </span>
+
+    </div>
+
+    <div class="progress-track">
+
+        <div id="progressBar"
+             class="progress-fill">
+
+            0%
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= QUESTION CARD ================= -->
+
+<section class="question-card">
+
+    <div class="question-top">
+
+        <div class="question-info">
+
+            <span class="question-label">
+                Current Question
+            </span>
+
+            <h3 id="questionNumber">
+                Question 1 / 50
+            </h3>
+
+        </div>
+
+        <div class="badge">
+            🏆 Vedic Challenge
+        </div>
+
+    </div>
+
+
+    <div class="question-body">
+
+        <h2 id="questionText">
+            Loading Question...
+        </h2>
+
+    </div>
+
+
+    <!-- OPTIONS -->
+
+    <div id="options"
+         class="options-container">
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= NAVIGATION ================= -->
+
+<section class="navigation">
+
+    <button
+        id="prevBtn"
+        class="nav-btn prev-btn"
+        onclick="previousQuestion()">
+
+        ⬅ Previous
+
+    </button>
+
+
+    <button
+        id="nextBtn"
+        class="nav-btn next-btn"
+        onclick="nextQuestion()">
+
+        Next ➜
+
+    </button>
+
+
+    <button
+        id="submitBtn"
+        class="submit-btn"
+        onclick="submitQuiz()"
+        style="display:none;">
+
+        ✅ Submit Quiz
+
+    </button>
+
+</section>
+
+
+
+<!-- ================= QUIZ NOTE ================= -->
+
+<section class="quiz-note">
+
+    <div class="note-card">
+
+        <div class="note-icon">
+            💡
+        </div>
+
+        <div>
+
+            <h3>
+                Quiz Instructions
+            </h3>
+
+            <ul>
+
+                <li>Read every question carefully before selecting an answer.</li>
+
+                <li>You can move between Previous and Next questions anytime.</li>
+
+                <li>Your progress is automatically saved during the quiz.</li>
+
+                <li>Review your answers after submitting the quiz.</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= RESULT SECTION ================= -->
+
+<section id="resultBox"
+         class="result-card"
+         style="display:none;">
+
+    <div class="result-header">
+
+        <div class="result-icon">
+            🏆
+        </div>
+
+        <h2>Quiz Completed Successfully!</h2>
+
+        <p>
+            Congratulations! Here is your performance summary.
+        </p>
+
+    </div>
+
+
+    <div class="score-circle">
+
+        <h1 id="scoreCircle">
+            0%
+        </h1>
+
+        <span>
+            Final Score
+        </span>
+
+    </div>
+
+
+    <div class="result-details">
+
+        <div class="detail-card">
+            <h3 id="scoreText"></h3>
+        </div>
+
+        <div class="detail-card">
+            <h3 id="percentageText"></h3>
+        </div>
+
+        <div class="detail-card">
+            <h3 id="gradeText"></h3>
+        </div>
+
+    </div>
+
+
+    <div id="messageText"
+         class="result-message">
+    </div>
+
+
+    <div class="result-buttons">
+
+        <button
+            class="review-btn"
+            onclick="reviewAnswers()">
+
+            📖 Review Answers
+
+        </button>
+
+
+        <a href="{{ url_for('dashboard') }}"
+           class="dashboard-btn">
+
+            🏠 Dashboard
+
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= REVIEW SECTION ================= -->
+
+<section id="reviewBox"
+         class="review-container"
+         style="display:none;">
+
+    <div class="review-header">
+
+        <h2>
+            📊 Student Performance Report
+        </h2>
+
+        <p>
+            Review all your submitted answers.
+        </p>
+
+    </div>
+
+
+    <div class="review-progress-card">
+
+        <div class="progress-grid">
+
+            <div class="progress-item">
+
+                <h3 id="reviewTotal">50</h3>
+
+                <p>Total Questions</p>
+
+            </div>
+
+
+            <div class="progress-item">
+
+                <h3 id="reviewAttempt">0</h3>
+
+                <p>Attempted</p>
+
+            </div>
+
+
+            <div class="progress-item">
+
+                <h3 id="reviewCorrect">0</h3>
+
+                <p>Correct</p>
+
+            </div>
+
+
+            <div class="progress-item">
+
+                <h3 id="reviewWrong">0</h3>
+
+                <p>Wrong</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="accuracy-box">
+
+            Accuracy :
+            <span id="reviewAccuracy">
+                0%
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div id="reviewQuestions">
+
+    </div>
+
+</section>
+
+</main>
+
+
+<script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+
+</body>
+
+</html>

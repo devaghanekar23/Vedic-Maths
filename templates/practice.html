@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Sessions | Vedic Mathematics</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .practice-header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        .practice-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #60a5fa;
+            margin-bottom: 8px;
+        }
+
+        .sutra-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 22px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .sutra-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 22px;
+            text-decoration: none;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+        }
+
+        .sutra-card:hover {
+            transform: translateY(-5px);
+            border-color: #2563eb;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            color: #ffffff;
+        }
+
+        .sutra-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .sutra-number {
+            font-size: 0.8rem;
+            color: #38bdf8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .sutra-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .sutra-sanskrit {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        /* FORMULA BOX ONLY (NO THEORY/EXPLANATION) */
+        .formula-box {
+            background: rgba(30, 41, 59, 0.9);
+            border-left: 3px solid #3b82f6;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin-bottom: 18px;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+            display: block;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="practice-header">
+            <h1>🧮 Select Sutra for Practice</h1>
+            <p class="text-muted">Select any Sutra below to practice 20 questions.</p>
+        </div>
+
+        <!-- 16 SUTRA CARDS (ONLY NAME + FORMULA + BUTTON) -->
+        <div class="sutra-grid">
+            {% for sutra in all_sutras %}
+            <a href="{{ url_for('practice', id=sutra.id) }}" class="sutra-card">
+                <div>
+                    <div class="sutra-icon">{{ sutra.icon }}</div>
+                    <div class="sutra-number">Sutra {{ sutra.id }}</div>
+                    <div class="sutra-title">{{ sutra.name }}</div>
+                    <div class="sutra-sanskrit">{{ sutra.sanskrit }}</div>
+                    
+                    <div class="formula-box">
+                        <strong>Formula:</strong> {{ sutra.rule }}
+                    </div>
+                </div>
+
+                <div class="start-btn">
+                    Start 20 Questions Practice 🚀
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="text-center">
+            <a href="{{ url_for('dashboard') }}" class="back-btn">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+</body>
+
+</html>

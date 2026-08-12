@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VedicMath | Learn Vedic Mathematics</title>
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+</head>
+
+
+<body>
+
+
+
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg fixed-top">
+
+
+<div class="container">
+
+
+<a class="navbar-brand" href="/">
+
+🧮 VedicMath
+
+</a>
+
+
+
+
+<button class="navbar-toggler bg-light"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#navbarMenu">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+
+<div class="collapse navbar-collapse" id="navbarMenu">
+
+
+<ul class="navbar-nav ms-auto align-items-center">
+
+
+
+<li class="nav-item">
+<a class="nav-link" href="#home">
+Home
+</a>
+</li>
+
+
+
+<li class="nav-item">
+<a class="nav-link" href="#about">
+About
+</a>
+</li>
+
+
+
+<li class="nav-item">
+<a class="nav-link" href="#sutras">
+Sutras
+</a>
+</li>
+
+
+
+<li class="nav-item">
+<a class="nav-link" href="#practice">
+Practice
+</a>
+</li>
+
+
+
+<li class="nav-item">
+<a class="nav-link" href="#quiz">
+Quiz
+</a>
+</li>
+
+
+
+<li class="nav-item">
+<a class="nav-link" href="#contact">
+Contact
+</a>
+</li>
+
+
+
+<li class="nav-item ms-3">
+
+<a href="{{ url_for('login') }}" class="login-btn">
+
+Login
+
+</a>
+
+</li>
+
+
+
+</ul>
+
+
+</div>
+
+
+
+</div>
+
+
+</nav>
+
+
+
+
+
+
+
+<!-- HERO SECTION -->
+
+
+<section class="hero" id="home">
+
+
+<div class="container">
+
+
+<div class="row align-items-center">
+
+
+
+<div class="col-lg-7">
+
+
+
+<div class="badge">
+
+🚀 India's Smart Vedic Mathematics Platform
+
+</div>
+
+
+
+
+<h1>
+
+Master
+
+<span>Vedic Mathematics</span>
+
+</h1>
+
+
+
+
+
+<p>
+
+Boost your calculation speed with ancient Vedic techniques.
+Learn Sutras, practice problems and improve your mathematical skills.
+
+</p>
+
+
+
+
+
+<a href="{{ url_for('register') }}" class="start-btn">
+
+Start Learning →
+
+</a>
+
+
+
+
+<a href="#sutras" class="demo-btn">
+
+Explore Sutras
+
+</a>
+
+
+
+
+</div>
+
+
+
+
+<div class="col-lg-5 text-center">
+
+
+<div style="font-size:180px;">
+
+🧮
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+<!-- ABOUT SECTION -->
+
+
+<section class="section" id="about">
+
+
+<div class="container">
+
+
+<h2>
+
+About Vedic Mathematics
+
+</h2>
+
+
+
+<p>
+
+Vedic Mathematics is an ancient Indian mathematical system based on
+16 Sutras. It helps students solve calculations faster and improves
+logical thinking.
+
+</p>
+
+
+
+</div>
+
+
+</section>
+<!-- ================= SUTRAS SECTION ================= -->
+
+<section class="section" id="sutras">
+
+<div class="container">
+
+
+<h2>
+📚 16 Vedic Mathematics Sutras
+</h2>
+
+
+
+<div class="row g-4">
+
+
+{% for sutra in [
+"Ekadhikena Purvena",
+"Nikhilam Navatashcaramam Dashatah",
+"Urdhva Tiryagbhyam",
+"Paravartya Yojayet",
+"Shunyam Saamyasamuccaye",
+"Anurupyena",
+"Sankalana Vyavakalanabhyam",
+"Puranapuranabhyam"
+] %}
+
+
+
+<div class="col-lg-3 col-md-4 col-sm-6">
+
+
+<div class="card-box">
+
+
+<h3>
+📘 {{ sutra }}
+</h3>
+
+
+<p>
+Learn Vedic technique with explanation and examples.
+</p>
+
+
+<a href="{{ url_for('login') }}" class="start-btn">
+
+Learn
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+{% endfor %}
+
+
+</div>
+
+
+
+<div class="text-center mt-5">
+
+
+<a href="{{ url_for('login') }}" class="start-btn">
+
+View All Sutras →
+
+</a>
+
+
+</div>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+<!-- ================= PRACTICE SECTION ================= -->
+
+
+<section class="section" id="practice">
+
+
+<div class="container">
+
+
+<h2>
+
+🧮 Smart Practice Zone
+
+</h2>
+
+
+
+
+<div class="row g-4">
+
+
+
+<div class="col-md-4">
+
+
+<div class="card-box">
+
+
+<h3>
+
+⚡ Speed Calculation
+
+</h3>
+
+
+<p>
+
+Improve your calculation speed using Vedic Maths techniques.
+
+</p>
+
+
+<a href="{{ url_for('login') }}" class="start-btn">
+
+Start Practice
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="col-md-4">
+
+
+<div class="card-box">
+
+
+<h3>
+
+📖 Daily Problems
+
+</h3>
+
+
+<p>
+
+Solve daily questions and improve accuracy.
+
+</p>
+
+
+<a href="{{ url_for('login') }}" class="start-btn">
+
+Practice Now
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="col-md-4">
+
+
+<div class="card-box">
+
+
+<h3>
+
+🎯 Skill Builder
+
+</h3>
+
+
+<p>
+
+Master Vedic Mathematics step by step.
+
+</p>
+
+
+<a href="{{ url_for('login') }}" class="start-btn">
+
+Explore
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- ================= QUIZ SECTION ================= -->
+
+
+<section class="section" id="quiz">
+
+
+<div class="container">
+
+
+<h2>
+
+🏆 Vedic Maths Challenge
+
+</h2>
+
+
+
+
+<div class="card-box text-center">
+
+
+<h3>
+
+Test Your Mathematical Skills
+
+</h3>
+
+
+
+<p>
+
+Take interactive quizzes and check your knowledge.
+
+</p>
+
+
+
+
+<a href="{{ url_for('login') }}" class="start-btn">
+
+Start Quiz
+
+</a>
+
+
+
+</div>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- ================= CONTACT ================= -->
+
+
+<section class="section" id="contact">
+
+
+<div class="container">
+
+
+<h2>
+
+📩 Contact Us
+
+</h2>
+
+
+
+
+<div class="card-box text-center">
+
+
+<p>
+
+<i class="bi bi-envelope"></i>
+
+support@vedicmath.com
+
+</p>
+
+
+
+
+<p>
+
+🎓 Vedic Mathematics Learning Portal
+
+</p>
+
+
+
+
+<p>
+
+⏰ 24/7 Student Support
+
+</p>
+
+
+
+</div>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- FOOTER -->
+
+
+<footer class="text-center py-4">
+
+
+<p>
+
+© 2026 VedicMath Learning Portal
+
+</p>
+
+
+</footer>
+
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+
+</html>

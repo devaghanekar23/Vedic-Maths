@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ sutra.name }} | Vedic Mathematics
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* =====================================================
+           MATHEMATICAL BOARD
+        ===================================================== */
+
+        .math-solution-board {
+
+            background: rgba(15, 23, 42, 0.90);
+
+            border: 1px solid
+                rgba(255, 255, 255, 0.12);
+
+            border-left: 5px solid #f59e0b;
+
+            border-radius: 14px;
+
+            padding: 24px;
+
+            margin: 25px 0;
+
+            text-align: left;
+
+            box-shadow:
+                0 8px 24px
+                rgba(0, 0, 0, 0.25);
+
+        }
+
+        .math-step-line {
+
+            font-family:
+                'Consolas',
+                'Courier New',
+                monospace;
+
+            font-size: 1.08rem;
+
+            color: #f1f5f9;
+
+            padding: 15px 18px;
+
+            margin-bottom: 12px;
+
+            border-bottom:
+                1px dashed
+                rgba(255, 255, 255, 0.12);
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: flex-start;
+
+            gap: 15px;
+
+            background:
+                rgba(255, 255, 255, 0.035);
+
+            border-radius: 8px;
+
+            line-height: 1.6;
+
+        }
+
+        .math-step-line:last-child {
+
+            margin-bottom: 0;
+
+            border-bottom: none;
+
+        }
+
+        .step-label {
+
+            color: #f59e0b;
+
+            font-weight: 700;
+
+            min-width: 90px;
+
+            font-family: 'Poppins', sans-serif;
+
+            white-space: nowrap;
+
+        }
+
+        .step-math {
+
+            color: #ffffff;
+
+            font-weight: 600;
+
+            letter-spacing: 0.3px;
+
+            line-height: 1.7;
+
+            word-break: break-word;
+
+        }
+
+        /* =====================================================
+           SUCCESS MESSAGE
+        ===================================================== */
+
+        .success-message {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+
+            padding: 22px;
+
+            border-radius: 14px;
+
+            background:
+                rgba(34, 197, 94, 0.12);
+
+            border:
+                1px solid
+                rgba(34, 197, 94, 0.35);
+
+        }
+
+        .success-message h2 {
+
+            color: #22c55e;
+
+            margin:
+                0 0 7px 0;
+
+        }
+
+        .success-message p {
+
+            color: #cbd5e1;
+
+            margin: 0;
+
+        }
+
+        .message-icon {
+
+            font-size: 2.5rem;
+
+            flex-shrink: 0;
+
+        }
+
+        /* =====================================================
+           ERROR MESSAGE
+        ===================================================== */
+
+        .error-message {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 18px;
+
+            padding: 22px;
+
+            border-radius: 14px;
+
+            background:
+                rgba(239, 68, 68, 0.12);
+
+            border:
+                1px solid
+                rgba(239, 68, 68, 0.40);
+
+        }
+
+        .error-message h2 {
+
+            color: #f87171;
+
+            margin:
+                0 0 8px 0;
+
+            line-height: 1.5;
+
+        }
+
+        .error-message p {
+
+            color: #cbd5e1;
+
+            margin: 0;
+
+            line-height: 1.7;
+
+        }
+
+        /* =====================================================
+           FINAL ANSWER
+        ===================================================== */
+
+        .final-answer {
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            padding: 30px;
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(245, 158, 11, 0.12),
+                    rgba(124, 58, 237, 0.12)
+                );
+
+            border:
+                1px solid
+                rgba(245, 158, 11, 0.25);
+
+        }
+
+        .answer-title {
+
+            font-size: 1.2rem;
+
+            font-weight: 700;
+
+            color: #f59e0b;
+
+            margin-bottom: 10px;
+
+        }
+
+        .final-answer h1 {
+
+            font-size: 3rem;
+
+            color: #ffffff;
+
+            margin: 5px 0 10px;
+
+            font-weight: 800;
+
+        }
+
+        .final-answer p {
+
+            color: #cbd5e1;
+
+            margin: 0;
+
+        }
+
+        /* =====================================================
+           PRACTICE FORM
+        ===================================================== */
+
+        .practice-form {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+
+            margin-top: 20px;
+
+        }
+
+        .practice-input {
+
+            flex: 1;
+
+            min-width: 180px;
+
+            padding: 14px 17px;
+
+            border-radius: 10px;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.15);
+
+            background:
+                rgba(255, 255, 255, 0.06);
+
+            color: #ffffff;
+
+            font-size: 1rem;
+
+            outline: none;
+
+        }
+
+        .practice-input::placeholder {
+
+            color: #94a3b8;
+
+        }
+
+        .practice-input:focus {
+
+            border-color: #f59e0b;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(245, 158, 11, 0.12);
+
+        }
+
+        .solve-btn {
+
+            border: none;
+
+            padding: 14px 24px;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f59e0b,
+                    #ea580c
+                );
+
+            color: #ffffff;
+
+            font-weight: 700;
+
+            font-size: 1rem;
+
+            cursor: pointer;
+
+            transition: 0.25s;
+
+        }
+
+        .solve-btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 20px
+                rgba(245, 158, 11, 0.25);
+
+        }
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 768px) {
+
+            .math-step-line {
+
+                flex-direction: column;
+
+                gap: 5px;
+
+                font-size: 0.98rem;
+
+            }
+
+            .step-label {
+
+                min-width: auto;
+
+            }
+
+            .success-message,
+            .error-message {
+
+                align-items: flex-start;
+
+            }
+
+            .final-answer h1 {
+
+                font-size: 2.3rem;
+
+            }
+
+            .practice-form {
+
+                flex-direction: column;
+
+            }
+
+            .practice-input,
+            .solve-btn {
+
+                width: 100%;
+
+                box-sizing: border-box;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- =========================================================
+     MAIN CONTAINER
+========================================================= -->
+
+<div class="sutra-container">
+
+    <!-- =====================================================
+         HERO
+    ===================================================== -->
+
+    <section class="sutra-hero">
+
+        <div class="glow-circle glow1"></div>
+
+        <div class="glow-circle glow2"></div>
+
+        <div class="sutra-icon-large">
+            {{ sutra.icon }}
+        </div>
+
+        <div class="sutra-number">
+            Sutra {{ sutra.id }}
+        </div>
+
+        <h1>
+            {{ sutra.name }}
+        </h1>
+
+        <h2>
+            {{ sutra.sanskrit }}
+        </h2>
+
+        <p class="hero-tagline">
+            {{ sutra.meaning }}
+        </p>
+
+    </section>
+
+    <!-- =====================================================
+         QUICK INFO
+    ===================================================== -->
+
+    <div class="info-grid">
+
+        <div class="info-box">
+
+            <span>
+                📚 Category
+            </span>
+
+            <h3>
+                Vedic Mathematics
+            </h3>
+
+        </div>
+
+        <div class="info-box">
+
+            <span>
+                ⚡ Difficulty
+            </span>
+
+            <h3>
+                Easy Learning
+            </h3>
+
+        </div>
+
+        <div class="info-box">
+
+            <span>
+                🎯 Used For
+            </span>
+
+            <h3>
+                {{ sutra.operation }}
+            </h3>
+
+        </div>
+
+        <div class="info-box">
+
+            <span>
+                🚀 Speed
+            </span>
+
+            <h3>
+                Fast Calculation
+            </h3>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         INTRODUCTION
+    ===================================================== -->
+
+    <div class="learning-card">
+
+        <div class="card-title">
+            📖 Introduction
+        </div>
+
+        <p>
+            {{ sutra.introduction }}
+        </p>
+
+    </div>
+
+    <!-- =====================================================
+         WHY LEARN
+    ===================================================== -->
+
+    <div class="learning-card">
+
+        <div class="card-title">
+            🌟 Why Learn This Sutra?
+        </div>
+
+        <div class="why-grid">
+
+            <div class="why-box">
+                ⚡
+                <p>
+                    Increase Calculation Speed
+                </p>
+            </div>
+
+            <div class="why-box">
+                🎯
+                <p>
+                    Useful in Competitive Exams
+                </p>
+            </div>
+
+            <div class="why-box">
+                🧠
+                <p>
+                    Improves Logical Thinking
+                </p>
+            </div>
+
+            <div class="why-box">
+                🚀
+                <p>
+                    Easy Mental Mathematics
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         RULE
+    ===================================================== -->
+
+    <div class="learning-card rule-card">
+
+        <div class="card-title">
+            📐 Sutra Rule
+        </div>
+
+        <div class="rule-content">
+            {{ sutra.rule }}
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         MEANING
+    ===================================================== -->
+
+    <div class="learning-card">
+
+        <div class="card-title">
+            📚 Meaning
+        </div>
+
+        <p>
+            {{ sutra.meaning }}
+        </p>
+
+    </div>
+
+    <!-- =====================================================
+         SOLVED EXAMPLE
+    ===================================================== -->
+
+    <div class="learning-card example-card">
+
+        <div class="card-title">
+            🧮 Solved Example
+        </div>
+
+        <div class="example-question">
+
+            <h3>
+                Question
+            </h3>
+
+            <div class="question-box">
+                {{ sutra.example_question }}
+            </div>
+
+        </div>
+
+        <div class="solution-area">
+
+            <div class="solution-step">
+
+                <div class="step-number">
+                    1
+                </div>
+
+                <div class="step-content">
+
+                    <h4>
+                        Read the Question
+                    </h4>
+
+                    <p>
+                        {{ sutra.example_question }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="solution-step">
+
+                <div class="step-number">
+                    2
+                </div>
+
+                <div class="step-content">
+
+                    <h4>
+                        Apply the Sutra
+                    </h4>
+
+                    <p>
+                        {{ sutra.rule }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="solution-step">
+
+                <div class="step-number">
+                    3
+                </div>
+
+                <div class="step-content">
+
+                    <h4>
+                        Final Answer
+                    </h4>
+
+                    <p>
+                        {{ sutra.example_answer }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="answer-box">
+
+            <h2>
+                🎉 {{ sutra.example_answer }}
+            </h2>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         FACT
+    ===================================================== -->
+
+    <div class="learning-card">
+
+        <div class="card-title">
+            💡 Did You Know?
+        </div>
+
+        <div class="fact-box">
+
+            <p>
+                Vedic Mathematics techniques can help
+                students perform calculations faster
+                and improve mental arithmetic skills.
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         TRY YOURSELF (WITH NO-RELOAD AJAX HANDLING)
+    ===================================================== -->
+
+    <div
+        class="learning-card practice-card"
+        id="practice-section"
+    >
+
+        <div class="card-title">
+            🧠 Try Yourself
+        </div>
+
+        <p class="practice-text">
+            Enter the values below and solve using
+            Vedic Mathematics.
+        </p>
+
+        <form
+            method="POST"
+            action="{{ url_for('sutra_detail', id=sutra.id) }}"
+            class="practice-form"
+            id="sutra-form"
+        >
+
+            <!-- =================================================
+                 ONE NUMBER SUTRAS
+            ================================================= -->
+
+            {% if sutra.id == 1 or sutra.id == 10 %}
+
+                <input
+                    type="number"
+                    name="num1"
+                    class="practice-input"
+                    placeholder="Enter Number"
+                    value="{{ request.form.get('num1', '') }}"
+                    required
+                >
+
+            {% else %}
+
+                <input
+                    type="number"
+                    name="num1"
+                    class="practice-input"
+                    placeholder="First Number"
+                    value="{{ request.form.get('num1', '') }}"
+                    required
+                >
+
+                <input
+                    type="number"
+                    name="num2"
+                    class="practice-input"
+                    placeholder="Second Number"
+                    value="{{ request.form.get('num2', '') }}"
+                    required
+                >
+
+            {% endif %}
+
+            <button
+                type="submit"
+                class="solve-btn"
+            >
+                🚀 Solve Using Vedic Mathematics
+            </button>
+
+        </form>
+
+        <!-- =====================================================
+             DYNAMIC RESULT CONTAINER (NO RELOAD / NO SCROLL)
+        ===================================================== -->
+
+        <div id="dynamic-result-area">
+
+            {% if message %}
+
+                <div style="margin-top: 25px;">
+
+                    {% if success %}
+
+                        <div class="success-message">
+                            <div class="message-icon">✅</div>
+                            <div>
+                                <h2>{{ message }}</h2>
+                                <p>
+                                    Your problem was solved using
+                                    <strong>{{ sutra.name }}</strong>.
+                                </p>
+                            </div>
+                        </div>
+
+                    {% else %}
+
+                        <div class="error-message">
+                            <div class="message-icon">❌</div>
+                            <div>
+                                <h2>{{ message }}</h2>
+                                {% if hint %}
+                                <p>💡 <strong>Try this:</strong> {{ hint }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+            {% if success and result %}
+
+                <div style="margin-top: 20px;">
+
+                    <div class="card-title" style="font-size: 1.15rem; color: #f59e0b;">
+                        ⚡ Step-by-Step Vedic Solution
+                    </div>
+
+                    <div class="math-solution-board">
+
+                        {% for step in steps %}
+
+                        <div class="math-step-line">
+                            <span class="step-label">Step {{ loop.index }}</span>
+                            <span class="step-math">{{ step }}</span>
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="final-answer">
+
+                        <div class="answer-title">
+                            🎉 Final Answer
+                        </div>
+
+                        <h1>{{ result }}</h1>
+
+                        <p>
+                            Solved using <strong>{{ sutra.name }}</strong>
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         NAVIGATION
+    ===================================================== -->
+
+    <div class="navigation-buttons">
+
+        {% if previous_sutra %}
+
+        <a
+            href="{{ url_for(
+                'sutra_detail',
+                id=previous_sutra
+            ) }}"
+            class="nav-btn previous"
+        >
+            ⬅ Previous Sutra
+        </a>
+
+        {% else %}
+
+        <div></div>
+
+        {% endif %}
+
+        {% if next_sutra %}
+
+        <a
+            href="{{ url_for(
+                'sutra_detail',
+                id=next_sutra
+            ) }}"
+            class="nav-btn next"
+        >
+            Next Sutra ➜
+        </a>
+
+        {% endif %}
+
+    </div>
+
+    <!-- =====================================================
+         BACK
+    ===================================================== -->
+
+    <div class="back-section">
+
+        <a
+            href="{{ url_for('sutras_page') }}"
+            class="back-btn"
+        >
+            📚 Back To Learn Sutras
+        </a>
+
+    </div>
+
+</div>
+
+<!-- =========================================================
+     NO RELOAD FETCH SCRIPT (STOPS AUTO-SCROLL COMPLETELY)
+========================================================= -->
+
+<script>
+
+    document.getElementById("sutra-form").addEventListener("submit", async function (e) {
+        // १. फॉर्मचा डीफॉल्ट रीलोड आणि ऑटो-स्क्रोल थांबवणे
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+        const resultArea = document.getElementById("dynamic-result-area");
+
+        try {
+            // २. बॅकएंडला रीलोड न करता डेटा पाठवणे
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: formData
+            });
+
+            const htmlText = await response.text();
+
+            // ३. आलेला नवीन निकाल फक्त खालील भागात अपडेट करणे
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, "text/html");
+            const newResult = doc.getElementById("dynamic-result-area");
+
+            if (newResult && resultArea) {
+                resultArea.innerHTML = newResult.innerHTML;
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+        }
+    });
+
+</script>
+
+</body>
+
+</html>
