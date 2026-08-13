@@ -32,7 +32,7 @@
                 style="display: flex; justify-content: center; margin-bottom: 15px;">
 
                 <img id="dashboardProfilePhoto"
-                    src=""
+                    src="{% if student and student.profile_pic %}{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}{% else %}{{ url_for('static', filename='img/default-avatar.png') }}{% endif %}"
                     alt="User Profile"
                     style="
                         width: 85px;
@@ -113,86 +113,10 @@
         </div>
 
     </div>
-    
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
 
-    /* =========================
-       GET SAVED PROFILE DATA
-    ========================= */
-
-    const savedName =
-        localStorage.getItem("user_profile_name");
-
-    const savedEmail =
-        localStorage.getItem("user_profile_email");
-
-    const savedPhoto =
-        localStorage.getItem("user_profile_photo");
-
-
-    /* =========================
-       UPDATE NAME
-    ========================= */
-
-    const nameElement =
-        document.getElementById("dashboardUserName");
-
-    if (savedName && nameElement) {
-        nameElement.innerText = savedName;
-    }
-
-
-    /* =========================
-       UPDATE EMAIL
-    ========================= */
-
-    const emailElement =
-        document.getElementById("dashboardUserEmail");
-
-    if (savedEmail && emailElement) {
-
-        emailElement.innerHTML =
-            savedEmail +
-            "<br>" +
-            "Start your Vedic Mathematics learning journey 🚀";
-    }
-
-
-    /* =========================
-       UPDATE PROFILE PHOTO
-    ========================= */
-
-    const photoElement =
-        document.getElementById("dashboardProfilePhoto");
-
-    if (savedPhoto && photoElement) {
-
-        photoElement.src = savedPhoto;
-
-    } else if (photoElement) {
-
-        {% if student.photo %}
-
-            photoElement.src = "{{ student.photo }}";
-
-        {% else %}
-
-            const name =
-                savedName || "{{ student.name }}";
-
-            photoElement.src =
-                "https://ui-avatars.com/api/?name=" +
-                encodeURIComponent(name) +
-                "&background=6366f1&color=fff&size=200&bold=true";
-
-        {% endif %}
-    }
-
-});
 </script>
-
-
 </body>
 
 </html>

@@ -6,44 +6,54 @@
 
     <title>My Profile | Vedic Maths</title>
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap 5 -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+        rel="stylesheet"
+    >
 
     <!-- Font Awesome -->
     <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(99,102,241,.12), transparent 30%),
-                radial-gradient(circle at 80% 70%, rgba(168,85,247,.10), transparent 30%),
-                #080c16;
-
-            color: #ffffff;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
+            color: #f8fafc;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(99, 102, 241, 0.18),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 80%,
+                    rgba(168, 85, 247, 0.14),
+                    transparent 30%
+                ),
+                #070b14;
         }
 
         /* ================= NAVBAR ================= */
 
         .navbar {
-            background: rgba(10,15,28,.88);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255,255,255,.08);
+            background: rgba(8, 12, 22, 0.88);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
         .navbar-brand {
-            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: .3px;
         }
 
         .brand-icon {
@@ -53,9 +63,9 @@
         /* ================= MAIN ================= */
 
         .profile-container {
-            max-width: 1050px;
+            max-width: 1100px;
             margin: auto;
-            padding: 45px 20px 60px;
+            padding: 45px 20px 70px;
         }
 
         /* ================= HERO ================= */
@@ -64,37 +74,39 @@
             position: relative;
             overflow: hidden;
 
+            padding: 40px 30px;
+
+            border-radius: 26px;
+
+            border: 1px solid rgba(255,255,255,0.08);
+
             background:
                 linear-gradient(
                     135deg,
-                    rgba(99,102,241,.16),
+                    rgba(99,102,241,.17),
                     rgba(168,85,247,.10)
                 );
 
-            border: 1px solid rgba(255,255,255,.08);
-            border-radius: 24px;
-
-            padding: 35px;
-
             box-shadow:
-                0 20px 60px rgba(0,0,0,.35);
-
-            margin-bottom: 25px;
+                0 25px 70px rgba(0,0,0,.35);
         }
 
         .profile-hero::before {
             content: "";
+
             position: absolute;
 
-            width: 250px;
-            height: 250px;
+            width: 300px;
+            height: 300px;
+
+            top: -140px;
+            right: -80px;
 
             background: #6366f1;
-            filter: blur(120px);
-            opacity: .12;
 
-            top: -100px;
-            right: -50px;
+            filter: blur(130px);
+
+            opacity: .13;
         }
 
         .profile-content {
@@ -106,20 +118,29 @@
 
         .avatar-wrapper {
             position: relative;
-            width: 125px;
-            height: 125px;
+
+            width: 130px;
+            height: 130px;
+
             margin: auto;
         }
 
         .avatar {
-            width: 125px;
-            height: 125px;
+            width: 130px;
+            height: 130px;
 
             border-radius: 50%;
 
             display: flex;
             align-items: center;
             justify-content: center;
+
+            overflow: hidden;
+
+            cursor: pointer;
+
+            font-size: 3.1rem;
+            font-weight: 800;
 
             background:
                 linear-gradient(
@@ -131,21 +152,14 @@
             border: 4px solid rgba(255,255,255,.18);
 
             box-shadow:
-                0 0 0 7px rgba(99,102,241,.08),
-                0 0 35px rgba(168,85,247,.35);
-
-            font-size: 3rem;
-            font-weight: 700;
-
-            overflow: hidden;
-
-            cursor: pointer;
+                0 0 0 8px rgba(99,102,241,.08),
+                0 0 40px rgba(168,85,247,.32);
 
             transition: .3s ease;
         }
 
         .avatar:hover {
-            transform: scale(1.04);
+            transform: scale(1.05);
         }
 
         .avatar img {
@@ -158,44 +172,54 @@
             position: absolute;
 
             right: -2px;
-            bottom: 2px;
+            bottom: 0;
 
-            width: 38px;
-            height: 38px;
-
-            border-radius: 50%;
-
-            border: 3px solid #080c16;
-
-            background: linear-gradient(
-                135deg,
-                #6366f1,
-                #a855f7
-            );
+            width: 40px;
+            height: 40px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            cursor: pointer;
+            border-radius: 50%;
 
             color: white;
 
+            cursor: pointer;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #a855f7
+                );
+
+            border: 3px solid #070b14;
+
             z-index: 5;
+
+            transition: .3s ease;
         }
 
-        /* ================= PROFILE INFO ================= */
+        .camera-btn:hover {
+            transform: scale(1.08);
+        }
+
+        /* ================= PROFILE TEXT ================= */
 
         .profile-name {
-            margin-top: 18px;
+            margin-top: 20px;
 
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2rem;
+
+            font-weight: 800;
         }
 
         .profile-role {
             color: #94a3b8;
-            margin-bottom: 12px;
+
+            margin-top: 4px;
+            margin-bottom: 13px;
         }
 
         .level-badge {
@@ -204,18 +228,18 @@
             align-items: center;
             gap: 7px;
 
-            padding: 6px 13px;
+            padding: 7px 14px;
 
-            border-radius: 20px;
+            border-radius: 30px;
+
+            color: #d8b4fe;
+
+            font-size: .82rem;
+            font-weight: 600;
 
             background: rgba(168,85,247,.12);
 
             border: 1px solid rgba(168,85,247,.25);
-
-            color: #c084fc;
-
-            font-size: .82rem;
-            font-weight: 600;
         }
 
         /* ================= STATS ================= */
@@ -228,35 +252,37 @@
 
             gap: 15px;
 
-            margin-top: 30px;
+            margin-top: 32px;
         }
 
         .stat-card {
-            background: rgba(255,255,255,.035);
-
-            border: 1px solid rgba(255,255,255,.07);
-
-            border-radius: 16px;
-
             padding: 20px 10px;
 
             text-align: center;
+
+            border-radius: 17px;
+
+            background: rgba(255,255,255,.035);
+
+            border: 1px solid rgba(255,255,255,.07);
 
             transition: .3s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-5px);
 
-            background: rgba(255,255,255,.055);
+            border-color:
+                rgba(168,85,247,.35);
 
-            border-color: rgba(168,85,247,.35);
+            background:
+                rgba(255,255,255,.055);
         }
 
         .stat-icon {
-            font-size: 1rem;
-
             color: #38bdf8;
+
+            font-size: 1.05rem;
 
             margin-bottom: 7px;
         }
@@ -264,7 +290,7 @@
         .stat-number {
             font-size: 1.55rem;
 
-            font-weight: 700;
+            font-weight: 800;
 
             background:
                 linear-gradient(
@@ -279,50 +305,51 @@
 
         .stat-label {
             color: #94a3b8;
-            font-size: .78rem;
+
+            font-size: .76rem;
+
             margin-top: 3px;
         }
 
-        /* ================= SECTION ================= */
-
-        .section-title {
-            font-size: 1rem;
-
-            font-weight: 700;
-
-            margin-bottom: 15px;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 9px;
-        }
-
-        .section-title i {
-            color: #38bdf8;
-        }
-
-        /* ================= CARDS ================= */
+        /* ================= GENERAL CARD ================= */
 
         .glass-card {
+            height: 100%;
+
+            padding: 24px;
+
+            border-radius: 20px;
+
             background: rgba(255,255,255,.035);
 
             border: 1px solid rgba(255,255,255,.07);
-
-            border-radius: 18px;
-
-            padding: 22px;
-
-            height: 100%;
 
             transition: .3s ease;
         }
 
         .glass-card:hover {
-            border-color: rgba(168,85,247,.25);
-
             transform: translateY(-2px);
+
+            border-color:
+                rgba(168,85,247,.25);
+        }
+
+        /* ================= SECTION TITLE ================= */
+
+        .section-title {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 20px;
+
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .section-title i {
+            color: #38bdf8;
         }
 
         /* ================= PROGRESS ================= */
@@ -330,14 +357,16 @@
         .progress {
             height: 9px;
 
-            background: rgba(255,255,255,.07);
+            overflow: hidden;
 
             border-radius: 20px;
 
-            overflow: hidden;
+            background: rgba(255,255,255,.07);
         }
 
         .progress-bar {
+            border-radius: 20px;
+
             background:
                 linear-gradient(
                     90deg,
@@ -345,27 +374,53 @@
                     #a855f7
                 );
 
-            border-radius: 20px;
-
             box-shadow:
-                0 0 12px rgba(168,85,247,.4);
+                0 0 13px rgba(168,85,247,.4);
         }
 
         .progress-info {
             display: flex;
-
             justify-content: space-between;
 
             margin-bottom: 8px;
 
-            font-size: .82rem;
-
             color: #94a3b8;
+
+            font-size: .82rem;
+        }
+
+        .progress-info strong {
+            color: #e2e8f0;
+        }
+
+        /* ================= STREAK ================= */
+
+        .streak-number {
+            color: #fb923c;
+
+            font-size: 2.4rem;
+
+            font-weight: 900;
+        }
+
+        .streak-fire {
+            color: #fb923c;
+
+            filter:
+                drop-shadow(
+                    0 0 8px rgba(251,146,60,.5)
+                );
         }
 
         /* ================= GOAL ================= */
 
         .goal-card {
+            height: 100%;
+
+            padding: 24px;
+
+            border-radius: 20px;
+
             background:
                 linear-gradient(
                     135deg,
@@ -374,41 +429,38 @@
                 );
 
             border: 1px solid rgba(56,189,248,.15);
-
-            border-radius: 18px;
-
-            padding: 22px;
         }
 
         .goal-icon {
-            width: 45px;
-            height: 45px;
-
-            border-radius: 13px;
-
-            background: rgba(56,189,248,.1);
-
-            color: #38bdf8;
+            width: 48px;
+            height: 48px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            font-size: 1.2rem;
+            flex-shrink: 0;
+
+            border-radius: 14px;
+
+            color: #38bdf8;
+
+            background:
+                rgba(56,189,248,.10);
         }
 
         /* ================= ACTIVITY ================= */
 
         .activity-item {
             display: flex;
-
             align-items: center;
 
             gap: 13px;
 
-            padding: 12px 0;
+            padding: 13px 0;
 
-            border-bottom: 1px solid rgba(255,255,255,.06);
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
         }
 
         .activity-item:last-child {
@@ -416,31 +468,35 @@
         }
 
         .activity-icon {
-            width: 38px;
-            height: 38px;
-
-            flex-shrink: 0;
-
-            border-radius: 11px;
-
-            background: rgba(168,85,247,.10);
-
-            color: #c084fc;
+            width: 40px;
+            height: 40px;
 
             display: flex;
             align-items: center;
             justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 12px;
+
+            color: #c084fc;
+
+            background:
+                rgba(168,85,247,.10);
         }
 
         .activity-title {
             font-size: .87rem;
+
             font-weight: 600;
         }
 
         .activity-time {
-            color: #64748b;
-            font-size: .75rem;
             margin-top: 2px;
+
+            color: #64748b;
+
+            font-size: .75rem;
         }
 
         /* ================= ACHIEVEMENTS ================= */
@@ -455,62 +511,91 @@
         }
 
         .achievement {
+            padding: 17px 5px;
+
             text-align: center;
 
-            padding: 15px 5px;
+            border-radius: 15px;
 
-            border-radius: 14px;
+            background:
+                rgba(255,255,255,.025);
 
-            background: rgba(255,255,255,.025);
+            border:
+                1px solid rgba(255,255,255,.05);
 
-            border: 1px solid rgba(255,255,255,.05);
+            transition: .3s ease;
+        }
+
+        .achievement:hover {
+            transform: translateY(-3px);
+
+            border-color:
+                rgba(245,158,11,.25);
         }
 
         .achievement-icon {
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
 
-            margin: auto auto 8px;
-
-            border-radius: 50%;
+            margin:
+                0 auto 9px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            font-size: 1.2rem;
-
-            background: rgba(245,158,11,.10);
+            border-radius: 50%;
 
             color: #f59e0b;
+
+            background:
+                rgba(245,158,11,.10);
         }
 
         .achievement-title {
-            font-size: .72rem;
             color: #cbd5e1;
+
+            font-size: .73rem;
+
+            font-weight: 600;
         }
 
         .locked {
             opacity: .35;
         }
 
-        /* ================= STREAK ================= */
+        /* ================= ACCOUNT ================= */
 
-        .streak-number {
-            font-size: 2.2rem;
+        .info-row {
+            display: flex;
 
-            font-weight: 800;
+            justify-content: space-between;
+            align-items: center;
 
-            color: #fb923c;
+            padding: 13px 0;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
         }
 
-        .streak-fire {
-            color: #fb923c;
+        .info-row:last-child {
+            border-bottom: none;
+        }
 
-            filter:
-                drop-shadow(
-                    0 0 8px rgba(251,146,60,.5)
-                );
+        .info-label {
+            color: #64748b;
+
+            font-size: .82rem;
+        }
+
+        .info-value {
+            color: #e2e8f0;
+
+            font-size: .82rem;
+
+            font-weight: 600;
+
+            text-align: right;
         }
 
         /* ================= BUTTON ================= */
@@ -518,20 +603,20 @@
         .btn-gradient {
             border: none;
 
+            color: white;
+
+            padding: 11px 21px;
+
+            border-radius: 12px;
+
+            font-weight: 600;
+
             background:
                 linear-gradient(
                     135deg,
                     #6366f1,
                     #a855f7
                 );
-
-            color: white;
-
-            border-radius: 12px;
-
-            padding: 11px 20px;
-
-            font-weight: 600;
 
             transition: .3s ease;
         }
@@ -542,83 +627,60 @@
             transform: translateY(-2px);
 
             box-shadow:
-                0 8px 25px rgba(168,85,247,.25);
-        }
-
-        /* ================= INFO ================= */
-
-        .info-row {
-            display: flex;
-
-            justify-content: space-between;
-
-            padding: 11px 0;
-
-            border-bottom: 1px solid rgba(255,255,255,.06);
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #64748b;
-            font-size: .82rem;
-        }
-
-        .info-value {
-            color: #e2e8f0;
-            font-size: .82rem;
-            font-weight: 600;
+                0 9px 25px
+                rgba(168,85,247,.25);
         }
 
         /* ================= MODAL ================= */
 
         .modal-content {
-            background: #151b2b;
-
             color: white;
+
+            background: #151b2b;
 
             border:
                 1px solid rgba(255,255,255,.08);
 
-            border-radius: 18px;
+            border-radius: 19px;
         }
 
         .form-control {
+            padding: 11px 13px;
+
+            color: white;
+
             background: #0f172a;
 
             border:
                 1px solid rgba(255,255,255,.1);
 
-            color: white;
-
             border-radius: 10px;
-
-            padding: 11px 13px;
         }
 
         .form-control:focus {
-            background: #0f172a;
-
             color: white;
+
+            background: #0f172a;
 
             border-color: #a855f7;
 
             box-shadow:
-                0 0 0 3px rgba(168,85,247,.1);
+                0 0 0 3px
+                rgba(168,85,247,.10);
         }
 
         /* ================= RESPONSIVE ================= */
 
-        @media(max-width: 768px) {
+        @media (max-width: 768px) {
 
             .profile-container {
-                padding: 25px 15px 40px;
+                padding:
+                    25px 15px 50px;
             }
 
             .profile-hero {
-                padding: 25px 15px;
+                padding:
+                    30px 15px;
             }
 
             .stats-grid {
@@ -631,24 +693,41 @@
                     repeat(2, 1fr);
             }
 
+            .profile-name {
+                font-size: 1.6rem;
+            }
         }
 
-        @media(max-width: 450px) {
+        @media (max-width: 500px) {
+
+            .navbar .btn {
+                font-size: .72rem;
+                padding: 6px 9px;
+            }
 
             .stats-grid {
                 gap: 8px;
             }
 
             .stat-card {
-                padding: 15px 5px;
+                padding:
+                    15px 5px;
             }
 
-            .profile-name {
-                font-size: 1.5rem;
+            .stat-number {
+                font-size: 1.3rem;
             }
 
+            .info-row {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .info-value {
+                max-width: 55%;
+                word-break: break-word;
+            }
         }
-
     </style>
 </head>
 
@@ -657,47 +736,49 @@
 <!-- ================= NAVBAR ================= -->
 
 <nav class="navbar navbar-dark">
+
     <div class="container py-2">
 
-        <a href="{{ url_for('dashboard') }}"
-           class="navbar-brand fw-bold">
-
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="navbar-brand"
+        >
             <i class="fa-solid fa-calculator brand-icon me-2"></i>
-
             Vedic Maths
-
         </a>
 
         <div>
 
-            <a href="{{ url_for('dashboard') }}"
-               class="btn btn-outline-light btn-sm rounded-pill me-2">
-
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="btn btn-outline-light btn-sm rounded-pill me-1"
+            >
                 <i class="fa-solid fa-house me-1"></i>
                 Dashboard
-
             </a>
 
-            <a href="{{ url_for('logout') }}"
-               class="btn btn-danger btn-sm rounded-pill">
-
+            <a
+                href="{{ url_for('logout') }}"
+                class="btn btn-danger btn-sm rounded-pill"
+            >
                 <i class="fa-solid fa-right-from-bracket me-1"></i>
                 Logout
-
             </a>
 
         </div>
 
     </div>
+
 </nav>
 
 
 <!-- ================= MAIN ================= -->
 
 <div class="profile-container">
+
     <!-- ================= PROFILE HERO ================= -->
 
-    <div class="profile-hero">
+    <div class="profile-hero mb-4">
 
         <div class="profile-content text-center">
 
@@ -705,27 +786,22 @@
 
             <div class="avatar-wrapper">
 
-                <div
-                    class="avatar"
-                    id="avatarDisplay"
-                    onclick="openPhotoModal()"
-                    title="View profile picture">
-
-                    {% if student and student.name %}
+                <div class="avatar" id="avatarDisplay" onclick="openPhotoModal()">
+                    {% if student and student.profile_pic %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="Profile Picture">
+                    {% elif student and student.name %}
                         {{ student.name[0] | upper }}
                     {% else %}
                         U
                     {% endif %}
-
                 </div>
 
                 <label
                     for="photoUpload"
                     class="camera-btn"
-                    title="Change profile picture">
-
+                    title="Change profile picture"
+                >
                     <i class="fa-solid fa-camera"></i>
-
                 </label>
 
                 <input
@@ -733,7 +809,8 @@
                     id="photoUpload"
                     accept="image/*"
                     class="d-none"
-                    onchange="previewPhoto(event)">
+                    onchange="previewPhoto(event)"
+                >
 
             </div>
 
@@ -742,10 +819,9 @@
 
             <div
                 class="profile-name"
-                id="userNameDisplay">
-
+                id="userNameDisplay"
+            >
                 {{ student.name if student else 'Student Name' }}
-
             </div>
 
 
@@ -763,12 +839,14 @@
             </div>
 
 
-            <!-- Edit -->
+            <!-- Edit Profile -->
 
             <div class="mt-3">
-                <a href="{{ url_for('edit_profile') }}"
-                    class="btn btn-sm btn-outline-light rounded-pill">
 
+                <a
+                    href="{{ url_for('edit_profile') }}"
+                    class="btn btn-sm btn-outline-light rounded-pill"
+                >
                     <i class="fa-solid fa-pen me-1"></i>
                     Edit Profile
                 </a>
@@ -853,20 +931,19 @@
     </div>
 
 
-    <!-- ================= LEARNING PROGRESS ================= -->
+    <!-- ================= PROGRESS + STREAK ================= -->
 
     <div class="row g-4 mb-4">
+
+        <!-- Progress -->
 
         <div class="col-lg-7">
 
             <div class="glass-card">
 
                 <div class="section-title">
-
                     <i class="fa-solid fa-chart-line"></i>
-
                     Learning Progress
-
                 </div>
 
 
@@ -886,8 +963,8 @@
 
                     <div
                         class="progress-bar"
-                        style="width:72%">
-                    </div>
+                        style="width:72%"
+                    ></div>
 
                 </div>
 
@@ -904,38 +981,34 @@
 
                 </div>
 
-                <div class="progress">
+                <div class="progress mb-4">
 
                     <div
                         class="progress-bar"
-                        style="width:80%">
-                    </div>
+                        style="width:80%"
+                    ></div>
 
                 </div>
 
 
-                <div class="mt-4">
+                <div class="progress-info">
 
-                    <div class="progress-info">
+                    <span>
+                        Practice Accuracy
+                    </span>
 
-                        <span>
-                            Practice Accuracy
-                        </span>
+                    <strong>
+                        85%
+                    </strong>
 
-                        <strong>
-                            85%
-                        </strong>
+                </div>
 
-                    </div>
+                <div class="progress">
 
-                    <div class="progress">
-
-                        <div
-                            class="progress-bar"
-                            style="width:85%">
-                        </div>
-
-                    </div>
+                    <div
+                        class="progress-bar"
+                        style="width:85%"
+                    ></div>
 
                 </div>
 
@@ -944,7 +1017,7 @@
         </div>
 
 
-        <!-- ================= STREAK ================= -->
+        <!-- Streak -->
 
         <div class="col-lg-5">
 
@@ -952,7 +1025,7 @@
 
                 <div class="section-title">
 
-                    <i class="fa-solid fa-fire"></i>
+                    <i class="fa-solid fa-fire streak-fire"></i>
 
                     Learning Streak
 
@@ -962,23 +1035,17 @@
                 <div class="d-flex align-items-center gap-3">
 
                     <div class="streak-number">
-
                         7
-
                     </div>
 
                     <div>
 
                         <div class="fw-bold">
-
                             Days in a row!
-
                         </div>
 
                         <small class="text-secondary">
-
                             Keep learning every day
-
                         </small>
 
                     </div>
@@ -988,7 +1055,9 @@
 
                 <div class="mt-4">
 
-                    <div class="d-flex justify-content-between">
+                    <div
+                        class="d-flex justify-content-between"
+                    >
 
                         <span class="text-secondary small">
                             Weekly Goal
@@ -1005,8 +1074,8 @@
 
                         <div
                             class="progress-bar"
-                            style="width:71%">
-                        </div>
+                            style="width:71%"
+                        ></div>
 
                     </div>
 
@@ -1023,8 +1092,7 @@
 
     <div class="row g-4 mb-4">
 
-
-        <!-- CURRENT GOAL -->
+        <!-- Goal -->
 
         <div class="col-lg-5">
 
@@ -1050,15 +1118,11 @@
                     <div>
 
                         <div class="fw-bold">
-
                             Master 20 Sutras
-
                         </div>
 
                         <small class="text-secondary">
-
                             16 of 20 completed
-
                         </small>
 
                     </div>
@@ -1070,8 +1134,8 @@
 
                     <div
                         class="progress-bar"
-                        style="width:80%">
-                    </div>
+                        style="width:80%"
+                    ></div>
 
                 </div>
 
@@ -1087,7 +1151,7 @@
         </div>
 
 
-        <!-- RECENT ACTIVITY -->
+        <!-- Activity -->
 
         <div class="col-lg-7">
 
@@ -1105,23 +1169,17 @@
                 <div class="activity-item">
 
                     <div class="activity-icon">
-
                         <i class="fa-solid fa-check"></i>
-
                     </div>
 
                     <div>
 
                         <div class="activity-title">
-
                             Completed Multiplication Practice
-
                         </div>
 
                         <div class="activity-time">
-
                             Today • 10 minutes ago
-
                         </div>
 
                     </div>
@@ -1132,23 +1190,17 @@
                 <div class="activity-item">
 
                     <div class="activity-icon">
-
                         <i class="fa-solid fa-book-open"></i>
-
                     </div>
 
                     <div>
 
                         <div class="activity-title">
-
                             Learned Nikhilam Sutra
-
                         </div>
 
                         <div class="activity-time">
-
                             Yesterday
-
                         </div>
 
                     </div>
@@ -1159,23 +1211,17 @@
                 <div class="activity-item">
 
                     <div class="activity-icon">
-
                         <i class="fa-solid fa-trophy"></i>
-
                     </div>
 
                     <div>
 
                         <div class="activity-title">
-
                             Earned Practice Champion badge
-
                         </div>
 
                         <div class="activity-time">
-
                             2 days ago
-
                         </div>
 
                     </div>
@@ -1207,15 +1253,11 @@
             <div class="achievement">
 
                 <div class="achievement-icon">
-
                     <i class="fa-solid fa-bolt"></i>
-
                 </div>
 
                 <div class="achievement-title">
-
                     Quick Starter
-
                 </div>
 
             </div>
@@ -1224,15 +1266,11 @@
             <div class="achievement">
 
                 <div class="achievement-icon">
-
                     <i class="fa-solid fa-crown"></i>
-
                 </div>
 
                 <div class="achievement-title">
-
                     Sutra Master
-
                 </div>
 
             </div>
@@ -1241,15 +1279,11 @@
             <div class="achievement">
 
                 <div class="achievement-icon">
-
                     <i class="fa-solid fa-fire"></i>
-
                 </div>
 
                 <div class="achievement-title">
-
                     7 Day Streak
-
                 </div>
 
             </div>
@@ -1258,15 +1292,11 @@
             <div class="achievement locked">
 
                 <div class="achievement-icon">
-
                     <i class="fa-solid fa-lock"></i>
-
                 </div>
 
                 <div class="achievement-title">
-
                     30 Day Streak
-
                 </div>
 
             </div>
@@ -1292,8 +1322,11 @@
         <div class="info-row">
 
             <span class="info-label">
+
                 <i class="fa-solid fa-id-card me-2"></i>
+
                 Student ID
+
             </span>
 
             <span class="info-value">
@@ -1308,13 +1341,17 @@
         <div class="info-row">
 
             <span class="info-label">
+
                 <i class="fa-solid fa-user me-2"></i>
+
                 Full Name
+
             </span>
 
             <span
                 class="info-value"
-                id="infoName">
+                id="infoName"
+            >
 
                 {{ student.name if student else 'N/A' }}
 
@@ -1326,8 +1363,11 @@
         <div class="info-row">
 
             <span class="info-label">
+
                 <i class="fa-solid fa-envelope me-2"></i>
+
                 Email
+
             </span>
 
             <span class="info-value">
@@ -1342,14 +1382,15 @@
         <div class="info-row">
 
             <span class="info-label">
+
                 <i class="fa-solid fa-calendar me-2"></i>
+
                 Member Since
+
             </span>
 
             <span class="info-value">
-
                 2026
-
             </span>
 
         </div>
@@ -1358,17 +1399,18 @@
         <div class="info-row">
 
             <span class="info-label">
-                <i class="fa-solid fa-circle text-success me-2"
-                   style="font-size:8px;"></i>
+
+                <i
+                    class="fa-solid fa-circle text-success me-2"
+                    style="font-size:8px;"
+                ></i>
 
                 Account Status
 
             </span>
 
             <span class="info-value text-success">
-
                 Active
-
             </span>
 
         </div>
@@ -1376,13 +1418,14 @@
     </div>
 
 
-    <!-- ================= BACK BUTTON ================= -->
+    <!-- ================= CONTINUE ================= -->
 
     <div class="text-center">
 
         <a
             href="{{ url_for('dashboard') }}"
-            class="btn btn-gradient">
+            class="btn btn-gradient"
+        >
 
             <i class="fa-solid fa-house me-2"></i>
 
@@ -1395,12 +1438,15 @@
 </div>
 
 
-<!-- ================= EDIT PROFILE MODAL ================= -->
+<!-- =====================================================
+     EDIT PROFILE MODAL
+===================================================== -->
 
 <div
     class="modal fade"
     id="editProfileModal"
-    tabindex="-1">
+    tabindex="-1"
+>
 
     <div class="modal-dialog modal-dialog-centered">
 
@@ -1419,15 +1465,18 @@
                 <button
                     type="button"
                     class="btn-close btn-close-white"
-                    data-bs-dismiss="modal">
-                </button>
+                    data-bs-dismiss="modal"
+                ></button>
 
             </div>
 
 
             <div class="modal-body">
 
-                <label class="form-label">
+                <label
+                    class="form-label"
+                    for="inputName"
+                >
                     Full Name
                 </label>
 
@@ -1435,7 +1484,16 @@
                     type="text"
                     class="form-control"
                     id="inputName"
-                    value="{{ student.name if student else '' }}">
+                    value="{{ student.name if student else '' }}"
+                    maxlength="50"
+                >
+
+                <div
+                    id="nameError"
+                    class="text-danger small mt-2 d-none"
+                >
+                    Please enter your name.
+                </div>
 
             </div>
 
@@ -1445,19 +1503,18 @@
                 <button
                     type="button"
                     class="btn btn-secondary rounded-pill"
-                    data-bs-dismiss="modal">
-
+                    data-bs-dismiss="modal"
+                >
                     Cancel
-
                 </button>
 
                 <button
                     type="button"
                     class="btn btn-gradient"
-                    onclick="saveProfile()">
-
+                    onclick="saveProfile()"
+                >
+                    <i class="fa-solid fa-check me-1"></i>
                     Save Changes
-
                 </button>
 
             </div>
@@ -1469,12 +1526,15 @@
 </div>
 
 
-<!-- ================= PHOTO MODAL ================= -->
+<!-- =====================================================
+     PHOTO MODAL
+===================================================== -->
 
 <div
     class="modal fade"
     id="previewImageModal"
-    tabindex="-1">
+    tabindex="-1"
+>
 
     <div class="modal-dialog modal-dialog-centered">
 
@@ -1493,17 +1553,16 @@
                 <button
                     type="button"
                     class="btn-close btn-close-white"
-                    data-bs-dismiss="modal">
-                </button>
+                    data-bs-dismiss="modal"
+                ></button>
 
             </div>
 
 
             <div
                 class="modal-body text-center p-4"
-                id="modalPhotoContainer">
-
-            </div>
+                id="modalPhotoContainer"
+            ></div>
 
         </div>
 
@@ -1514,48 +1573,81 @@
 
 <!-- Bootstrap JS -->
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
 
 
 <script>
 
-    /* ================= PHOTO PREVIEW ================= */
+    /* =====================================================
+       PHOTO UPLOAD
+    ===================================================== */
 
     function previewPhoto(event) {
 
         const file = event.target.files[0];
 
-        if (!file) return;
+        if (!file) {
+            return;
+        }
 
         if (!file.type.startsWith("image/")) {
 
             alert("Please select a valid image.");
 
+            event.target.value = "";
+
             return;
         }
 
+        const maxSize = 5 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+
+            alert("Image size must be less than 5 MB.");
+
+            event.target.value = "";
+
+            return;
+        }
+
+
         const reader = new FileReader();
 
+
         reader.onload = function(e) {
+
+            const imageURL = e.target.result;
 
             const avatar =
                 document.getElementById("avatarDisplay");
 
-            avatar.innerHTML =
-                `<img src="${e.target.result}"
-                      alt="Profile Picture">`;
+
+            avatar.innerHTML = `
+                <img
+                    src="${imageURL}"
+                    alt="Profile Picture"
+                >
+            `;
+
 
             localStorage.setItem(
                 "user_profile_photo",
-                e.target.result
+                imageURL
             );
+
         };
 
+
         reader.readAsDataURL(file);
+
     }
 
 
-    /* ================= OPEN PHOTO ================= */
+    /* =====================================================
+       OPEN PROFILE PHOTO
+    ===================================================== */
 
     function openPhotoModal() {
 
@@ -1563,7 +1655,9 @@
             document.getElementById("avatarDisplay");
 
         const container =
-            document.getElementById("modalPhotoContainer");
+            document.getElementById(
+                "modalPhotoContainer"
+            );
 
         const image =
             avatar.querySelector("img");
@@ -1571,35 +1665,60 @@
 
         if (image) {
 
-            container.innerHTML =
-                `<img src="${image.src}"
-                      style="
-                      max-width:100%;
-                      max-height:65vh;
-                      border-radius:18px;
-                      box-shadow:0 0 30px rgba(168,85,247,.35);
-                      ">`;
+            container.innerHTML = `
+                <img
+                    src="${image.src}"
+                    alt="Profile Picture"
+                    style="
+                        max-width:100%;
+                        max-height:65vh;
+                        border-radius:18px;
+                        box-shadow:
+                            0 0 35px
+                            rgba(168,85,247,.35);
+                    "
+                >
+            `;
 
         } else {
 
             const letter =
-                avatar.innerText.trim();
+                avatar.innerText.trim() || "U";
 
-            container.innerHTML =
-                `<div style="
-                    width:180px;
-                    height:180px;
-                    margin:auto;
-                    border-radius:50%;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    font-size:5rem;
-                    font-weight:bold;
-                    background:linear-gradient(135deg,#6366f1,#a855f7);
-                ">
+
+            container.innerHTML = `
+
+                <div
+                    style="
+                        width:180px;
+                        height:180px;
+                        margin:auto;
+
+                        border-radius:50%;
+
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+
+                        font-size:5rem;
+                        font-weight:800;
+
+                        background:
+                            linear-gradient(
+                                135deg,
+                                #6366f1,
+                                #a855f7
+                            );
+
+                        box-shadow:
+                            0 0 35px
+                            rgba(168,85,247,.35);
+                    "
+                >
                     ${letter}
-                </div>`;
+                </div>
+
+            `;
         }
 
 
@@ -1610,102 +1729,58 @@
                 )
             );
 
+
         modal.show();
+
     }
 
 
-    /* ================= LOAD SAVED DATA ================= */
-
-    window.addEventListener("load", function() {
-
-        const savedPhoto =
-            localStorage.getItem(
-                "user_profile_photo"
-            );
-
-        if (savedPhoto) {
-
-            document.getElementById(
-                "avatarDisplay"
-            ).innerHTML =
-                `<img src="${savedPhoto}"
-                      alt="Profile Picture">`;
-        }
-
-
-        const savedName =
-            localStorage.getItem(
-                "user_profile_name"
-            );
-
-        if (savedName) {
-
-            document.getElementById(
-                "userNameDisplay"
-            ).innerText = savedName;
-
-            document.getElementById(
-                "infoName"
-            ).innerText = savedName;
-
-            document.getElementById(
-                "inputName"
-            ).value = savedName;
-        }
-
-    });
-
-
-    /* ================= SAVE PROFILE ================= */
+    /* =====================================================
+       SAVE PROFILE NAME
+    ===================================================== */
 
     function saveProfile() {
 
-        const input =
-            document.getElementById("inputName");
+    const nameInput = document.getElementById("inputName");
+    const newName = nameInput.value.trim();
 
-        const newName =
-            input.value.trim();
-
-
-        if (!newName) {
-
-            alert("Please enter your name.");
-
-            return;
-        }
-
-
-        document.getElementById(
-            "userNameDisplay"
-        ).innerText = newName;
-
-
-        document.getElementById(
-            "infoName"
-        ).innerText = newName;
-
-
-        localStorage.setItem(
-            "user_profile_name",
-            newName
-        );
-
-
-        const modalElement =
-            document.getElementById(
-                "editProfileModal"
-            );
-
-        const modal =
-            bootstrap.Modal.getInstance(
-                modalElement
-            );
-
-        if (modal) {
-            modal.hide();
-        }
-
+    if (newName === "") {
+        alert("Please enter your full name.");
+        nameInput.focus();
+        return;
     }
+
+    if (newName.length < 2) {
+        alert("Name must contain at least 2 characters.");
+        nameInput.focus();
+        return;
+    }
+
+    // Actual form submit -> yeh POST /edit-profile route ko call karega
+    document.getElementById("editProfileForm").requestSubmit();
+    }
+
+
+    /* =====================================================
+       ENTER KEY TO SAVE
+    ===================================================== */
+
+    document
+        .getElementById("inputName")
+        .addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    saveProfile();
+
+                }
+
+            }
+        );
 
 </script>
 

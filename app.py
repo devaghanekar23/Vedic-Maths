@@ -1,5 +1,9 @@
-
+import os
 import random
+import mysql.connector
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import make_response
+
 from flask import (
     Flask,
     flash,
@@ -11,26 +15,37 @@ from flask import (
     url_for,
 )
 
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = os.path.join("static", "uploads")
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 # ============================================================
 # FLASK APP
 # ============================================================
 
 app = Flask(__name__)
-app.secret_key = "vedic_math_secret_key_2026"
+app.secret_key = "vedic-maths-secret-key-2026"
+
 
 # ============================================================
 # TEMP STUDENT DATABASE
 # ============================================================
 
-students = [
-    {
-        "id": 1,
-        "name": "Demo Student",
-        "email": "demo@gmail.com",
-        "password": "123",
-        "photo": "https://ui-avatars.com/api/?name=Demo+Student&background=6366f1&color=fff",
-    }
-]
+DB_CONFIG = {
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "database": "vedic_math"
+}
+
+
+def get_db_connection():
+    return mysql.connector.connect(**DB_CONFIG)
 
 # ============================================================
 # 16 VEDIC SUTRAS
@@ -503,6 +518,7 @@ def solve_sutra(sutra_id, num1, num2=0):
     solver = solvers.get(sutra_id)
     return solver(num1, num2) if solver else {"success": False, "message": "Solver not found."}
 
+
 # ============================================================
 # ROUTES
 # ============================================================
@@ -511,43 +527,11 @@ def solve_sutra(sutra_id, num1, num2=0):
 def home():
     return render_template("index.html")
 
-@app.route("/google_login", methods=["POST"])
-def google_login():
-    data = request.get_json()
-    if not data:
-        return jsonify({"success": False, "message": "No data received"}), 400
-
-    email = data.get("email", "").strip()
-    name = data.get("name", "")
-    photo = data.get("photo", "")
-
-    if not email:
-        return jsonify({"success": False, "message": "Email is required"}), 400
-
-    if not name:
-        username = email.split('@')[0]
-        name = username.capitalize()
-
-    student = next((s for s in students if s["email"] == email), None)
-    if not student:
-        student = {
-            "id": len(students) + 1,
-            "name": name,
-            "email": email,
-            "password": "",
-            "photo": photo,
-        }
-        students.append(student)
-
-    session["student_id"] = student["id"]
-    session["student_name"] = student["name"]
-    session["student_email"] = student["email"]
-
-    return jsonify({"success": True, "redirect": url_for("dashboard")})
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
+
     if request.method == "POST":
+
         name = request.form.get("name", "").strip()
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
@@ -556,36 +540,79 @@ def register():
             flash("All fields are required.")
             return redirect(url_for("register"))
 
-        for student in students:
-            if student["email"] == email:
-                flash("Email already exists.")
-                return redirect(url_for("register"))
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
 
-        students.append({
-            "id": len(students) + 1,
-            "name": name,
-            "email": email,
-            "password": password,
-        })
-        flash("Registration Successful.")
+        # Check if email already exists
+        cursor.execute(
+            "SELECT id FROM students WHERE email = %s",
+            (email,)
+        )
+
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            cursor.close()
+            conn.close()
+
+            flash("Email already exists.")
+            return redirect(url_for("register"))
+
+        # Insert new user
+        cursor.execute(
+            """
+            INSERT INTO students (name, email, password)
+            VALUES (%s, %s, %s)
+            """,
+            (name, email, password)
+        )
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        flash("Registration Successful. Please login.")
+
         return redirect(url_for("login"))
 
     return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
+
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
 
-        for student in students:
-            if student["email"] == email and student["password"] == password:
-                session["student_id"] = student["id"]
-                session["student_name"] = student["name"]
-                session["student_email"] = student["email"]
-                return redirect(url_for("dashboard"))
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
 
-        flash("Invalid Login.")
+        cursor.execute(
+            """
+            SELECT id, name, email, password, profile_pic
+            FROM students
+            WHERE email = %s AND password = %s
+            """,
+            (email, password)
+        )
+
+        student = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if student:
+
+            session.clear()
+
+            # Store logged-in user's database ID
+            session["student_id"] = student["id"]
+
+            return redirect(url_for("dashboard"))
+
+        flash("Invalid email or password.")
 
     return render_template("login.html")
 
@@ -599,19 +626,76 @@ def dashboard():
     if "student_id" not in session:
         return redirect(url_for("login"))
 
-    student = {
-        "name": session.get("student_name"),
-        "email": session.get("student_email"),
-    }
-    return render_template("dashboard.html", student=student)
+    student_id = session["student_id"]
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT id, name, email, profile_pic FROM students WHERE id = %s",
+        (student_id,)
+    )
+    student = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if not student:
+        session.clear()
+        return redirect(url_for("login"))
+
+    response = make_response(render_template("dashboard.html", student=student))
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    return response
 
 @app.route("/profile")
 def profile():
+
+    # User login nahi hai
     if "student_id" not in session:
         return redirect(url_for("login"))
 
-    student = next((s for s in students if s["id"] == session["student_id"]), None)
-    return render_template("profile.html", student=student)
+    student_id = session["student_id"]
+
+    conn = None
+    cursor = None
+
+    try:
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute(
+            """
+            SELECT id, name, email, profile_pic
+            FROM students
+            WHERE id = %s
+            """,
+            (student_id,)
+        )
+
+        student = cursor.fetchone()
+
+        # User database mein nahi mila
+        if not student:
+            session.clear()
+            return redirect(url_for("login"))
+
+        return render_template(
+            "profile.html",
+            student=student
+        )
+
+    except Exception as e:
+
+        print("PROFILE ERROR:", e)
+
+        return "Profile Error", 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
 
 @app.route("/contact")
 def contact():
@@ -672,9 +756,134 @@ def sutra_detail(id):
 def practice_main():
     return render_template("practice.html", all_sutras=sutras_list)
 
-@app.route('/edit-profile')
+@app.route("/edit-profile", methods=["GET", "POST"])
 def edit_profile():
-    return render_template('edit_profile.html')
+
+    if "student_id" not in session:
+        return redirect(url_for("login"))
+
+    student_id = session["student_id"]
+
+    conn = None
+    cursor = None
+
+    try:
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Get logged-in user's data
+        cursor.execute(
+            """
+            SELECT id, name, email, profile_pic
+            FROM students
+            WHERE id = %s
+            """,
+            (student_id,)
+        )
+
+        student = cursor.fetchone()
+
+        if not student:
+            session.clear()
+            return redirect(url_for("login"))
+
+        # Update profile
+        if request.method == "POST":
+
+            name = request.form.get("name", "").strip()
+
+            if not name:
+                flash("Please enter your name.")
+
+                return render_template(
+                    "edit_profile.html",
+                    student=student
+                )
+
+            if len(name) < 2:
+                flash("Name must contain at least 2 characters.")
+
+                return render_template(
+                    "edit_profile.html",
+                    student=student
+                )
+
+            if len(name) > 50:
+                flash("Name cannot be longer than 50 characters.")
+
+                return render_template(
+                    "edit_profile.html",
+                    student=student
+                )
+
+            # By default keep the existing photo unless a new one is uploaded
+            profile_pic_filename = student.get("profile_pic")
+
+            print("DEBUG >>> request.files keys:", list(request.files.keys()))   # ADD THIS
+
+            photo = request.files.get("photo")
+
+            print("DEBUG >>> photo object:", photo)                              # ADD THIS
+            if photo:
+                print("DEBUG >>> photo.filename:", repr(photo.filename))         # ADD THIS
+
+            if photo and photo.filename != "":
+
+                if not allowed_file(photo.filename):
+                    flash("Invalid image format. Use PNG, JPG, JPEG, GIF or WEBP.")
+                    return render_template("edit_profile.html", student=student)
+
+                filename = secure_filename(f"student_{student_id}_{photo.filename}")
+                print("DEBUG >>> saving as:", filename)                          # ADD THIS
+
+                save_path = os.path.join(UPLOAD_FOLDER, filename)
+                print("DEBUG >>> save_path:", os.path.abspath(save_path))        # ADD THIS
+
+                photo.save(save_path)
+
+                print("DEBUG >>> file exists after save:", os.path.exists(save_path))  # ADD THIS
+
+                profile_pic_filename = filename
+
+            # Update MySQL
+            cursor.execute(
+                """
+                UPDATE students
+                SET name = %s, profile_pic = %s
+                WHERE id = %s
+                """,
+                (name, profile_pic_filename, student_id)
+            )
+
+            conn.commit()
+
+            flash("Profile updated successfully!")
+
+            return redirect(url_for("profile"))
+
+        # Open edit_profile.html
+        return render_template(
+            "edit_profile.html",
+            student=student
+        )
+
+    except Exception as e:
+
+        if conn:
+            conn.rollback()
+
+        print("EDIT PROFILE ERROR:", e)
+
+        return "Edit Profile Error", 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
 
 # ============================================================
 # PRACTICE DETAILS PAGE (20 Questions Form - Photo Layout)

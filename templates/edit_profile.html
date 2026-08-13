@@ -927,15 +927,6 @@
                     <i class="fa-solid fa-camera"></i>
 
                 </label>
-
-
-                <input
-                    type="file"
-                    id="photoUpload"
-                    accept="image/*"
-                    class="d-none"
-                    onchange="previewPhoto(event)">
-
             </div>
 
 
@@ -1661,7 +1652,14 @@
 
             <div class="modal-body p-4">
 
-                <form id="editProfileForm">
+                <form method="POST" action="{{ url_for('edit_profile') }}" id="editProfileForm" enctype="multipart/form-data">
+                    <input
+                        type="file"
+                        id="photoUpload"
+                        name="photo"
+                        accept="image/*"
+                        class="d-none"
+                        onchange="previewPhoto(event)">
 
 
                     <!-- PROFILE PHOTO -->
@@ -1726,8 +1724,10 @@
                                 type="text"
                                 class="form-control"
                                 id="inputName"
+                                name="name"
                                 value="{{ student.name if student else '' }}"
-                                placeholder="Enter your full name">
+                                placeholder="Enter your full name"
+                                required>
 
                             <div
                                 id="nameError"
@@ -1757,8 +1757,10 @@
                                 type="email"
                                 class="form-control"
                                 id="inputEmail"
+                                name="email"
                                 value="{{ student.email if student else '' }}"
-                                placeholder="Enter email">
+                                placeholder="Enter email"
+                                required>
 
                             <div
                                 id="emailError"
@@ -1788,6 +1790,7 @@
                                 type="tel"
                                 class="form-control"
                                 id="inputPhone"
+                                name="phone"
                                 placeholder="Enter phone number"
                                 maxlength="15">
 
@@ -2029,7 +2032,6 @@
 
                     </div>
 
-
                 </form>
 
             </div>
@@ -2126,63 +2128,22 @@
     ===================================================== */
 
     function previewPhoto(event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-        const file =
-            event.target.files[0];
-
-        if (!file) {
-            return;
-        }
-
-
-        if (!file.type.startsWith("image/")) {
-
-            alert("Please select a valid image.");
-
-            return;
-        }
-
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload =
-            function(e) {
-
-                const image =
-                    e.target.result;
-
-
-                document.getElementById(
-                    "avatarDisplay"
-                ).innerHTML =
-
-                    `<img
-                        src="${image}"
-                        alt="Profile Picture">`;
-
-
-                document.getElementById(
-                    "modalAvatar"
-                ).innerHTML =
-
-                    `<img
-                        src="${image}"
-                        alt="Profile Picture">`;
-
-
-                localStorage.setItem(
-                    "user_profile_photo",
-                    image
-                );
-
-            };
-
-
-        reader.readAsDataURL(file);
-
+    if (!file.type.startsWith("image/")) {
+        alert("Please select a valid image.");
+        return;
     }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const image = e.target.result;
+        document.getElementById("avatarDisplay").innerHTML = `<img src="${image}" alt="Profile Picture">`;
+        document.getElementById("modalAvatar").innerHTML = `<img src="${image}" alt="Profile Picture">`;
+    };
+    reader.readAsDataURL(file);
+}
 
 
     /* =====================================================
@@ -2323,200 +2284,26 @@
 
     function saveProfile() {
 
-    const newName = document.getElementById("inputName").value.trim();
+    const nameInput = document.getElementById("inputName");
+    const newName = nameInput.value.trim();
 
     if (newName === "") {
         alert("Please enter your full name.");
+        nameInput.focus();
         return;
     }
 
-    // Update profile name
-    document.getElementById("userNameDisplay").innerText = newName;
-    document.getElementById("infoName").innerText = newName;
-
-    // Save name
-    localStorage.setItem("user_profile_name", newName);
-
-    // Success message
-    alert("Profile updated successfully!");
-
-    // Close Edit Profile Modal after clicking OK
-    const modalElement = document.getElementById("editProfileModal");
-
-    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-
-    modal.hide();
-    
+    if (newName.length < 2) {
+        alert("Name must contain at least 2 characters.");
+        nameInput.focus();
+        return;
     }
 
+    // Ye asli form submit karega -> POST /edit-profile route ko
+    // jo Flask mein database update karta hai
+    document.getElementById("editProfileForm").requestSubmit();
 
-    /* =====================================================
-       LOAD SAVED PROFILE
-    ===================================================== */
-
-    window.addEventListener(
-        "load",
-        function() {
-
-
-            /* PHOTO */
-
-            const savedPhoto =
-                localStorage.getItem(
-                    "user_profile_photo"
-                );
-
-
-            if (savedPhoto) {
-
-                document.getElementById(
-                    "avatarDisplay"
-                ).innerHTML =
-
-                    `<img
-                        src="${savedPhoto}"
-                        alt="Profile Picture">`;
-
-
-                document.getElementById(
-                    "modalAvatar"
-                ).innerHTML =
-
-                    `<img
-                        src="${savedPhoto}"
-                        alt="Profile Picture">`;
-
-            }
-
-
-            /* NAME */
-
-            const savedName =
-                localStorage.getItem(
-                    "user_profile_name"
-                );
-
-
-            if (savedName) {
-
-                document.getElementById(
-                    "userNameDisplay"
-                ).innerText =
-                    savedName;
-
-
-                document.getElementById(
-                    "infoName"
-                ).innerText =
-                    savedName;
-
-
-                document.getElementById(
-                    "inputName"
-                ).value =
-                    savedName;
-
-            }
-
-
-            /* EMAIL */
-
-            const savedEmail =
-                localStorage.getItem(
-                    "user_profile_email"
-                );
-
-
-            if (savedEmail) {
-
-                document.getElementById(
-                    "infoEmail"
-                ).innerText =
-                    savedEmail;
-
-
-                document.getElementById(
-                    "inputEmail"
-                ).value =
-                    savedEmail;
-
-            }
-
-
-            /* PHONE */
-
-            const savedPhone =
-                localStorage.getItem(
-                    "user_profile_phone"
-                );
-
-
-            if (savedPhone) {
-
-                document.getElementById(
-                    "infoPhone"
-                ).innerText =
-                    savedPhone;
-
-
-                document.getElementById(
-                    "inputPhone"
-                ).value =
-                    savedPhone;
-
-            }
-
-
-            /* LEVEL */
-
-            const savedLevel =
-                localStorage.getItem(
-                    "user_learning_level"
-                );
-
-
-            if (savedLevel) {
-
-                document.getElementById(
-                    "levelDisplay"
-                ).innerText =
-                    savedLevel;
-
-
-                document.getElementById(
-                    "inputLevel"
-                ).value =
-                    savedLevel;
-
-            }
-
-
-            /* GOAL */
-
-            const savedGoal =
-                localStorage.getItem(
-                    "user_learning_goal"
-                );
-
-
-            if (savedGoal) {
-
-                document.getElementById(
-                    "goalDisplay"
-                ).innerText =
-                    savedGoal;
-
-
-                document.getElementById(
-                    "inputGoal"
-                ).value =
-                    savedGoal;
-
-            }
-
-        }
-
-    );
+}
 
 </script>
 
