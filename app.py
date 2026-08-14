@@ -519,9 +519,72 @@ def solve_sutra(sutra_id, num1, num2=0):
     return solver(num1, num2) if solver else {"success": False, "message": "Solver not found."}
 
 
+def update_streak(cursor, student_id):
+ 
+    cursor.execute(
+        "SELECT last_active_date, current_streak FROM students WHERE id = %s",
+        (student_id,)
+    )
+    row = cursor.fetchone()
+ 
+    if not row:
+        return
+ 
+    today = date.today()
+    last_active = row["last_active_date"]
+    current_streak = row["current_streak"] or 0
+ 
+    # Aaj already activity ho chuki hai - kuch mat karo
+    if last_active == today:
+        return
+ 
+    # Kal activity thi - streak badhao
+    if last_active == today - timedelta(days=1):
+        new_streak = current_streak + 1
+    # Kal activity nahi thi (ya pehli baar hai) - streak restart
+    else:
+        new_streak = 1
+ 
+    cursor.execute(
+        "UPDATE students SET last_active_date = %s, current_streak = %s WHERE id = %s",
+        (today, new_streak, student_id)
+    )
+
+def get_practice_stats(cursor, student_id):
+ 
+    cursor.execute("""
+        SELECT sutra_id, COUNT(*) AS attempted, SUM(is_correct) AS correct
+        FROM practice_answers
+        WHERE student_id = %s
+        GROUP BY sutra_id
+    """, (student_id,))
+ 
+    rows = cursor.fetchall()
+ 
+    total_attempts = sum(r["attempted"] for r in rows) if rows else 0
+    total_correct = sum(r["correct"] for r in rows) if rows else 0
+    sutras_attempted = len(rows)
+ 
+    sutras_mastered = sum(
+        1 for r in rows
+        if r["attempted"] >= MIN_ATTEMPTS_FOR_MASTERY
+        and (r["correct"] / r["attempted"]) >= MASTERY_THRESHOLD
+    )
+ 
+    return {
+        "total_attempts": total_attempts,
+        "correct_attempts": total_correct,
+        "sutras_attempted": sutras_attempted,
+        "sutras_mastered": sutras_mastered,
+    }
+
+
 # ============================================================
 # ROUTES
 # ============================================================
+
+QUIZ_TOTAL_QUESTIONS = 55
+TOTAL_SUTRAS = 16
 
 @app.route("/")
 def home():
@@ -625,77 +688,110 @@ def logout():
 def dashboard():
     if "student_id" not in session:
         return redirect(url_for("login"))
-
+ 
     student_id = session["student_id"]
+ 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+ 
     cursor.execute(
         "SELECT id, name, email, profile_pic FROM students WHERE id = %s",
         (student_id,)
     )
     student = cursor.fetchone()
-    cursor.close()
-    conn.close()
-
+ 
     if not student:
+        cursor.close()
+        conn.close()
         session.clear()
         return redirect(url_for("login"))
-
-    response = make_response(render_template("dashboard.html", student=student))
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    return response
+ 
+    practice_stats = get_practice_stats(cursor, student_id)
+ 
+    total_attempts = practice_stats["total_attempts"]
+    correct_attempts = practice_stats["correct_attempts"]
+    accuracy = round((correct_attempts / total_attempts) * 100, 1) if total_attempts > 0 else 0
+    sutras_mastered = practice_stats["sutras_mastered"]
+ 
+    stats = {
+        "total_attempts": total_attempts,
+        "correct_attempts": correct_attempts,
+        "accuracy": accuracy,
+        "sutras_mastered": sutras_mastered,
+    }
+ 
+    cursor.close()
+    conn.close()
+ 
+    return render_template("dashboard.html", student=student, stats=stats)
 
 @app.route("/profile")
 def profile():
-
-    # User login nahi hai
+ 
     if "student_id" not in session:
         return redirect(url_for("login"))
-
+ 
     student_id = session["student_id"]
-
+ 
     conn = None
     cursor = None
-
+ 
     try:
-
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-
-        cursor.execute(
-            """
-            SELECT id, name, email, profile_pic
+ 
+        cursor.execute("""
+            SELECT id, name, email, profile_pic, current_streak
             FROM students
             WHERE id = %s
-            """,
-            (student_id,)
-        )
-
+        """, (student_id,))
+ 
         student = cursor.fetchone()
-
-        # User database mein nahi mila
+ 
         if not student:
             session.clear()
             return redirect(url_for("login"))
-
-        return render_template(
-            "profile.html",
-            student=student
-        )
-
+ 
+        # ---- QUIZ stats (student_answers) ----
+        cursor.execute("""
+            SELECT COUNT(*) AS attempted, COALESCE(SUM(is_correct), 0) AS correct
+            FROM student_answers
+            WHERE student_id = %s
+        """, (student_id,))
+        quiz_stats = cursor.fetchone()
+ 
+        # ---- PRACTICE stats (practice_answers) ----
+        practice_stats = get_practice_stats(cursor, student_id)
+ 
+        # ---- COMBINE both ----
+        total_attempted = (quiz_stats["attempted"] or 0) + practice_stats["total_attempts"]
+        total_correct = (quiz_stats["correct"] or 0) + practice_stats["correct_attempts"]
+ 
+        accuracy = round((total_correct / total_attempted) * 100, 1) if total_attempted > 0 else 0
+ 
+        sutras_mastered = practice_stats["sutras_mastered"]
+        overall_progress = round((sutras_mastered / TOTAL_SUTRAS) * 100, 1) if TOTAL_SUTRAS else 0
+ 
+        stats = {
+            "problems_solved": total_attempted,
+            "accuracy": accuracy,
+            "sutras_mastered": sutras_mastered,
+            "overall_progress": overall_progress,
+            "day_streak": student["current_streak"] or 0
+        }
+ 
+        return render_template("profile.html", student=student, stats=stats)
+ 
     except Exception as e:
-
         print("PROFILE ERROR:", e)
-
         return "Profile Error", 500
-
+ 
     finally:
-
         if cursor:
             cursor.close()
-
         if conn:
             conn.close()
+ 
 
 @app.route("/contact")
 def contact():
@@ -894,10 +990,10 @@ def practice(id):
     sutra = next((s for s in sutras_list if s["id"] == id), None)
     if sutra is None:
         return "Sutra Not Found", 404
-
+ 
     questions = generate_20_questions(id)
     submitted_q = None
-
+ 
     if request.method == "POST":
         try:
             q_id = int(request.form.get("question_id", 0))
@@ -916,7 +1012,7 @@ def practice(id):
             solution = solve_sutra(id, num1, num2)
             correct_ans = solution.get("result", "")
             is_correct = str(user_ans).strip() == str(correct_ans).strip()
-
+ 
             submitted_q = {
                 "id": q_id,
                 "user_ans": user_ans,
@@ -925,7 +1021,44 @@ def practice(id):
                 "steps": solution.get("steps", []),
                 "message": solution.get("message"),
             }
-
+ 
+            if "student_id" in session:
+                conn = None
+                cursor = None
+                try:
+                    conn = get_db_connection()
+                    cursor = conn.cursor(dictionary=True)
+ 
+                    cursor.execute(
+                        """
+                        INSERT INTO practice_answers
+                            (student_id, sutra_id, question_id, user_answer, correct_answer, is_correct)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        """,
+                        (
+                            session["student_id"],
+                            id,
+                            q_id,
+                            user_ans,
+                            correct_ans,
+                            1 if is_correct else 0,
+                        )
+                    )
+ 
+                    # ---- NAYI LINE: streak update ----
+                    update_streak(cursor, session["student_id"])
+ 
+                    conn.commit()
+                except Exception as e:
+                    if conn:
+                        conn.rollback()
+                    print("PRACTICE SAVE ERROR:", e)
+                finally:
+                    if cursor:
+                        cursor.close()
+                    if conn:
+                        conn.close()
+ 
     return render_template(
         "practice_details.html",
         sutra=sutra,
@@ -940,7 +1073,160 @@ def ai_scan():
 
 @app.route("/quiz")
 def quiz():
-    return render_template("quiz.html")
+    student_id = session.get("student_id")
+    if not student_id:
+        return redirect(url_for("login"))
+
+    quiz_id = 1
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT total_questions, attempted_questions, correct_answers,
+                   wrong_answers, progress_percentage, current_question, status
+            FROM quiz_attempts
+            WHERE student_id = %s AND quiz_id = %s
+        """, (student_id, quiz_id))
+
+        attempt = cursor.fetchone()
+
+        if not attempt:
+            cursor.execute("""
+                INSERT INTO quiz_attempts
+                    (student_id, quiz_id, current_question, total_questions, status, started_at)
+                VALUES (%s, %s, %s, %s, %s, NOW())
+            """, (student_id, quiz_id, 1, QUIZ_TOTAL_QUESTIONS, "in_progress"))
+
+            conn.commit()
+
+            attempt = {
+                "total_questions": QUIZ_TOTAL_QUESTIONS,
+                "attempted_questions": 0,
+                "correct_answers": 0,
+                "wrong_answers": 0,
+                "progress_percentage": 0,
+                "current_question": 1,
+                "status": "in_progress"
+            }
+
+        return render_template("quiz.html", attempt=attempt)
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print("QUIZ ERROR:", e)
+        return "Quiz Error", 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route("/submit_answer", methods=["POST"])
+def submit_answer():
+    student_id = session.get("student_id")
+    if not student_id:
+        return jsonify({"error": "unauthorized"}), 401
+ 
+    data = request.get_json(silent=True) or {}
+    quiz_id = data.get("quiz_id", 1)
+    question_index = data.get("question_index")
+    selected_option = data.get("selected_option")
+    is_correct = 1 if data.get("is_correct") else 0
+ 
+    if question_index is None or selected_option is None:
+        return jsonify({"error": "missing fields"}), 400
+ 
+    conn = None
+    cursor = None
+ 
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+ 
+        cursor.execute("""
+            SELECT id FROM student_answers
+            WHERE student_id = %s AND quiz_id = %s AND question_index = %s
+        """, (student_id, quiz_id, question_index))
+        existing = cursor.fetchone()
+ 
+        if existing:
+            cursor.execute("""
+                UPDATE student_answers
+                SET selected_option = %s, is_correct = %s, answered_at = NOW()
+                WHERE id = %s
+            """, (selected_option, is_correct, existing["id"]))
+        else:
+            cursor.execute("""
+                INSERT INTO student_answers
+                    (student_id, quiz_id, question_index, selected_option, is_correct)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (student_id, quiz_id, question_index, selected_option, is_correct))
+ 
+        # ---- NAYI LINE: streak update ----
+        update_streak(cursor, student_id)
+ 
+        conn.commit()
+ 
+        cursor.execute("""
+            SELECT COUNT(*) AS attempted, COALESCE(SUM(is_correct), 0) AS correct
+            FROM student_answers
+            WHERE student_id = %s AND quiz_id = %s
+        """, (student_id, quiz_id))
+        agg = cursor.fetchone()
+ 
+        attempted = agg["attempted"] or 0
+        correct = agg["correct"] or 0
+        wrong = attempted - correct
+ 
+        cursor.execute("""
+            SELECT total_questions FROM quiz_attempts
+            WHERE student_id = %s AND quiz_id = %s
+        """, (student_id, quiz_id))
+        row = cursor.fetchone()
+        total_questions = row["total_questions"] if row else QUIZ_TOTAL_QUESTIONS
+ 
+        progress = round((attempted / total_questions) * 100, 1) if total_questions else 0
+        status = "completed" if attempted >= total_questions else "in_progress"
+ 
+        cursor.execute("""
+            UPDATE quiz_attempts
+            SET attempted_questions = %s,
+                correct_answers = %s,
+                wrong_answers = %s,
+                progress_percentage = %s,
+                current_question = %s,
+                status = %s
+            WHERE student_id = %s AND quiz_id = %s
+        """, (attempted, correct, wrong, progress, question_index + 1,
+              status, student_id, quiz_id))
+ 
+        conn.commit()
+ 
+        return jsonify({
+            "success": True,
+            "attempted": attempted,
+            "correct": correct,
+            "wrong": wrong,
+            "progress": progress
+        })
+ 
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print("SUBMIT ANSWER ERROR:", e)
+        return jsonify({"error": str(e)}), 500
+ 
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 @app.route("/speed-test")
 def speed_test():
