@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | Vedic Maths</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: #f8fafc;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.18), transparent 28%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.14), transparent 30%),
+                #070b14;
+        }
+
+        .navbar {
+            background: rgba(8, 12, 22, 0.88);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .navbar-brand { font-weight: 700; letter-spacing: .3px; }
+        .brand-icon { color: #38bdf8; }
+
+        .profile-container { max-width: 1100px; margin: auto; padding: 45px 20px 70px; }
+
+        .profile-hero {
+            position: relative; overflow: hidden; padding: 40px 30px;
+            border-radius: 26px; border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(135deg, rgba(99,102,241,.17), rgba(168,85,247,.10));
+            box-shadow: 0 25px 70px rgba(0,0,0,.35);
+        }
+        .profile-hero::before {
+            content: ""; position: absolute; width: 300px; height: 300px;
+            top: -140px; right: -80px; background: #6366f1; filter: blur(130px); opacity: .13;
+        }
+        .profile-content { position: relative; z-index: 2; }
+
+        .avatar-wrapper { position: relative; width: 130px; height: 130px; margin: auto; }
+        .avatar {
+            width: 130px; height: 130px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; cursor: pointer; font-size: 3.1rem; font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: 4px solid rgba(255,255,255,.18);
+            box-shadow: 0 0 0 8px rgba(99,102,241,.08), 0 0 40px rgba(168,85,247,.32);
+            transition: .3s ease;
+        }
+        .avatar:hover { transform: scale(1.05); }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .camera-btn {
+            position: absolute; right: -2px; bottom: 0; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; color: white; cursor: pointer;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: 3px solid #070b14; z-index: 5; transition: .3s ease;
+        }
+        .camera-btn:hover { transform: scale(1.08); }
+
+        .profile-name { margin-top: 20px; font-size: 2rem; font-weight: 800; }
+        .profile-role { color: #94a3b8; margin-top: 4px; margin-bottom: 13px; }
+
+        .level-badge {
+            display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
+            border-radius: 30px; color: #d8b4fe; font-size: .82rem; font-weight: 600;
+            background: rgba(168,85,247,.12); border: 1px solid rgba(168,85,247,.25);
+        }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 32px; }
+        .stat-card {
+            padding: 20px 10px; text-align: center; border-radius: 17px;
+            background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07);
+            transition: .3s ease;
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: rgba(168,85,247,.35); background: rgba(255,255,255,.055); }
+        .stat-icon { color: #38bdf8; font-size: 1.05rem; margin-bottom: 7px; }
+        .stat-number {
+            font-size: 1.55rem; font-weight: 800;
+            background: linear-gradient(90deg, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .stat-label { color: #94a3b8; font-size: .76rem; margin-top: 3px; }
+
+        .glass-card {
+            height: 100%; padding: 24px; border-radius: 20px;
+            background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07);
+            transition: .3s ease;
+        }
+        .glass-card:hover { transform: translateY(-2px); border-color: rgba(168,85,247,.25); }
+
+        .section-title { display: flex; align-items: center; gap: 9px; margin-bottom: 20px; font-size: 1rem; font-weight: 700; }
+        .section-title i { color: #38bdf8; }
+
+        .progress { height: 9px; overflow: hidden; border-radius: 20px; background: rgba(255,255,255,.07); }
+        .progress-bar {
+            border-radius: 20px; background: linear-gradient(90deg, #6366f1, #a855f7);
+            box-shadow: 0 0 13px rgba(168,85,247,.4);
+        }
+        .progress-info { display: flex; justify-content: space-between; margin-bottom: 8px; color: #94a3b8; font-size: .82rem; }
+        .progress-info strong { color: #e2e8f0; }
+
+        .streak-number { color: #fb923c; font-size: 2.4rem; font-weight: 900; }
+        .streak-fire { color: #fb923c; filter: drop-shadow(0 0 8px rgba(251,146,60,.5)); }
+
+        .info-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #64748b; font-size: .82rem; }
+        .info-value { color: #e2e8f0; font-size: .82rem; font-weight: 600; text-align: right; }
+
+        .btn-gradient {
+            border: none; color: white; padding: 11px 21px; border-radius: 12px; font-weight: 600;
+            background: linear-gradient(135deg, #6366f1, #a855f7); transition: .3s ease;
+        }
+        .btn-gradient:hover { color: white; transform: translateY(-2px); box-shadow: 0 9px 25px rgba(168,85,247,.25); }
+
+        .modal-content { color: white; background: #151b2b; border: 1px solid rgba(255,255,255,.08); border-radius: 19px; }
+        .form-label { color: #cbd5e1; font-size: .85rem; font-weight: 600; margin-bottom: 7px; }
+        .form-control {
+            padding: 11px 13px; color: white; background: #0f172a;
+            border: 1px solid rgba(255,255,255,.1); border-radius: 10px; width: 100%;
+        }
+        .form-control:focus { color: white; background: #0f172a; border-color: #a855f7; box-shadow: 0 0 0 3px rgba(168,85,247,.10); }
+        .form-error { display: none; margin-top: 5px; color: #f87171; font-size: .75rem; }
+
+        @media (max-width: 768px) {
+            .profile-container { padding: 25px 15px 50px; }
+            .profile-hero { padding: 30px 15px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .profile-name { font-size: 1.6rem; }
+        }
+        @media (max-width: 500px) {
+            .navbar .btn { font-size: .72rem; padding: 6px 9px; }
+            .stats-grid { gap: 8px; }
+            .stat-card { padding: 15px 5px; }
+            .stat-number { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-dark">
+    <div class="container py-2">
+        <a href="{{ url_for('dashboard') }}" class="navbar-brand">
+            <i class="fa-solid fa-calculator brand-icon me-2"></i>
+            Vedic Maths
+        </a>
+        <div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light btn-sm rounded-pill me-1">
+                <i class="fa-solid fa-house me-1"></i> Dashboard
+            </a>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm rounded-pill">
+                <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+
+<!-- ================= MAIN ================= -->
+<div class="profile-container">
+
+    <div class="profile-hero mb-4">
+        <div class="profile-content text-center">
+
+            <div class="avatar-wrapper">
+                <div class="avatar" id="avatarDisplay" onclick="openPhotoModal()">
+                    {% if student and student.profile_pic %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="Profile Picture">
+                    {% elif student and student.name %}
+                        {{ student.name[0] | upper }}
+                    {% else %}
+                        U
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="profile-name">{{ student.name if student else 'Student Name' }}</div>
+            <div class="profile-role">Vedic Maths Learner</div>
+
+            <div class="level-badge">
+                <i class="fa-solid fa-star"></i>
+                Level 3 • Fast Learner
+            </div>
+
+            <!-- EDIT PROFILE - ab modal open karega, kahin navigate nahi karega -->
+            <div class="mt-3">
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-light rounded-pill"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editProfileModal"
+                >
+                    <i class="fa-solid fa-pen me-1"></i>
+                    Edit Profile
+                </button>
+            </div>
+
+            <!-- ================= STATS (real backend data) ================= -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-book"></i></div>
+                    <div class="stat-number">{{ stats.sutras_mastered if stats else 0 }}</div>
+                    <div class="stat-label">Sutras Mastered</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-bullseye"></i></div>
+                    <div class="stat-number">{{ stats.accuracy if stats else 0 }}%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-calculator"></i></div>
+                    <div class="stat-number">{{ stats.problems_solved if stats else 0 }}</div>
+                    <div class="stat-label">Problems Solved</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-fire"></i></div>
+                    <div class="stat-number">{{ stats.day_streak if stats else 0 }}</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= PROGRESS + STREAK ================= -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-7">
+            <div class="glass-card">
+                <div class="section-title">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Learning Progress
+                </div>
+
+                <div class="progress-info">
+                    <span>Overall Course Progress</span>
+                    <strong>{{ stats.overall_progress if stats else 0 }}%</strong>
+                </div>
+                <div class="progress mb-4">
+                    <div class="progress-bar" style="width:{{ stats.overall_progress if stats else 0 }}%"></div>
+                </div>
+
+                <div class="progress-info">
+                    <span>Sutras Mastered</span>
+                    <strong>{{ stats.sutras_mastered if stats else 0 }} / 16</strong>
+                </div>
+                <div class="progress mb-4">
+                    <div class="progress-bar" style="width:{{ ((stats.sutras_mastered / 16 * 100) if stats and stats.sutras_mastered else 0) }}%"></div>
+                </div>
+
+                <div class="progress-info">
+                    <span>Practice Accuracy</span>
+                    <strong>{{ stats.accuracy if stats else 0 }}%</strong>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" style="width:{{ stats.accuracy if stats else 0 }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="glass-card">
+                <div class="section-title">
+                    <i class="fa-solid fa-fire streak-fire"></i>
+                    Learning Streak
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <div class="streak-number">{{ stats.day_streak if stats else 0 }}</div>
+                    <div>
+                        <div class="fw-bold">Days in a row!</div>
+                        <small class="text-secondary">Keep learning every day</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ================= ACCOUNT INFORMATION ================= -->
+    <div class="glass-card mb-4">
+        <div class="section-title">
+            <i class="fa-solid fa-user"></i>
+            Account Information
+        </div>
+
+        <div class="info-row">
+            <span class="info-label"><i class="fa-solid fa-id-card me-2"></i>Student ID</span>
+            <span class="info-value">#{{ student.id if student else '000' }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label"><i class="fa-solid fa-user me-2"></i>Full Name</span>
+            <span class="info-value">{{ student.name if student else 'N/A' }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label"><i class="fa-solid fa-envelope me-2"></i>Email</span>
+            <span class="info-value">{{ student.email if student else 'N/A' }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label"><i class="fa-solid fa-circle text-success me-2" style="font-size:8px;"></i>Account Status</span>
+            <span class="info-value text-success">Active</span>
+        </div>
+    </div>
+
+
+    <div class="text-center">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-gradient">
+            <i class="fa-solid fa-house me-2"></i>
+            Continue Learning
+        </a>
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     EDIT PROFILE MODAL (Name + Photo only - matches backend)
+===================================================== -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-user-pen me-2"></i>
+                    Edit Profile
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form method="POST" action="{{ url_for('edit_profile') }}" id="editProfileForm" enctype="multipart/form-data">
+
+                <div class="modal-body">
+
+                    <!-- Photo preview + upload -->
+                    <div class="text-center mb-4">
+                        <div class="avatar-wrapper" style="width:90px;height:90px;">
+                            <div class="avatar" id="modalAvatar" style="width:90px;height:90px;font-size:2rem;">
+                                {% if student and student.profile_pic %}
+                                    <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="Profile Picture">
+                                {% elif student and student.name %}
+                                    {{ student.name[0] | upper }}
+                                {% else %}
+                                    U
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <input type="file" id="photoUpload" name="photo" accept="image/*" class="d-none" onchange="previewPhoto(event)">
+
+                        <button type="button" class="btn btn-sm btn-outline-light rounded-pill mt-2"
+                                onclick="document.getElementById('photoUpload').click()">
+                            <i class="fa-solid fa-camera me-1"></i>
+                            Change Photo
+                        </button>
+                    </div>
+
+                    <label class="form-label" for="inputName">Full Name</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="inputName"
+                        name="name"
+                        value="{{ student.name if student else '' }}"
+                        maxlength="50"
+                        required
+                    >
+                    <div id="nameError" class="form-error">Please enter your name.</div>
+
+                </div>
+
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-gradient">
+                        <i class="fa-solid fa-check me-1"></i>
+                        Save Changes
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- =====================================================
+     PHOTO VIEW MODAL
+===================================================== -->
+<div class="modal fade" id="previewImageModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="fa-solid fa-image me-2"></i>Profile Picture</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-4" id="modalPhotoContainer"></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    function previewPhoto(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            alert("Please select a valid image.");
+            event.target.value = "";
+            return;
+        }
+
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert("Image size must be less than 5 MB.");
+            event.target.value = "";
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const imageURL = e.target.result;
+            document.getElementById("modalAvatar").innerHTML = `<img src="${imageURL}" alt="Profile Picture">`;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function openPhotoModal() {
+        const avatar = document.getElementById("avatarDisplay");
+        const container = document.getElementById("modalPhotoContainer");
+        const image = avatar.querySelector("img");
+
+        if (image) {
+            container.innerHTML = `<img src="${image.src}" alt="Profile Picture" style="max-width:100%;max-height:65vh;border-radius:18px;box-shadow:0 0 35px rgba(168,85,247,.35);">`;
+        } else {
+            const letter = avatar.innerText.trim() || "U";
+            container.innerHTML = `<div style="width:180px;height:180px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:5rem;font-weight:800;background:linear-gradient(135deg,#6366f1,#a855f7);box-shadow:0 0 35px rgba(168,85,247,.35);">${letter}</div>`;
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById("previewImageModal"));
+        modal.show();
+    }
+
+</script>
+
+</body>
+</html>

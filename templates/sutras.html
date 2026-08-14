@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Learn Sutras | VedicMath</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body class="dashboard-page">
+
+
+<!-- NAVBAR -->
+
+<nav class="dashboard-nav">
+
+<div class="logo">
+
+🧮 VedicMath
+
+</div>
+
+
+<div class="nav-links">
+
+<a href="{{ url_for('dashboard') }}">
+Dashboard
+</a>
+
+<a href="{{ url_for('home') }}">
+Home
+</a>
+
+<a href="{{ url_for('logout') }}">
+Logout
+</a>
+
+</div>
+
+</nav>
+
+
+
+
+<div class="dashboard-container">
+
+
+<h1 class="text-center">
+
+📚 16 Vedic Mathematics Sutras
+
+</h1>
+
+
+<p class="text-center">
+
+Learn, Practice and Master Vedic Maths
+
+</p>
+
+
+
+
+<div class="dashboard-cards">
+
+
+{% for sutra in sutras %}
+
+
+<div class="dash-card">
+
+
+<h2>
+
+{{ sutra.icon }}
+
+</h2>
+
+
+<h3>
+
+{{ sutra.name }}
+
+</h3>
+
+
+<p>
+
+{{ sutra.meaning }}
+
+</p>
+
+
+<a href="{{ url_for('sutra_detail', id=sutra.id) }}" class="learn-btn">
+
+Learn More →
+
+</a>
+
+
+</div>
+
+
+{% endfor %}
+
+
+</div>
+
+
+</div>
+
+
+
+
+</body>
+
+</html>
+

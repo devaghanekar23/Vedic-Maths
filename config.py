@@ -1,0 +1,5 @@
+MYSQL_HOST = "localhost"
+MYSQL_USER = "root"
+MYSQL_PASSWORD = ""
+MYSQL_DB = "vedic_math"
+SECRET_KEY = "vedic_math_project_2026"
