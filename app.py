@@ -1,4 +1,12 @@
 import os
+import base64
+from io import BytesIO
+from PIL import Image
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import random
 import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for, session, flash
@@ -23,6 +31,10 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+print("KEY LOADED:", os.environ.get("GEMINI_API_KEY"))
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-3.5-flash")
 
 # ============================================================
 # FLASK APP
@@ -679,6 +691,62 @@ def login():
 
     return render_template("login.html")
 
+@app.route("/google_login", methods=["POST"])
+def google_login():
+    data = request.get_json(silent=True) or {}
+    email = data.get("email", "").strip()
+    name = data.get("name", "").strip()
+    photo = data.get("photo", "")
+
+    if not email:
+        return jsonify({"success": False, "message": "Email is required."}), 400
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Check if user already exists
+        cursor.execute(
+            "SELECT id FROM students WHERE email = %s",
+            (email,)
+        )
+        student = cursor.fetchone()
+
+        if student:
+            student_id = student["id"]
+        else:
+            # Create new student with Google info (no password needed)
+            cursor.execute(
+                """
+                INSERT INTO students (name, email, password, profile_pic)
+                VALUES (%s, %s, %s, %s)
+                """,
+                (name, email, "", photo)
+            )
+            conn.commit()
+            student_id = cursor.lastrowid
+
+        session.clear()
+        session["student_id"] = student_id
+
+        return jsonify({"success": True, "redirect": url_for("dashboard")})
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print("GOOGLE LOGIN ERROR:", e)
+        return jsonify({"success": False, "message": "Server error, try again."}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
 @app.route("/logout")
 def logout():
     session.clear()
@@ -1067,9 +1135,48 @@ def practice(id):
         submitted_q=submitted_q,
     )
 
-@app.route("/ai-scan")
+@app.route("/ai-scan", methods=["GET", "POST"])
 def ai_scan():
-    return render_template("ai_scan.html")
+    result = None
+
+    if request.method == "POST":
+        prompt = request.form.get("prompt", "").strip()
+        image_file = request.files.get("image")
+        camera_data = request.form.get("camera_image")
+
+        pil_image = None
+
+        if image_file and image_file.filename != "":
+            pil_image = Image.open(image_file.stream)
+
+        elif camera_data:
+            # camera_data format: "data:image/png;base64,xxxxx"
+            header, encoded = camera_data.split(",", 1)
+            image_bytes = base64.b64decode(encoded)
+            pil_image = Image.open(BytesIO(image_bytes))
+
+        system_instruction = (
+            "You are a Vedic Mathematics tutor. Solve the given maths problem "
+            "step by step using Vedic Maths sutras where applicable. "
+            "Explain clearly and give the final answer at the end."
+        )
+
+        content_parts = [system_instruction]
+        if prompt:
+            content_parts.append(prompt)
+        if pil_image:
+            content_parts.append(pil_image)
+
+        if len(content_parts) == 1:  # sirf system instruction hai, kuch input nahi
+            result = "Please enter a question or upload an image."
+        else:
+            try:
+                response = model.generate_content(content_parts)
+                result = response.text
+            except Exception as e:
+                result = f"Error: {str(e)}"
+
+    return render_template("ai_scan.html", result=result)
 
 @app.route("/quiz")
 def quiz():
