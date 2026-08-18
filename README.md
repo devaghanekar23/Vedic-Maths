@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+# Vedic-Maths
+=======
 # Vedic Mathematics Learning Platform
 
 A Flask + MySQL web application to learn and practice the 16 Vedic Math Sutras, take a 55-question quiz, track practice accuracy, and monitor daily learning streaks.
@@ -243,3 +246,4 @@ http://127.0.0.1:5000
 - Quiz correctness is currently checked **client-side** (in `quiz.js`), since quiz questions live in the JS file rather than the database. This is fine for casual use but not tamper-proof.
 - "Sutras Mastered" counts a sutra as mastered once a student has attempted at least 5 questions on it with 80%+ accuracy (adjustable via `MASTERY_THRESHOLD` and `MIN_ATTEMPTS_FOR_MASTERY` in `app.py`).
 - Day streak updates automatically whenever a student submits a quiz answer or a practice answer.
+>>>>>>> 74daf0a125262affedb90a9675d8c7df7aa478f6
