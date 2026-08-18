@@ -777,10 +777,6 @@ img{
 }
 
 
-
-
-
-
 /* SUTRA CARD */
 
 
@@ -2827,7 +2823,6 @@ body{
 
     border-radius:25px;
 
-
     background:
 
     rgba(255,255,255,.08);
@@ -2842,6 +2837,7 @@ body{
 
 
     transition:.4s;
+    margin-top:12px;
 
 
 }
@@ -2868,12 +2864,8 @@ body{
 
 
 .card-box h3{
-
-
     color:#38bdf8;
-
     font-size:22px;
-
 
 }
 
@@ -6151,5 +6143,105 @@ grid-template-columns:1fr;
 
 }
 
+
+}
+
+/* ============ SUTRA CAROUSEL - FORCE FIX ============ */
+#sutraCarousel {
+  position: relative !important;
+  padding-bottom: 3rem !important;
+}
+
+#sutraCarousel .carousel-inner {
+  padding: 24px 3.5rem !important; /* cards ko center mein rakhega, arrows ke liye jagah */
+}
+
+/* ===== Arrows - box ke BAHAR ===== */
+#sutraCarousel .carousel-control-prev,
+#sutraCarousel .carousel-control-next {
+  position: absolute !important;
+  top: 45% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  width: 3rem !important;
+  height: 3rem !important;
+  opacity: 1 !important;
+  z-index: 10 !important;
+}
+
+#sutraCarousel .carousel-control-prev {
+  left: -3.2rem !important;
+}
+
+#sutraCarousel .carousel-control-next {
+  right: -3.2rem !important;
+}
+
+#sutraCarousel .carousel-control-prev-icon,
+#sutraCarousel .carousel-control-next-icon {
+  width: 2.8rem !important;
+  height: 2.8rem !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 50% !important;
+  background-size: 50% !important;
+}
+
+/* ===== Indicators - box ke NICHE ===== */
+#sutraCarousel .carousel-indicators {
+  position: static !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  margin: 2rem 0 0 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  padding: 0 !important;
+}
+
+#sutraCarousel .carousel-indicators button {
+  position: relative !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  background-color: #6c6c6c !important;
+  opacity: 0.5 !important;
+  margin: 0 5px !important;
+  text-indent: -9999px !important;
+  border: none !important;
+}
+
+#sutraCarousel .carousel-indicators button.active {
+  opacity: 1 !important;
+  background-color: #6a4cff !important;
+}
+
+#about h2 {
+    opacity: 0;
+    transform: translateY(-30px);
+    animation: aboutHeading 0.8s ease-out forwards;
+}
+
+.about-text {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: aboutTextAnimation 1.2s ease-out 0.3s forwards;
+}
+
+@keyframes aboutHeading {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes aboutTextAnimation {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.start-btn {
+    display: inline-block;
+    margin-top: -32px;
 
 }
