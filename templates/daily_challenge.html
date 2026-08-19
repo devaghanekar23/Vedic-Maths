@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge of the Day | VedicMath</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dashboard-page">
+
+    <nav class="dashboard-nav">
+        <div class="logo">🧮 VedicMath</div>
+        <div class="nav-right">
+            <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout no-right-panel">
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('dashboard') }}">🏠 Dashboard</a></li>
+                <li><a href="{{ url_for('sutras_page') }}">📘 Course Syllabus</a></li>
+                <li><a href="{{ url_for('leaderboard') }}">🏆 Leaderboard</a></li>
+                <li class="active"><a href="{{ url_for('daily_challenge') }}">🎯 Challenge of the Day</a></li>
+                <li><a href="#">🧮 Vedic Formulas</a></li>
+                <li><a href="#">📜 My Certificates</a></li>
+                <li><a href="{{ url_for('profile') }}">⚙️ Account Settings</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="welcome-card" style="padding:24px;">
+                <h1 class="student-name" style="font-size:22px;">🎯 Today's Challenge</h1>
+                <p class="student-text">Sutra: {{ sutra.icon }} {{ sutra.name }}</p>
+            </div>
+
+            {% if already_done %}
+            <div class="dash-card challenge-result-card">
+                <h2>{% if attempt.is_correct %}✅ Solved Correctly!{% else %}❌ Attempted{% endif %}</h2>
+                <p>Your answer: <strong>{{ attempt.user_answer }}</strong></p>
+                <p>Correct answer: <strong>{{ attempt.correct_answer }}</strong></p>
+                <p class="points-earned">+{{ attempt.points_earned }} points earned today 🏅</p>
+                <p class="challenge-note">Come back tomorrow for a new challenge!</p>
+            </div>
+            {% else %}
+            <div class="dash-card challenge-question-card">
+                <h2 class="challenge-question-text">{{ question.q_text }}</h2>
+                <form method="POST">
+                    <input type="text" name="user_ans" placeholder="Your answer" required class="challenge-input">
+                    <button type="submit" class="btn">Submit Answer →</button>
+                </form>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+</body>
+</html>

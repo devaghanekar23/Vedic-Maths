@@ -211,7 +211,8 @@ sutras_list = [
     {
         "id": 13,
         "icon": "📏",
-        "name": "Sopantyadvayamantyam",
+        "name": "Sopantyadvaya-"
+        "mantyam",
         "sanskrit": "सोपान्त्यद्वयमन्त्यम्",
         "meaning": "Ultimate and Twice the Penultimate.",
         "introduction": "Used here to demonstrate the last and twice the previous quantity.",
@@ -346,17 +347,24 @@ def generate_20_questions(sutra_id):
 # ============================================================
 
 def solve_sutra_1(num1, num2=0):
-    n = num1 // 10
+    if num1 % 10 != 5:
+        return {
+            "success": False,
+            "error": "Ekadhikena Purvena Formula Only assign to the last digit 5 numbers (e.g., 15, 25, 35)!"
+        }
+    
+    n = num1 // 10 
     next_num = n + 1
     left = n * next_num
-    answer = num1 * num1
+    answer = (left * 100) + 25 
     
     steps = [
         "Step 1: The last digit is 5, so the end of the answer will be 25.",
-        f"Step 2: Multiply the first digit ({n}) by its next consecutive integer ({next_num}) -> {n} × {next_num} = {left}",
+        f"Step 2: Multiply the remaining part ({n}) by its next consecutive integer ({next_num}) -> {n} × {next_num} = {left}",
         f"Step 3: Combine both parts together -> {left}25",
         f"Correct Answer = {answer}"
     ]
+    
     return {"success": True, "result": str(answer), "steps": steps}
 
 def solve_sutra_2(num1, num2):
@@ -1342,6 +1350,241 @@ def speed_test():
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template("404.html"), 404
+
+@app.route("/leaderboard")
+def leaderboard():
+    if "student_id" not in session:
+        return redirect(url_for("login"))
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT 
+                s.id, 
+                s.name, 
+                s.profile_pic,
+                s.current_streak,
+                COALESCE(qa.correct, 0) + COALESCE(pa.correct, 0) AS total_correct,
+                COALESCE(qa.attempted, 0) + COALESCE(pa.attempted, 0) AS total_attempted
+            FROM students s
+            LEFT JOIN (
+                SELECT student_id, COUNT(*) AS attempted, SUM(is_correct) AS correct
+                FROM student_answers
+                GROUP BY student_id
+            ) qa ON qa.student_id = s.id
+            LEFT JOIN (
+                SELECT student_id, COUNT(*) AS attempted, SUM(is_correct) AS correct
+                FROM practice_answers
+                GROUP BY student_id
+            ) pa ON pa.student_id = s.id
+            HAVING total_attempted > 0
+            ORDER BY total_correct DESC, total_attempted ASC
+            LIMIT 50
+        """)
+
+        rows = cursor.fetchall()
+
+        leaderboard_data = []
+        for idx, row in enumerate(rows, start=1):
+            accuracy = round((row["total_correct"] / row["total_attempted"]) * 100, 1) if row["total_attempted"] else 0
+            leaderboard_data.append({
+                "rank": idx,
+                "id": row["id"],
+                "name": row["name"],
+                "profile_pic": row["profile_pic"],
+                "total_correct": row["total_correct"],
+                "total_attempted": row["total_attempted"],
+                "accuracy": accuracy,
+                "streak": row["current_streak"] or 0,
+            })
+
+        current_student_id = session["student_id"]
+        my_rank = next((e for e in leaderboard_data if e["id"] == current_student_id), None)
+
+        return render_template(
+            "leaderboard.html",
+            leaderboard=leaderboard_data,
+            my_rank=my_rank
+        )
+
+    except Exception as e:
+        print("LEADERBOARD ERROR:", e)
+        return "Leaderboard Error", 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+from datetime import date
+
+@app.route("/formulas")
+def vedic_formulas():
+    return render_template("formulas.html", sutras=sutras_list)
+
+@app.route("/challenge", methods=["GET", "POST"])
+def daily_challenge():
+    if "student_id" not in session:
+        return redirect(url_for("login"))
+
+    student_id = session["student_id"]
+    today = date.today()
+
+    # Aajcha sutra decide karnyasathi date-based rotation (16 sutras madhun)
+    day_number = today.toordinal()
+    sutra_id = (day_number % 16) + 1
+    sutra = next((s for s in sutras_list if s["id"] == sutra_id), None)
+
+    conn = None
+    cursor = None
+    result = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Aaj already solve kela ka check kar
+        cursor.execute("""
+            SELECT * FROM daily_challenges
+            WHERE student_id = %s AND challenge_date = %s
+        """, (student_id, today))
+        existing = cursor.fetchone()
+
+        if existing:
+            return render_template(
+                "daily_challenge.html",
+                sutra=sutra,
+                already_done=True,
+                attempt=existing
+            )
+
+        # Student-specific random question (student_id + date seed)
+        seed_value = student_id * 1000 + day_number
+        random.seed(seed_value)
+        questions = generate_20_questions(sutra_id)
+        random.seed()  # reset global seed
+        question = random.choice(questions)
+
+        if request.method == "POST":
+            user_ans = request.form.get("user_ans", "").strip()
+            solution = solve_sutra(sutra_id, question["num1"], question["num2"])
+            correct_ans = solution.get("result", "")
+            is_correct = str(user_ans).strip() == str(correct_ans).strip()
+            points = 10 if is_correct else 2  # try karnyasathi bhi thode points
+
+            cursor.execute("""
+                INSERT INTO daily_challenges
+                    (student_id, challenge_date, sutra_id, question_text, user_answer, correct_answer, is_correct, points_earned)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (student_id, today, sutra_id, question["q_text"], user_ans, correct_ans, 1 if is_correct else 0, points))
+
+            cursor.execute("""
+                UPDATE students SET total_points = total_points + %s WHERE id = %s
+            """, (points, student_id))
+
+            conn.commit()
+
+            result = {
+                "is_correct": is_correct,
+                "correct_ans": correct_ans,
+                "points": points,
+                "steps": solution.get("steps", [])
+            }
+
+            return render_template(
+                "daily_challenge.html",
+                sutra=sutra,
+                already_done=True,
+                attempt={
+                    "user_answer": user_ans,
+                    "correct_answer": correct_ans,
+                    "is_correct": is_correct,
+                    "points_earned": points
+                },
+                result=result
+            )
+
+        return render_template(
+            "daily_challenge.html",
+            sutra=sutra,
+            question=question,
+            already_done=False
+        )
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print("DAILY CHALLENGE ERROR:", e)
+        return "Daily Challenge Error", 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route("/certificates")
+def certificates():
+    if "student_id" not in session:
+        return redirect(url_for("login"))
+
+    student_id = session["student_id"]
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT id, name FROM students WHERE id = %s
+        """, (student_id,))
+        student = cursor.fetchone()
+
+        if not student:
+            session.clear()
+            return redirect(url_for("login"))
+
+        practice_stats = get_practice_stats(cursor, student_id)
+        sutras_mastered = practice_stats["sutras_mastered"]
+        overall_progress = round((sutras_mastered / TOTAL_SUTRAS) * 100, 1) if TOTAL_SUTRAS else 0
+
+        milestones = [
+            {"percent": 25, "title": "Bronze Achiever", "icon": "🥉"},
+            {"percent": 50, "title": "Silver Achiever", "icon": "🥈"},
+            {"percent": 75, "title": "Gold Achiever", "icon": "🥇"},
+            {"percent": 100, "title": "Vedic Math Master", "icon": "🏆"},
+        ]
+
+        for m in milestones:
+            m["unlocked"] = overall_progress >= m["percent"]
+
+        return render_template(
+            "certificates.html",
+            student=student,
+            milestones=milestones,
+            overall_progress=overall_progress,
+            sutras_mastered=sutras_mastered
+        )
+
+    except Exception as e:
+        print("CERTIFICATES ERROR:", e)
+        return "Certificates Error", 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
 
 # ============================================================
 # RUN APPLICATION

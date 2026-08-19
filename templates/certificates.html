@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Certificates | VedicMath</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dashboard-page">
+
+    <nav class="dashboard-nav">
+        <div class="logo">🧮 VedicMath</div>
+        <div class="nav-right">
+            <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout no-right-panel">
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('dashboard') }}">🏠 Dashboard</a></li>
+                <li><a href="{{ url_for('sutras_page') }}">📘 Course Syllabus</a></li>
+                <li><a href="{{ url_for('leaderboard') }}">🏆 Leaderboard</a></li>
+                <li><a href="{{ url_for('daily_challenge') }}">🎯 Challenge of the Day</a></li>
+                <li><a href="{{ url_for('vedic_formulas') }}">🧮 Vedic Formulas</a></li>
+                <li class="active"><a href="{{ url_for('certificates') }}">📜 My Certificates</a></li>
+                <li><a href="{{ url_for('profile') }}">⚙️ Account Settings</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="welcome-card" style="padding:24px;">
+                <h1 class="student-name" style="font-size:22px;">📜 My Certificates</h1>
+                <p class="student-text">
+                    {{ student.name }}, your progress: {{ sutras_mastered }}/16 sutras mastered ({{ overall_progress }}%)
+                </p>
+            </div>
+
+            <div class="dashboard-cards">
+                {% for m in milestones %}
+                <div class="dash-card certificate-card {% if not m.unlocked %}locked{% endif %}"
+                     {% if m.unlocked %}
+                     onclick="openCertificate('{{ m.icon }}', '{{ m.title }}', '{{ m.percent }}')"
+                     {% endif %}>
+                    <h2>{{ m.icon }}</h2>
+                    <h3>{{ m.title }}</h3>
+                    <p>{{ m.percent }}% Sutra Mastery</p>
+                    {% if m.unlocked %}
+                        <span class="cert-badge unlocked">✅ Unlocked — Click to View</span>
+                    {% else %}
+                        <span class="cert-badge locked">🔒 Locked</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+
+    <!-- CERTIFICATE MODAL -->
+    <div id="certModalOverlay" class="cert-modal-overlay" onclick="closeCertificate(event)">
+        <div class="cert-modal">
+            <button class="cert-close-btn" onclick="closeCertificate(event)">✕</button>
+
+            <div class="cert-paper">
+                <div class="cert-border">
+                    <p class="cert-header">🧮 VedicMath Academy</p>
+                    <p class="cert-subheader">Certificate of Achievement</p>
+
+                    <div class="cert-icon" id="certIcon">🏆</div>
+
+                    <p class="cert-presented">This certificate is proudly presented to</p>
+                    <h2 class="cert-name">{{ student.name }}</h2>
+
+                    <p class="cert-desc" id="certDesc">
+                        for achieving <strong id="certTitle">Gold Achiever</strong>
+                        (<span id="certPercent">75</span>% Sutra Mastery)
+                        in Vedic Mathematics
+                    </p>
+
+                    <p class="cert-date" id="certDate"></p>
+
+                    <div class="cert-signature">
+                        <span>____________________</span>
+                        <p>VedicMath Academy</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openCertificate(icon, title, percent) {
+            document.getElementById('certIcon').innerText = icon;
+            document.getElementById('certTitle').innerText = title;
+            document.getElementById('certPercent').innerText = percent;
+
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('certDate').innerText = "Awarded on " + dateStr;
+
+            document.getElementById('certModalOverlay').style.display = 'flex';
+        }
+
+        function closeCertificate(event) {
+            if (event.target.id === 'certModalOverlay' || event.target.classList.contains('cert-close-btn')) {
+                document.getElementById('certModalOverlay').style.display = 'none';
+            }
+        }
+    </script>
+
+</body>
+</html>

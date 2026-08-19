@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedic Formulas | VedicMath</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dashboard-page">
+
+    <nav class="dashboard-nav">
+        <div class="logo">🧮 VedicMath</div>
+        <div class="nav-right">
+            <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout no-right-panel">
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('dashboard') }}">🏠 Dashboard</a></li>
+                <li><a href="{{ url_for('sutras_page') }}">📘 Course Syllabus</a></li>
+                <li><a href="{{ url_for('leaderboard') }}">🏆 Leaderboard</a></li>
+                <li><a href="{{ url_for('daily_challenge') }}">🎯 Challenge of the Day</a></li>
+                <li class="active"><a href="{{ url_for('vedic_formulas') }}">🧮 Vedic Formulas</a></li>
+                <li><a href="#">📜 My Certificates</a></li>
+                <li><a href="{{ url_for('profile') }}">⚙️ Account Settings</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="welcome-card" style="padding:24px;">
+                <h1 class="student-name" style="font-size:22px;">🧮 Vedic Formulas Cheat Sheet</h1>
+                <p class="student-text">Quick reference for all 16 Sutras — no need to open full lessons</p>
+            </div>
+
+            <div class="dashboard-cards formula-grid">
+                {% for s in sutras %}
+                <div class="dash-card formula-card">
+                    <h2>{{ s.icon }}</h2>
+                    <h3>{{ s.name }}</h3>
+                    <p class="formula-sanskrit">{{ s.sanskrit }}</p>
+                    <p class="formula-meaning">{{ s.meaning }}</p>
+                    <p class="formula-rule"><strong>Rule:</strong> {{ s.rule }}</p>
+                    <p class="formula-example">
+                        <strong>Eg:</strong> {{ s.example_question }} = {{ s.example_answer }}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

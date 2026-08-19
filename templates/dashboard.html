@@ -10,113 +10,137 @@
 
 <body class="dashboard-page">
 
-    <!-- NAVBAR -->
+    <!-- TOP NAVBAR -->
     <nav class="dashboard-nav">
-        <div class="logo">
-            🧮 VedicMath
+        <div class="logo">🧮 VedicMath</div>
+        <div class="nav-search">
+            <input type="text" placeholder="🔍 Search for Sutras, practice sets...">
         </div>
-
-        <div class="nav-links">
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('sutras_page') }}">Sutras</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+        <div class="nav-right">
+            <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
+            <img class="nav-avatar"
+                src="{% if student and student.profile_pic %}{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}{% else %}{{ url_for('static', filename='img/default-avatar.png') }}{% endif %}"
+                alt="avatar">
         </div>
     </nav>
 
-    <div class="dashboard-container">
+    <div class="dashboard-layout">
 
-        <!-- STUDENT PROFILE WITH GOOGLE PROFILE PHOTO -->
-        <div class="student-profile" style="text-align: center;">
+        <!-- LEFT SIDEBAR -->
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li class="active"><a href="{{ url_for('dashboard') }}">🏠 Dashboard</a></li>
+                <li><a href="{{ url_for('sutras_page') }}">📘 Course Syllabus</a></li>
+                <li><a href="{{ url_for('leaderboard') }}">🏆 Leaderboard</a></li>
+                <li><a href="{{ url_for('daily_challenge') }}">🎯 Challenge of the Day</a></li>
+                <li><a href="{{ url_for('vedic_formulas') }}">🧮 Vedic Formulas</a></li>
+                <li><a href="{{ url_for('certificates') }}">📜 My Certificates</a></li>
+                <li><a href="{{ url_for('profile') }}">⚙️ Account Settings</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+            </ul>
 
-            <div class="profile-avatar-wrapper"
-                style="display: flex; justify-content: center; margin-bottom: 15px;">
+            <div class="sidebar-mascot">
+                <img src="{{ url_for('static', filename='images/vedic-math3.png') }}" alt="Vedic Guru">
+            </div>
+        </aside>
 
-                <img id="dashboardProfilePhoto"
-                    src="{% if student and student.profile_pic %}{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}{% else %}{{ url_for('static', filename='img/default-avatar.png') }}{% endif %}"
-                    alt="User Profile"
-                    style="
-                        width: 85px;
-                        height: 85px;
-                        border-radius: 50%;
-                        object-fit: cover;
-                        border: 3px solid #6366f1;
-                        box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
-                    ">
+        <!-- MAIN CONTENT -->
+        <main class="dashboard-main">
+
+            <!-- WELCOME CARD -->
+            <div class="welcome-card">
+                <div class="profile-avatar-wrapper">
+                    <img id="dashboardProfilePhoto"
+                        src="{% if student and student.profile_pic %}{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}{% else %}{{ url_for('static', filename='img/default-avatar.png') }}{% endif %}"
+                        alt="User Profile" class="welcome-avatar">
+                </div>
+
+                <h1 class="student-name">
+                    Welcome,<br>
+                    <span id="dashboardUserName">{{ student.name }}</span>
+                </h1>
+
+                <p class="student-text" id="dashboardUserEmail">
+                    {{ student.email }}<br>
+                    Start your Vedic Mathematics learning journey 🚀
+                </p>
             </div>
 
-            <h1 class="student-name">
-                Welcome,<br>
-                <span id="dashboardUserName">
-                    {{ student.name }}
-                </span>
-            </h1>
+            <!-- DASHBOARD CARDS GRID -->
+            <div class="dashboard-cards">
 
-            <p class="student-text" id="dashboardUserEmail">
-                {{ student.email }}
-                <br>
-                Start your Vedic Mathematics learning journey 🚀
-            </p>
+                <div class="dash-card">
+                    <h2>📚</h2>
+                    <h3>Learn Sutras</h3>
+                    <p>Explore all 16 Vedic Mathematics Sutras with examples.</p>
+                    <a href="{{ url_for('sutras_page') }}" class="btn">Learn Now →</a>
+                </div>
 
-        </div>
+                <div class="dash-card">
+                    <h2>✍️</h2>
+                    <h3>Practice</h3>
+                    <p>Practice Vedic Maths calculations and improve speed.</p>
+                    <a href="{{ url_for('practice_main') }}" class="btn">Start Practice →</a>
+                </div>
 
-        <!-- DASHBOARD CARDS -->
-        <div class="dashboard-cards">
+                <div class="dash-card">
+                    <h2>📝</h2>
+                    <h3>Quiz</h3>
+                    <p>Test your Vedic Mathematics knowledge.</p>
+                    <a href="{{ url_for('quiz') }}" class="btn">Start Quiz →</a>
+                </div>
 
-            <!-- LEARN SUTRAS -->
-            <div class="dash-card">
-                <h2>📚</h2>
-                <h3>Learn Sutras</h3>
-                <p>Explore all 16 Vedic Mathematics Sutras with examples.</p>
-                <a href="{{ url_for('sutras_page') }}" class="btn">Learn Now →</a>
+                <div class="dash-card">
+                    <h2>🤖</h2>
+                    <h3>AI Scan</h3>
+                    <p>Upload maths questions and get AI solutions.</p>
+                    <a href="{{ url_for('ai_scan') }}" class="btn">Scan Now →</a>
+                </div>
+
+                <div class="dash-card">
+                    <h2>⚡</h2>
+                    <h3>Speed Test</h3>
+                    <p>Check and improve your calculation speed.</p>
+                    <a href="{{ url_for('speed_test') }}" class="btn">Start Test →</a>
+                </div>
+
+                <div class="dash-card">
+                    <h2>👤</h2>
+                    <h3>My Profile</h3>
+                    <p>View your personal student information.</p>
+                    <a href="{{ url_for('profile') }}" class="btn">View Profile →</a>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- RIGHT PANEL -->
+        <aside class="dashboard-right">
+            <h3 class="right-title">Learning Progress</h3>
+
+            <div class="progress-ring-wrapper">
+                <svg class="progress-ring" width="160" height="160">
+                    <circle class="ring-bg" cx="80" cy="80" r="70"></circle>
+                    <circle class="ring-fill" cx="80" cy="80" r="70"
+                        style="stroke-dashoffset: {{ 440 - (4.4 * stats.accuracy)|round(0) }};"></circle>
+
+                </svg>
+                <div class="progress-ring-text">
+                    <span class="ring-label">Sutra Mastery</span>
+                    <span class="ring-percent">{{ stats.accuracy }}%</span>
+                </div>
             </div>
 
-            <!-- PRACTICE -->
-            <div class="dash-card">
-                <h2>✍️</h2>
-                <h3>Practice</h3>
-                <p>Practice Vedic Maths calculations and improve speed.</p>
-                <a href="{{ url_for('practice_main') }}" class="btn">Start Practice →</a>
-            </div>
-
-            <!-- QUIZ -->
-            <div class="dash-card">
-                <h2>📝</h2>
-                <h3>Quiz</h3>
-                <p>Test your Vedic Mathematics knowledge.</p>
-                <a href="{{ url_for('quiz') }}">Start Quiz →</a>
-            </div>
-
-            <!-- AI SCAN -->
-            <div class="dash-card">
-                <h2>🤖</h2>
-                <h3>AI Scan</h3>
-                <p>Upload maths questions and get AI solutions.</p>
-                <a href="{{ url_for('ai_scan') }}">Scan Now →</a>
-            </div>
-
-            <!-- SPEED TEST -->
-            <div class="dash-card">
-                <h2>⚡</h2>
-                <h3>Speed Test</h3>
-                <p>Check and improve your calculation speed.</p>
-                <a href="{{ url_for('speed_test') }}">Start Test →</a>
-            </div>
-
-            <!-- PROFILE -->
-            <div class="dash-card">
-                <h2>👤</h2>
-                <h3>My Profile</h3>
-                <p>View your personal student information.</p>
-                <a href="{{ url_for('profile') }}">View Profile →</a>
-            </div>
-
-        </div>
+            <ul class="progress-stats">
+                <li>📘 Sutras Completed <span>{{ stats.sutras_mastered }}/16</span></li>
+                <li>📝 Quiz Avg <span>{{ stats.accuracy }}%</span></li>
+                <li>🤖 AI Scans Used <span>15/50</span></li>
+                <li>⚡ Speed Test Rank <span>Top 10%</span></li>
+            </ul>
+        </aside>
 
     </div>
 
-<script>
-
-</script>
 </body>
 
 </html>

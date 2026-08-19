@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard | VedicMath</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-page">
+
+    <nav class="dashboard-nav">
+        <div class="logo">🧮 VedicMath</div>
+        <div class="nav-search">
+            <input type="text" placeholder="🔍 Search for Sutras, practice sets...">
+        </div>
+        <div class="nav-right">
+            <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout no-right-panel">
+
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('dashboard') }}">🏠 Dashboard</a></li>
+                <li><a href="{{ url_for('sutras_page') }}">📘 Course Syllabus</a></li>
+                <li class="active"><a href="{{ url_for('leaderboard') }}">🏆 Leaderboard</a></li>
+                <li><a href="#">🎯 Challenge of the Day</a></li>
+                <li><a href="#">🧮 Vedic Formulas</a></li>
+                <li><a href="#">📜 My Certificates</a></li>
+                <li><a href="{{ url_for('profile') }}">⚙️ Account Settings</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-main">
+
+            <div class="welcome-card" style="padding:24px;">
+                <h1 class="student-name" style="font-size:22px;">🏆 Leaderboard</h1>
+                <p class="student-text">Top performers based on total correct answers</p>
+            </div>
+
+            {% if my_rank %}
+            <div class="dash-card" style="text-align:left; padding:18px 24px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                    <p style="color:#a5a6c9; font-size:12px; margin:0;">Your Rank</p>
+                    <h3 style="margin:4px 0;">#{{ my_rank.rank }} — {{ my_rank.total_correct }} correct ({{ my_rank.accuracy }}%)</h3>
+                </div>
+                <div style="font-size:26px;">🔥 {{ my_rank.streak }} day streak</div>
+            </div>
+            {% endif %}
+
+            <div class="dash-card" style="text-align:left; padding:0; overflow:hidden;">
+                <table style="width:100%; border-collapse:collapse; color:#fff;">
+                    <thead>
+                        <tr style="background:#1e1f42; text-align:left;">
+                            <th style="padding:14px 18px;">Rank</th>
+                            <th style="padding:14px 18px;">Student</th>
+                            <th style="padding:14px 18px;">Correct</th>
+                            <th style="padding:14px 18px;">Accuracy</th>
+                            <th style="padding:14px 18px;">Streak</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in leaderboard %}
+                        <tr style="border-bottom:1px solid #2a2b55; {% if entry.id == my_rank.id %}background:#2a2b55;{% endif %}">
+                            <td style="padding:12px 18px; font-weight:700;">
+                                {% if entry.rank == 1 %}🥇
+                                {% elif entry.rank == 2 %}🥈
+                                {% elif entry.rank == 3 %}🥉
+                                {% else %}#{{ entry.rank }}
+                                {% endif %}
+                            </td>
+                            <td style="padding:12px 18px; display:flex; align-items:center; gap:10px;">
+                                <img src="{% if entry.profile_pic %}{{ url_for('static', filename='uploads/' ~ entry.profile_pic) }}{% else %}{{ url_for('static', filename='img/default-avatar.png') }}{% endif %}"
+                                     style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+                                {{ entry.name }}
+                            </td>
+                            <td style="padding:12px 18px;">{{ entry.total_correct }}</td>
+                            <td style="padding:12px 18px;">{{ entry.accuracy }}%</td>
+                            <td style="padding:12px 18px;">🔥 {{ entry.streak }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>

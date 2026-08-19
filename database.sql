@@ -180,3 +180,23 @@ CREATE TABLE IF NOT EXISTS practice_answers (
     FOREIGN KEY (student_id) REFERENCES students(id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS daily_challenges (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    challenge_date DATE NOT NULL,
+    sutra_id INT NOT NULL,
+    question_text VARCHAR(255),
+    user_answer VARCHAR(255),
+    correct_answer VARCHAR(255),
+    is_correct TINYINT(1) NOT NULL DEFAULT 0,
+    points_earned INT NOT NULL DEFAULT 0,
+    answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE KEY unique_student_day (student_id, challenge_date),
+
+    FOREIGN KEY (student_id) REFERENCES students(id)
+        ON DELETE CASCADE
+);
+
+ALTER TABLE students ADD COLUMN total_points INT NOT NULL DEFAULT 0;
