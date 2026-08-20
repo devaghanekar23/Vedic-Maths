@@ -772,6 +772,30 @@ img{
     font-size: 14px;
 }
 
+
+/* images home page courasal */
+.gallery-sub{ color:#6b665f; max-width:480px; margin:0 auto 2.5rem; text-align:center; }
+.gallery-carousel{ border-radius:26px; overflow:hidden; box-shadow:0 24px 50px rgba(27,27,58,.16); }
+.gallery-slide{ display:flex; flex-wrap:wrap; min-height:380px; background:#1B1B3A; }
+.gallery-media{ flex:1 1 55%; position:relative; min-height:380px; background:linear-gradient(135deg,#2B2A5C,#1B1B3A); overflow:hidden; }
+.gallery-media img{ width:100%; height:100%; object-fit:cover; display:block; transform:scale(1.02); transition:transform 6s ease; }
+.carousel-item.active .gallery-media img{ transform:scale(1.12); }
+.gallery-media-fallback{ display:none; position:absolute; inset:0; align-items:center; justify-content:center; font-size:4.5rem; color:rgba(245,167,66,.35); }
+.gallery-text{ flex:1 1 40%; padding:2.6rem 2.4rem; display:flex; flex-direction:column; justify-content:center; color:#FBF6EC; }
+.gallery-count{ font-size:.85rem; letter-spacing:.08em; margin-bottom:.6rem; display:block; color:#F5A742; }
+.gallery-text h3{ color:#fff; font-size:1.6rem; margin-bottom:.8rem; }
+.gallery-text p{ color:rgba(251,246,236,.78); line-height:1.7; }
+.gallery-indicators{ position:static; margin:0 0 -6px; }
+.gallery-indicators [data-bs-target]{ background-color:#C9A227; width:9px; height:9px; border-radius:50%; opacity:.5; }
+.gallery-indicators .active{ opacity:1; }
+.gallery-thumbs{ display:flex; gap:.8rem; justify-content:center; margin-top:1.6rem; flex-wrap:wrap; }
+.gallery-thumb{ width:52px; height:52px; border-radius:14px; border:1px solid rgba(201,162,39,.35); background:#fff; color:#8B2635; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:all .25s ease; }
+.gallery-thumb:hover{ border-color:#E8871E; transform:translateY(-3px); }
+.gallery-thumb.active{ background:linear-gradient(135deg,#E8871E,#8B2635); color:#fff; border-color:transparent; }
+@media (max-width:767px){ .gallery-slide{ flex-direction:column; } .gallery-media{ min-height:240px; } }
+
+
+
 /* ===== CARDS GRID ===== */
 .dashboard-cards {
     display: grid;

@@ -233,6 +233,77 @@ Vedic Mathematics encourages students to understand patterns and relationships b
 
 
 </section>
+
+<!-- ================= GALLERY / HIGHLIGHTS CAROUSEL ================= -->
+
+<section class="section gallery-section" id="gallery">
+  <div class="container">
+
+    <h2>🖼️ A Glimpse Into Our Classroom</h2>
+    <p class="text-center gallery-sub">
+      Moments from live sessions, sutra walkthroughs, and student wins.
+    </p>
+
+    {% set gallery = [
+      { "title": "Live Sutra Sessions",     "caption": "Interactive walkthroughs of each sutra with real examples.",     "img": "gallery-1.jpg", "icon": "bi-easel2" },
+      { "title": "Speed Math Drills",        "caption": "Timed drills that build calculation speed day by day.",         "img": "gallery-2.jpg", "icon": "bi-stopwatch" },
+      { "title": "Student Achievements",     "caption": "Celebrating milestones from learners across the country.",      "img": "gallery-3.jpg", "icon": "bi-mortarboard" },
+      { "title": "Exam-Ready Practice",      "caption": "Problem sets mapped to competitive exam patterns.",             "img": "gallery-4.jpg", "icon": "bi-journal-check" },
+      { "title": "Community Workshops",      "caption": "Group sessions where students solve and discuss together.",     "img": "gallery-5.jpg", "icon": "bi-people" }
+    ] %}
+
+    <div id="galleryCarousel" class="carousel slide gallery-carousel" data-bs-ride="carousel">
+
+      <div class="carousel-indicators gallery-indicators">
+        {% for slide in gallery %}
+        <button type="button" data-bs-target="#galleryCarousel" data-bs-slide-to="{{ loop.index0 }}"
+          class="{% if loop.first %}active{% endif %}" aria-current="{% if loop.first %}true{% endif %}"
+          aria-label="Slide {{ loop.index }}"></button>
+        {% endfor %}
+      </div>
+
+      <div class="carousel-inner">
+        {% for slide in gallery %}
+        <div class="carousel-item {% if loop.first %}active{% endif %}">
+          <div class="gallery-slide">
+            <div class="gallery-media">
+              <img src="{{ url_for('static', filename='images/' ~ slide.img) }}" alt="{{ slide.title }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <div class="gallery-media-fallback">
+                <i class="bi {{ slide.icon }}"></i>
+              </div>
+            </div>
+            <div class="gallery-text">
+              <span class="gallery-count">{{ '%02d'|format(loop.index) }} / {{ '%02d'|format(gallery|length) }}</span>
+              <h3>{{ slide.title }}</h3>
+              <p>{{ slide.caption }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#galleryCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#galleryCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+
+    <div class="gallery-thumbs">
+      {% for slide in gallery %}
+      <button type="button" data-bs-target="#galleryCarousel" data-bs-slide-to="{{ loop.index0 }}"
+        class="gallery-thumb {% if loop.first %}active{% endif %}" aria-label="{{ slide.title }}">
+        <i class="bi {{ slide.icon }}"></i>
+      </button>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
 <!-- ================= SUTRAS SECTION ================= -->
 
 <section class="section" id="sutras">
@@ -574,6 +645,16 @@ support@vedicmath.com
 
 </footer>
 
+<script>
+  var galleryEl = document.getElementById('galleryCarousel');
+  if (galleryEl) {
+    galleryEl.addEventListener('slid.bs.carousel', function (e) {
+      document.querySelectorAll('.gallery-thumb').forEach(function (thumb, i) {
+        thumb.classList.toggle('active', i === e.to);
+      });
+    });
+  }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
