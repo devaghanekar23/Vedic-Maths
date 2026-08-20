@@ -185,26 +185,23 @@ img{
 
 
 .nav-links a{
-
-
-    color:white;
-
-
-    font-weight:600;
-
-
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 10px 24px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #6366f1, #4338ca);
+    transition: all 0.3s ease;
+    display: inline-block;
+    border: none;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
 }
-
-
 
 .nav-links a:hover{
-
-
-    color:#38bdf8;
-
-
+    background: linear-gradient(135deg, #4338ca, #3730a3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
 }
-
 
 
 
