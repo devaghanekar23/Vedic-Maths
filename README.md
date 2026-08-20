@@ -1,124 +1,119 @@
 # 🧮 Vedic Mathematics Learning Platform
 
-A **Vedic Mathematics Learning Platform** built with **Flask + MySQL** that helps students learn and practice the **16 Vedic Math Sutras**, improve calculation speed, take quizzes, track accuracy, and monitor their daily learning streaks.
+A Flask + MySQL based web application for learning and practicing **Vedic Mathematics**.
+
+The platform allows students to learn the **16 Vedic Math Sutras**, practice questions, take quizzes, track accuracy and progress, maintain daily streaks, use AI-powered maths assistance, update their profile, view the leaderboard, and unlock achievement certificates.
 
 ---
 
-## 📚 Features
+## 📌 Features
 
-* 👤 User Registration & Login
-* 🔐 Secure password handling
-* 📊 Student Dashboard
-* 📈 Practice accuracy statistics
-* 🎯 Track attempted and mastered Sutras
-* 📖 Learn all **16 Vedic Math Sutras**
-* 🧮 Step-by-step Sutra solvers
-* ✍️ Live practice questions
-* 📝 **55-question multiple-choice quiz**
-* 💾 Auto-save quiz progress
-* 🔄 Refresh-safe quiz progress
-* 👤 Student Profile
-* 📊 Combined Quiz + Practice statistics
-* 🔥 Daily learning streak counter
-* ✏️ Edit profile information
-* 🖼️ Profile photo upload
-* 🤖 AI Scan placeholder page
-* ⚡ Speed Test placeholder page
-* 📞 Contact page
-* ❌ Custom 404 error page
+### 👤 User Management
 
----
+* User registration
+* User login/logout
+* Google Login
+* Session-based authentication
+* Individual student dashboard
+* Individual profile
+* Edit profile information
+* Upload profile picture
 
-# 🛠️ Tech Stack
+### 📚 Vedic Mathematics
 
-### Backend
+* Learn all **16 Vedic Sutras**
+* Sanskrit name and meaning
+* Explanation of each Sutra
+* Formula/rule
+* Example questions
+* Step-by-step solutions
+* Previous/Next Sutra navigation
 
-* Python 3.10+
-* Flask
-* MySQL
-* mysql-connector-python
-* python-dotenv
-* Werkzeug
+### ✏️ Practice
 
-### Frontend
+* Practice all 16 Sutras
+* 20 questions generated for each Sutra
+* Automatic answer checking
+* Step-by-step solution after submission
+* Practice answers stored for each logged-in student
+* Accuracy tracking
+* Sutra mastery tracking
 
-* HTML5
-* CSS3
-* Bootstrap 5
-* JavaScript
-* Vanilla JavaScript
+### 📝 Quiz
 
-### Additional Libraries
+* 55-question quiz
+* Question progress tracking
+* Correct/wrong answer tracking
+* Quiz progress saved in the database
+* Quiz completion status
 
-* Google Generative AI
-* Pillow
+### 🤖 AI Maths Assistant
 
----
+* Enter a mathematical question
+* Upload an image of a maths problem
+* Use camera input
+* AI explains the solution step-by-step
+* Vedic Mathematics approach is used where applicable
 
-# 📋 Prerequisites
+### 🏆 Progress & Achievements
 
-Before running the project, make sure you have the following installed:
-
-### 1. Python
-
-Python **3.10 or higher** is recommended.
-
-Check your Python version:
-
-```bash
-python --version
-```
-
-You can download Python from:
-
-https://www.python.org/
+* Total problems solved
+* Accuracy percentage
+* Sutras mastered
+* Overall progress
+* Daily streak
+* Leaderboard
+* Achievement milestones
+* Certificates
 
 ---
 
-### 2. MySQL
+# 🛠️ Technology Stack
 
-You need a running MySQL server.
+| Technology       | Purpose                         |
+| ---------------- | ------------------------------- |
+| Python           | Backend programming             |
+| Flask            | Web framework                   |
+| MySQL            | Database                        |
+| HTML             | Frontend structure              |
+| CSS              | Frontend styling                |
+| JavaScript       | Frontend functionality          |
+| Google Gemini AI | AI maths assistance             |
+| Google OAuth     | Google Login                    |
+| Pillow           | Image processing                |
+| python-dotenv    | Environment variable management |
 
-You can use:
-
-* XAMPP
-* WAMP
-* MySQL Server
-* MySQL Workbench
-
-Check MySQL:
-
-```bash
-mysql --version
-```
+The Flask application connects to the `vedic_math` MySQL database and uses session-based `student_id` authentication to load each student's own dashboard and progress.
 
 ---
 
-### 3. Git
+# 📋 Requirements
 
-If you are cloning the project from GitHub, install Git.
+Before installing the project, make sure the following are installed.
 
-Check Git:
+### Required Software
 
-```bash
-git --version
-```
+1. Python 3.10 or newer
+2. MySQL Server
+3. MySQL Workbench — optional
+4. Git — optional
+5. Google account — required for Google Login
+6. Gemini API key — required for AI features
 
 ---
 
 # 📁 Project Structure
 
-The project structure should look approximately like this:
+Your project should have a structure similar to:
 
 ```text
 Vedic-Maths/
 │
 ├── app.py
-│
-├── static/
-│   ├── css/
-│   ├── js/
-│   └── uploads/
+├── requirements.txt
+├── .env
+├── .gitignore
+├── README.md
 │
 ├── templates/
 │   ├── index.html
@@ -126,46 +121,58 @@ Vedic-Maths/
 │   ├── register.html
 │   ├── dashboard.html
 │   ├── profile.html
-│   ├── quiz.html
-│   ├── practice.html
-│   ├── practice_details.html
+│   ├── edit_profile.html
 │   ├── sutras.html
 │   ├── sutra_detail.html
+│   ├── practice.html
+│   ├── practice_details.html
+│   ├── quiz.html
 │   ├── ai_scan.html
+│   ├── leaderboard.html
+│   ├── certificates.html
 │   ├── speed_test.html
 │   ├── contact.html
 │   └── 404.html
 │
-└── README.md
+├── static/
+│   ├── css/
+│   ├── js/
+│   ├── images/
+│   └── uploads/
+│
+└── database/
+    └── vedic_math.sql
 ```
-
-The `uploads/` directory is used for uploaded profile photos and can be created automatically by the application.
 
 ---
 
-# 🚀 Installation & Setup
+# 🚀 Installation Guide
 
-## Step 1 — Get the Project Files
+## Step 1 — Clone the Repository
 
-Clone the project from GitHub:
+If your project is available on GitHub:
 
 ```bash
-git clone <YOUR-GITHUB-REPOSITORY-URL>
+git clone YOUR_GITHUB_REPOSITORY_URL
 ```
 
-Move into the project directory:
+Example:
+
+```bash
+git clone https://github.com/yourusername/Vedic-Maths.git
+```
+
+Move into the project:
 
 ```bash
 cd Vedic-Maths
 ```
 
-Or, if you already have the project folder, simply open a terminal inside the project directory.
+If you already have the project folder, simply open the terminal inside the project directory.
 
 ---
 
-# Step 2 — Create a Virtual Environment
-
-Creating a virtual environment is recommended.
+# Step 2 — Create a Python Virtual Environment
 
 ### Windows
 
@@ -179,91 +186,147 @@ Activate it:
 venv\Scripts\activate
 ```
 
-### Linux / macOS
+After activation, you should see something similar to:
+
+```text
+(venv) C:\Vedic-Maths>
+```
+
+### Linux / Ubuntu / macOS
 
 ```bash
 python3 -m venv venv
 ```
 
-Activate it:
+Activate:
 
 ```bash
 source venv/bin/activate
 ```
 
-After activation, you should see something similar to:
+---
+
+# Step 3 — Upgrade pip
+
+Run:
+
+```bash
+python -m pip install --upgrade pip
+```
+
+---
+
+# Step 4 — Install Python Dependencies
+
+Create a file named:
 
 ```text
-(venv)
+requirements.txt
 ```
 
-in your terminal.
+Add:
+
+```text
+Flask
+mysql-connector-python
+Pillow
+google-generativeai
+python-dotenv
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+Werkzeug
+```
+
+Then install everything using:
+
+```bash
+pip install -r requirements.txt
+```
+
+This is the easiest installation method because all required Python packages are installed with one command.
 
 ---
 
-# Step 3 — Install Python Dependencies
+# Step 5 — Verify Python Packages
 
-Install Flask:
+Run:
 
 ```bash
-pip install flask
+pip list
 ```
 
-Install MySQL connector:
+You should see packages including:
 
-```bash
-pip install mysql-connector-python
-```
-
-Install Werkzeug:
-
-```bash
-pip install werkzeug
-```
-
-Install python-dotenv:
-
-```bash
-pip install python-dotenv
-```
-
-Install Google Generative AI:
-
-```bash
-pip install google-generativeai
-```
-
-Install Pillow:
-
-```bash
-pip install Pillow
-```
-
-### Or install everything together
-
-You can install all required packages with:
-
-```bash
-pip install flask mysql-connector-python werkzeug python-dotenv google-generativeai Pillow
+```text
+Flask
+mysql-connector-python
+Pillow
+google-generativeai
+python-dotenv
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+Werkzeug
 ```
 
 ---
 
-# Step 4 — MySQL Database Setup
+# 🗄️ MySQL Database Setup
+
+## Step 6 — Start MySQL
+
+Make sure MySQL Server is running.
+
+### Windows
 
 Open:
 
-* MySQL Workbench
-* phpMyAdmin
-* MySQL command line
+```text
+Services
+```
 
-Create the database:
+Find:
+
+```text
+MySQL
+```
+
+and make sure the service is running.
+
+You can also use MySQL Workbench.
+
+### Ubuntu
+
+```bash
+sudo systemctl start mysql
+```
+
+Check status:
+
+```bash
+sudo systemctl status mysql
+```
+
+---
+
+# Step 7 — Create the Database
+
+Open MySQL:
+
+```bash
+mysql -u root -p
+```
+
+Enter your MySQL password.
+
+Then create the database:
 
 ```sql
 CREATE DATABASE vedic_math;
 ```
 
-Select the database:
+Select it:
 
 ```sql
 USE vedic_math;
@@ -271,205 +334,50 @@ USE vedic_math;
 
 ---
 
-# Step 5 — Create the Students Table
+# Step 8 — Import the Database
 
-Run:
-
-```sql
-CREATE TABLE students (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    profile_pic VARCHAR(255) DEFAULT 'default.png',
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    last_active_date DATE NULL,
-    current_streak INT NOT NULL DEFAULT 0
-);
-```
-
-This table stores student registration, login, profile, and streak information.
-
----
-
-# Step 6 — Create the Quizzes Table
-
-Run:
-
-```sql
-CREATE TABLE quizzes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description VARCHAR(255),
-    total_questions INT DEFAULT 0,
-    is_active TINYINT(1) DEFAULT 1,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-Insert the default quiz:
-
-```sql
-INSERT INTO quizzes (id, title)
-VALUES (1, 'Vedic Mathematics Challenge');
-```
-
-The application uses `quiz_id = 1` for the main Vedic Mathematics quiz.
-
----
-
-# Step 7 — Create the Quiz Attempts Table
-
-Run:
-
-```sql
-CREATE TABLE quiz_attempts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT NOT NULL,
-    quiz_id INT NOT NULL,
-    current_question INT DEFAULT 1,
-    total_questions INT DEFAULT 0,
-    attempted_questions INT DEFAULT 0,
-    correct_answers INT DEFAULT 0,
-    wrong_answers INT DEFAULT 0,
-    progress_percentage DECIMAL(5,2) DEFAULT 0,
-    status VARCHAR(20) DEFAULT 'in_progress',
-    started_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (student_id)
-        REFERENCES students(id)
-        ON DELETE CASCADE,
-
-    FOREIGN KEY (quiz_id)
-        REFERENCES quizzes(id)
-        ON DELETE CASCADE
-);
-```
-
-This table stores quiz progress and results.
-
----
-
-# Step 8 — Create the Student Answers Table
-
-This table stores individual answers given by students during the quiz.
-
-```sql
-CREATE TABLE student_answers (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT NOT NULL,
-    quiz_id INT NOT NULL,
-    question_index INT NOT NULL,
-    selected_option VARCHAR(255) NOT NULL,
-    is_correct TINYINT(1) NOT NULL DEFAULT 0,
-    answered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-
-    UNIQUE KEY unique_student_quiz_question
-        (student_id, quiz_id, question_index),
-
-    FOREIGN KEY (student_id)
-        REFERENCES students(id)
-        ON DELETE CASCADE
-);
-```
-
-The unique key prevents duplicate answers for the same student, quiz, and question.
-
----
-
-# Step 9 — Create the Practice Answers Table
-
-This table stores individual practice-question results.
-
-```sql
-CREATE TABLE practice_answers (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT NOT NULL,
-    sutra_id INT NOT NULL,
-    question_id INT NOT NULL,
-    user_answer VARCHAR(255),
-    correct_answer VARCHAR(255),
-    is_correct TINYINT(1) NOT NULL DEFAULT 0,
-    answered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (student_id)
-        REFERENCES students(id)
-        ON DELETE CASCADE
-);
-```
-
----
-
-# ⚠️ Old `practice_results` Table
-
-An older table named:
+If your project contains:
 
 ```text
-practice_results
+database/vedic_math.sql
 ```
 
-may exist from an earlier version of the project.
+you can import it using:
 
-The current application uses:
+```bash
+mysql -u root -p vedic_math < database/vedic_math.sql
+```
+
+Or use MySQL Workbench:
 
 ```text
-practice_answers
-```
-
-instead.
-
-Therefore, `practice_results` can be ignored.
-
-If you are sure that the old table is not required, it can be removed:
-
-```sql
-DROP TABLE practice_results;
+File
+→ Open SQL Script
+→ Select vedic_math.sql
+→ Execute
 ```
 
 ---
 
-# Step 10 — Verify Database Tables
+# 🧑‍🎓 Student Database
 
-Run:
+The application uses the `students` table for registered users.
 
-```sql
-SHOW TABLES;
+The application checks whether an email already exists before registering a new student and then stores the student's name, email and password.
+
+The application also stores the logged-in user's database ID in the Flask session:
+
+```python
+session["student_id"] = student["id"]
 ```
 
-You should see tables similar to:
-
-```text
-students
-quizzes
-quiz_attempts
-student_answers
-practice_answers
-```
-
-Check the quiz:
-
-```sql
-SELECT * FROM quizzes;
-```
-
-You should have:
-
-```text
-1 | Vedic Mathematics Challenge
-```
+This allows different users to see their own dashboard and progress.
 
 ---
 
-# Step 11 — Configure Database Connection
+# 🔐 Database Configuration
 
-Open:
-
-```text
-app.py
-```
-
-Find the database configuration:
+The current application contains this database configuration:
 
 ```python
 DB_CONFIG = {
@@ -480,32 +388,15 @@ DB_CONFIG = {
 }
 ```
 
-Update the values according to your MySQL configuration.
-
-For example:
+The database connection is created using:
 
 ```python
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "your_mysql_password",
-    "database": "vedic_math"
-}
+mysql.connector.connect(**DB_CONFIG)
 ```
 
-### If MySQL root has no password
+## Recommended Configuration
 
-Use:
-
-```python
-"password": ""
-```
-
----
-
-# 🔐 Optional — Using `.env`
-
-If your project uses `python-dotenv`, you can keep configuration in a `.env` file.
+For better security, use environment variables instead of putting passwords directly inside `app.py`.
 
 Create:
 
@@ -518,496 +409,91 @@ Example:
 ```env
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=
+DB_PASSWORD=your_mysql_password
 DB_NAME=vedic_math
+
+GEMINI_API_KEY=your_gemini_api_key
+
+FLASK_SECRET_KEY=your_secret_key
 ```
 
-If your application also uses Google Generative AI, you can add your API key:
+Then update your Python application to read these values from `.env`.
+
+---
+
+# 🤖 Gemini AI Setup
+
+The application uses Google's Gemini API for the AI Maths Assistant.
+
+The application loads:
+
+```python
+GEMINI_API_KEY
+```
+
+from the environment and configures the Gemini model.
+
+## Step 1 — Get Gemini API Key
+
+Create a Gemini API key from Google's Gemini developer platform.
+
+Do **not** put the API key directly into GitHub.
+
+Add it to:
+
+```text
+.env
+```
+
+Example:
 
 ```env
 GEMINI_API_KEY=your_api_key_here
 ```
 
-**Do not upload `.env` to GitHub.**
+---
 
-Add this to `.gitignore`:
+# 🔑 Google Login Setup
 
-```text
-.env
-venv/
-__pycache__/
-static/uploads/
-```
+The application supports Google Login using Google OAuth.
+
+The application verifies the Google credential and checks whether the email has been verified by Google.
+
+You need to configure a Google OAuth Client ID.
+
+Your application currently contains a Google Client ID configuration.
+
+For production deployment, keep OAuth configuration in environment variables rather than hard-coding credentials.
 
 ---
 
-# ▶️ Step 12 — Run the Application
+# 📂 Upload Folder
 
-From the project directory:
-
-```bash
-python app.py
-```
-
-You should see something similar to:
-
-```text
- * Running on http://127.0.0.1:5000
-```
-
-Open your browser:
-
-```text
-http://127.0.0.1:5000
-```
-
----
-
-# 🌐 Application Routes
-
-| Route            | Purpose              |
-| ---------------- | -------------------- |
-| `/`              | Home page            |
-| `/register`      | Student registration |
-| `/login`         | Student login        |
-| `/logout`        | Logout               |
-| `/dashboard`     | Student dashboard    |
-| `/sutras`        | View all 16 Sutras   |
-| `/sutra/<id>`    | Sutra details        |
-| `/practice/<id>` | Practice a Sutra     |
-| `/quiz`          | 55-question quiz     |
-| `/profile`       | Student profile      |
-| `/ai-scan`       | AI Scan page         |
-| `/speed-test`    | Speed Test page      |
-| `/contact`       | Contact page         |
-
----
-
-# 📖 16 Vedic Mathematics Sutras
-
-The platform provides learning and practice for the 16 major Vedic Mathematics Sutras.
-
-Students can:
-
-1. Browse the Sutras
-2. Read explanations
-3. View examples
-4. Learn step-by-step solving methods
-5. Practice questions
-6. Track their accuracy
-
----
-
-# 📝 55-Question Quiz
-
-The application includes a:
-
-```text
-55-Question Vedic Mathematics Challenge
-```
-
-Quiz features include:
-
-* Multiple-choice questions
-* Live progress tracking
-* Automatic answer saving
-* Refresh-safe progress
-* Correct/wrong answer tracking
-* Progress percentage
-* Quiz attempt tracking
-
-When a student answers a question, the answer can be saved to the database so the student can continue later.
-
----
-
-# 📊 Dashboard
-
-The dashboard provides an overview of the student's learning progress.
-
-It can display:
-
-* Total practice questions
-* Correct answers
-* Wrong answers
-* Accuracy percentage
-* Sutras attempted
-* Sutras mastered
-* Quiz progress
-* Current learning streak
-
----
-
-# 👤 Profile
-
-The profile page combines statistics from:
-
-```text
-Practice + Quiz
-```
-
-Students can:
-
-* View their name
-* View email
-* Upload profile photo
-* Edit profile name
-* View total questions
-* View correct answers
-* View accuracy
-* View current streak
-* View learning progress
-
----
-
-# 🔥 Daily Learning Streak
-
-The application tracks the student's daily activity.
-
-A streak can be updated when the student submits:
-
-* A quiz answer
-* A practice answer
-
-The database uses:
-
-```text
-last_active_date
-current_streak
-```
-
-to track the student's learning streak.
-
----
-
-# 🏆 Sutra Mastery
-
-A Sutra is considered **mastered** when the student satisfies the configured mastery requirements.
-
-The default configuration is:
-
-```python
-MASTERY_THRESHOLD = 80
-MIN_ATTEMPTS_FOR_MASTERY = 5
-```
-
-This means a student needs:
-
-```text
-Minimum 5 attempts
-+
-80% or higher accuracy
-```
-
-to have a Sutra counted as mastered.
-
-These values can be changed in `app.py`.
-
----
-
-# 🤖 AI Scan
-
-The project includes an AI Scan page as a placeholder for future development.
-
-The planned functionality can include:
-
-* Uploading a mathematical problem
-* Image recognition
-* Mathematical problem detection
-* Step-by-step solution generation
-* Vedic Mathematics technique suggestions
-
-The project includes the Google Generative AI package:
-
-```bash
-pip install google-generativeai
-```
-
-For production use, configure the required API key through environment variables.
-
----
-
-# ⚡ Speed Test
-
-The Speed Test page is intended to help students measure their calculation speed.
-
-Possible future features include:
-
-* Timed questions
-* Questions per minute
-* Average solving time
-* Accuracy percentage
-* Difficulty levels
-* Personal best score
-* Speed comparison
-
----
-
-# 🖼️ Pillow
-
-Pillow is installed for image-related functionality such as profile photo processing.
-
-Install it using:
-
-```bash
-pip install Pillow
-```
-
-It can be used for:
-
-* Image validation
-* Image resizing
-* Image processing
-* Profile photo handling
-
----
-
-# 🔧 Common Issues
-
-## 1. `1054 Unknown column`
-
-### Cause
-
-The database table is missing a column expected by the Flask application.
-
-### Solution
-
-Check the table structure:
-
-```sql
-DESCRIBE students;
-```
-
-or:
-
-```sql
-DESCRIBE quiz_attempts;
-```
-
-Make sure all required columns exist.
-
----
-
-# 2. `No database selected`
-
-### Cause
-
-MySQL has not selected the `vedic_math` database.
-
-### Solution
-
-Run:
-
-```sql
-USE vedic_math;
-```
-
-Or select:
-
-```text
-vedic_math
-```
-
-from the MySQL Workbench schema panel.
-
----
-
-# 3. `1452 Foreign Key Constraint Fails`
-
-Example:
-
-```text
-Cannot add or update a child row:
-a foreign key constraint fails
-```
-
-### Cause
-
-The referenced record does not exist.
-
-For example, if the application tries to create a quiz attempt using:
-
-```text
-quiz_id = 1
-```
-
-but quiz ID 1 does not exist.
-
-### Solution
-
-Check:
-
-```sql
-SELECT * FROM quizzes;
-```
-
-If the quiz is missing:
-
-```sql
-INSERT INTO quizzes (id, title)
-VALUES (1, 'Vedic Mathematics Challenge');
-```
-
----
-
-# 4. `BuildError: Could not build url for endpoint`
-
-### Cause
-
-A Flask route is:
-
-* Missing
-* Misspelled
-* Incorrectly named
-* Incorrectly referenced in a template
-
-### Solution
-
-Check:
-
-```python
-@app.route(...)
-```
-
-and compare the endpoint name with:
-
-```python
-url_for(...)
-```
-
----
-
-# 5. `ERR_CONNECTION_RESET`
-
-### Cause
-
-The Flask server may have crashed.
-
-### Solution
-
-Check the terminal for the Python traceback.
-
-Then restart:
-
-```bash
-python app.py
-```
-
----
-
-# 6. MySQL Access Denied
-
-Example:
-
-```text
-Access denied for user 'root'
-```
-
-### Cause
-
-The MySQL username or password is incorrect.
-
-### Solution
-
-Check your:
-
-```python
-DB_CONFIG
-```
-
-Example:
-
-```python
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "your_password",
-    "database": "vedic_math"
-}
-```
-
----
-
-# 7. `ModuleNotFoundError`
-
-Example:
-
-```text
-ModuleNotFoundError: No module named 'flask'
-```
-
-Install the required dependency:
-
-```bash
-pip install flask
-```
-
-For all dependencies:
-
-```bash
-pip install flask mysql-connector-python werkzeug python-dotenv google-generativeai Pillow
-```
-
----
-
-# 8. Profile Image Not Uploading
-
-Make sure the upload directory exists:
+The application automatically creates:
 
 ```text
 static/uploads/
 ```
 
-If it doesn't exist, create it:
+The application supports:
 
-```bash
-mkdir static/uploads
+```text
+PNG
+JPG
+JPEG
+GIF
+WEBP
 ```
 
-Also make sure the Flask application has permission to write to the directory.
+for profile pictures.
+
+If the folder does not exist, the application creates it automatically.
 
 ---
 
-# 📦 Requirements File
+# ▶️ Run the Application
 
-It is recommended to create a:
-
-```text
-requirements.txt
-```
-
-file.
-
-Example:
-
-```text
-Flask
-mysql-connector-python
-Werkzeug
-python-dotenv
-google-generativeai
-Pillow
-```
-
-Then all dependencies can be installed using:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# 🔄 Recommended Installation Workflow
-
-For a fresh installation, the easiest process is:
-
-```bash
-git clone <YOUR-GITHUB-REPOSITORY-URL>
-cd Vedic-Maths
-
-python -m venv venv
-```
-
-Activate the environment.
+Activate your virtual environment first.
 
 ### Windows
 
@@ -1021,24 +507,602 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-Install dependencies:
+Then run:
+
+```bash
+python app.py
+```
+
+The application runs on:
+
+```text
+http://127.0.0.1:5000
+```
+
+The current application configuration uses Flask port `5000` and host `127.0.0.1`.
+
+Open your browser and visit:
+
+```text
+http://127.0.0.1:5000
+```
+
+---
+
+# 🌐 Main Application Pages
+
+| URL              | Purpose              |
+| ---------------- | -------------------- |
+| `/`              | Home page            |
+| `/register`      | Student registration |
+| `/login`         | Student login        |
+| `/logout`        | Logout               |
+| `/dashboard`     | Student dashboard    |
+| `/profile`       | Student profile      |
+| `/edit-profile`  | Edit profile         |
+| `/sutras`        | All 16 Sutras        |
+| `/sutra/<id>`    | Individual Sutra     |
+| `/practice`      | Practice selection   |
+| `/practice/<id>` | Sutra practice       |
+| `/quiz`          | 55-question quiz     |
+| `/ai-scan`       | AI Maths Assistant   |
+| `/leaderboard`   | Student leaderboard  |
+| `/certificates`  | Achievements         |
+| `/speed-test`    | Speed test           |
+| `/contact`       | Contact page         |
+
+---
+
+# 👤 How a New User Uses the Application
+
+## 1. Open the Website
+
+Go to:
+
+```text
+http://127.0.0.1:5000
+```
+
+---
+
+## 2. Register
+
+Click:
+
+```text
+Register
+```
+
+Enter:
+
+```text
+Name
+Email
+Password
+```
+
+Then click:
+
+```text
+Register
+```
+
+The user will be stored in the MySQL `students` table.
+
+---
+
+## 3. Login
+
+After registration:
+
+```text
+Login
+```
+
+Enter:
+
+```text
+Email
+Password
+```
+
+The application verifies the credentials.
+
+After successful login, the user's unique database ID is stored in the session.
+
+---
+
+# 📊 Dashboard
+
+After login, the user is redirected to:
+
+```text
+/dashboard
+```
+
+The dashboard displays information for the currently logged-in student.
+
+The application retrieves the student using:
+
+```sql
+SELECT id, name, email, profile_pic
+FROM students
+WHERE id = %s
+```
+
+This prevents one user's dashboard information from being displayed to another user.
+
+---
+
+# 📚 Learn Vedic Sutras
+
+Go to:
+
+```text
+Sutras
+```
+
+The application contains:
+
+```text
+1. Ekadhikena Purvena
+2. Nikhilam Navatashcaramam Dashatah
+3. Urdhva Tiryagbhyam
+4. Paravartya Yojayet
+5. Shunyam Saamyasamuccaye
+6. Anurupyena
+7. Sankalana Vyavakalanabhyam
+8. Puranapuranabhyam
+9. Chalana Kalanabhyam
+10. Yavadunam
+11. Vyastisamanstih
+12. Shesanyankena Charamena
+13. Sopantyadvayamantyam
+14. Ekanyunena Purvena
+15. Gunitasamuccayah
+16. Gunakasamuccayah
+```
+
+Each Sutra has an explanation, rule and example.
+
+---
+
+# ✏️ Practice
+
+Go to:
+
+```text
+/practice
+```
+
+Select any Sutra.
+
+The application generates:
+
+```text
+20 Questions
+```
+
+for each Sutra.
+
+When a student submits an answer:
+
+1. The answer is checked.
+2. The correct answer is calculated.
+3. Step-by-step solution is displayed.
+4. The result is stored against the logged-in student's ID.
+5. The student's streak can be updated.
+
+Practice answers are saved using the current session's `student_id`.
+
+---
+
+# 📝 Quiz
+
+Go to:
+
+```text
+/quiz
+```
+
+The application provides a:
+
+```text
+55-question quiz
+```
+
+Quiz progress includes:
+
+```text
+Total Questions
+Attempted Questions
+Correct Answers
+Wrong Answers
+Progress Percentage
+Current Question
+Status
+```
+
+The quiz stores progress against the logged-in student's ID.
+
+---
+
+# 🤖 AI Maths Assistant
+
+Go to:
+
+```text
+/ai-scan
+```
+
+You can provide:
+
+```text
+Mathematical question
+```
+
+or:
+
+```text
+Image of a mathematical problem
+```
+
+The application can also process camera image data.
+
+The AI is instructed to solve mathematical problems step-by-step using Vedic Mathematics techniques where applicable.
+
+---
+
+# 🏆 Leaderboard
+
+Go to:
+
+```text
+/leaderboard
+```
+
+The leaderboard calculates student performance using:
+
+```text
+Correct Answers
+Total Attempts
+Accuracy
+Current Streak
+```
+
+It can display up to the top 50 students.
+
+---
+
+# 🏅 Certificates & Achievements
+
+Go to:
+
+```text
+/certificates
+```
+
+Achievement levels include:
+
+| Progress | Achievement          |
+| -------: | -------------------- |
+|      25% | 🥉 Bronze Achiever   |
+|      50% | 🥈 Silver Achiever   |
+|      75% | 🥇 Gold Achiever     |
+|     100% | 🏆 Vedic Math Master |
+
+The application calculates achievement progress from the number of mastered Sutras.
+
+---
+
+# 👤 Profile
+
+After login, users can open:
+
+```text
+/profile
+```
+
+The profile can show:
+
+```text
+Name
+Email
+Profile Picture
+Problems Solved
+Accuracy
+Sutras Mastered
+Overall Progress
+Daily Streak
+```
+
+The profile statistics are calculated specifically for the logged-in student's ID.
+
+---
+
+# 🖼️ Edit Profile
+
+Go to:
+
+```text
+/edit-profile
+```
+
+The user can:
+
+* Change name
+* Upload profile picture
+* Keep existing profile picture
+* Save profile changes
+
+Supported image formats:
+
+```text
+PNG
+JPG
+JPEG
+GIF
+WEBP
+```
+
+The uploaded profile image is associated with the logged-in student's ID.
+
+---
+
+# 🚪 Logout
+
+Click:
+
+```text
+Logout
+```
+
+or visit:
+
+```text
+/logout
+```
+
+The application clears the current Flask session and returns the user to the home page.
+
+---
+
+# 🔒 User Data Isolation
+
+Each registered student has a unique:
+
+```text
+student_id
+```
+
+When a user logs in, the application stores:
+
+```python
+session["student_id"] = student["id"]
+```
+
+Every protected page uses this ID to retrieve the correct user's data.
+
+For example:
+
+```sql
+WHERE id = %s
+```
+
+and:
+
+```sql
+WHERE student_id = %s
+```
+
+are used throughout the application.
+
+This means:
+
+```text
+User A
+   ↓
+student_id = 1
+   ↓
+Only User A's data
+
+User B
+   ↓
+student_id = 2
+   ↓
+Only User B's data
+```
+
+This is an important part of the application's multi-user functionality.
+
+---
+
+# ⚠️ Common Errors
+
+## Error 1 — `ModuleNotFoundError`
+
+Example:
+
+```text
+ModuleNotFoundError: No module named 'flask'
+```
+
+Solution:
 
 ```bash
 pip install -r requirements.txt
 ```
 
+Or:
+
+```bash
+pip install Flask
+```
+
+---
+
+## Error 2 — MySQL Connection Error
+
+Example:
+
+```text
+mysql.connector.errors.InterfaceError
+```
+
+Check:
+
+1. MySQL is running.
+2. Database name is correct.
+3. Username is correct.
+4. Password is correct.
+5. MySQL is running on the expected host/port.
+
+Check database:
+
+```sql
+SHOW DATABASES;
+```
+
+You should see:
+
+```text
+vedic_math
+```
+
+---
+
+# ❌ Error 3 — `Unknown database 'vedic_math'`
+
 Create the database:
 
 ```sql
 CREATE DATABASE vedic_math;
-USE vedic_math;
 ```
 
-Run all required table creation queries.
+Then import your SQL file.
 
-Configure `app.py` or `.env`.
+---
 
-Finally:
+# ❌ Error 4 — `Access denied for user 'root'`
+
+Check your MySQL username and password.
+
+Test:
+
+```bash
+mysql -u root -p
+```
+
+If MySQL asks for a password, enter the correct password.
+
+Then update your `.env`:
+
+```env
+DB_USER=root
+DB_PASSWORD=your_password
+```
+
+---
+
+# ❌ Error 5 — Gemini API Error
+
+Check that:
+
+```text
+GEMINI_API_KEY
+```
+
+exists in your `.env`.
+
+Example:
+
+```env
+GEMINI_API_KEY=your_api_key
+```
+
+Restart the application after changing `.env`.
+
+---
+
+# ❌ Error 6 — Google Login Not Working
+
+Check:
+
+* Google Client ID
+* Authorized JavaScript origins
+* Authorized redirect/origin configuration
+* Google OAuth configuration
+* Browser console errors
+
+Also make sure the Google email is verified.
+
+The application explicitly checks Google's `email_verified` value.
+
+---
+
+# ❌ Error 7 — Profile Image Not Uploading
+
+Check:
+
+```text
+static/uploads/
+```
+
+Make sure the directory exists.
+
+The application creates this directory automatically, but it must be writable by the application process.
+
+Use only:
+
+```text
+PNG
+JPG
+JPEG
+GIF
+WEBP
+```
+
+---
+
+# ❌ Error 8 — User A Sees User B's Data
+
+Make sure the application uses:
+
+```python
+session["student_id"]
+```
+
+after login.
+
+Do not use hard-coded student information.
+
+Correct approach:
+
+```python
+student_id = session["student_id"]
+```
+
+Then query:
+
+```sql
+WHERE student_id = %s
+```
+
+or:
+
+```sql
+WHERE id = %s
+```
+
+depending on the table.
+
+The current application already follows this session-based pattern on dashboard and profile routes.
+
+---
+
+# 🧪 Test the Application
+
+After starting the application:
 
 ```bash
 python app.py
@@ -1050,218 +1114,454 @@ Open:
 http://127.0.0.1:5000
 ```
 
----
-
-# 🔒 Security Notes
-
-For development, a local MySQL configuration may look like:
-
-```python
-"password": ""
-```
-
-However, for production:
-
-* Never hard-code database passwords
-* Never hard-code API keys
-* Use environment variables
-* Keep `.env` out of Git
-* Use strong Flask secret keys
-* Validate uploaded files
-* Restrict upload file types
-* Use HTTPS in production
-
-Example `.gitignore`:
+Test the following flow:
 
 ```text
-.env
+Home
+ ↓
+Register
+ ↓
+Login
+ ↓
+Dashboard
+ ↓
+Sutras
+ ↓
+Practice
+ ↓
+Submit Answer
+ ↓
+Profile
+ ↓
+Leaderboard
+ ↓
+Certificates
+ ↓
+Logout
+```
+
+Also test:
+
+```text
+Google Login
+AI Scan
+Profile Image Upload
+Quiz
+```
+
+---
+
+# 👥 Multi-User Testing
+
+To verify that user data is separated correctly:
+
+### Test User 1
+
+Register:
+
+```text
+Name: Rahul
+Email: rahul@example.com
+Password: 123456
+```
+
+Login as Rahul and complete some practice questions.
+
+Logout.
+
+### Test User 2
+
+Register:
+
+```text
+Name: Amit
+Email: amit@example.com
+Password: 123456
+```
+
+Login as Amit.
+
+Amit should have his own:
+
+```text
+Dashboard
+Practice History
+Quiz Progress
+Accuracy
+Streak
+Profile
+```
+
+Rahul's practice history should not appear in Amit's profile.
+
+---
+
+# 🛑 Before Production Deployment
+
+Do **not** use the development configuration directly for a public website.
+
+The current application runs Flask with:
+
+```python
+debug=True
+host="127.0.0.1"
+port=5000
+```
+
+For production:
+
+* Set `DEBUG=False`
+* Use a strong Flask secret key
+* Store secrets in environment variables
+* Never commit `.env`
+* Use hashed passwords
+* Use HTTPS
+* Configure a production WSGI server such as Gunicorn
+* Use a production MySQL user instead of root
+* Restrict database access
+* Configure Google OAuth production URLs
+* Protect uploaded files
+* Configure proper logging
+
+---
+
+# 🔐 `.gitignore`
+
+Create:
+
+```text
+.gitignore
+```
+
+Add:
+
+```text
 venv/
+.env
 __pycache__/
 *.pyc
 static/uploads/*
 ```
 
----
-
-# 🧪 Testing the Application
-
-After starting the application, test the following flow:
-
-### 1. Registration
-
-Open:
+Do not upload:
 
 ```text
-/register
+.env
 ```
 
-Create a new account.
-
-### 2. Login
-
-Open:
-
-```text
-/login
-```
-
-Log in using the newly created account.
-
-### 3. Dashboard
-
-Open:
-
-```text
-/dashboard
-```
-
-Verify that the dashboard displays the logged-in student's information.
-
-### 4. Sutras
-
-Open:
-
-```text
-/sutras
-```
-
-Verify that all 16 Sutras are displayed.
-
-### 5. Practice
-
-Select a Sutra and answer practice questions.
-
-Verify that practice answers are saved.
-
-### 6. Quiz
-
-Open:
-
-```text
-/quiz
-```
-
-Answer questions and refresh the page.
-
-Verify that the saved progress is restored.
-
-### 7. Profile
-
-Open:
-
-```text
-/profile
-```
-
-Verify:
-
-* Student information
-* Practice statistics
-* Quiz statistics
-* Accuracy
-* Streak
-* Profile photo
+to GitHub.
 
 ---
 
-# 📈 Future Development
+# 📦 Complete Installation — Quick Version
 
-Possible future improvements:
+For a new computer, the basic commands are:
 
-* 🤖 Fully functional AI Math Scanner
-* ⚡ Advanced Speed Test
-* 🏆 Leaderboard
-* 🥇 Student achievements and badges
-* 📊 Advanced performance analytics
-* 📚 More practice questions
-* 🎯 Difficulty-based questions
-* 🔔 Learning reminders
-* 📱 Fully responsive mobile application
-* 🌐 Deploy application to AWS
-* 🔐 Improved authentication
-* 🧪 Automated testing
-* 🐳 Docker support
-* ⚙️ CI/CD pipeline using Jenkins
-* ☁️ Cloud database integration
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd Vedic-Maths
+
+python -m venv venv
+
+venv\Scripts\activate
+
+python -m pip install --upgrade pip
+
+pip install -r requirements.txt
+
+python app.py
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5000
+```
 
 ---
 
-# 👨‍💻 Development Notes
+# 🐧 Ubuntu Installation
 
-Quiz correctness is currently handled on the client side in:
+Install Python:
 
-```text
-quiz.js
+```bash
+sudo apt update
+sudo apt install python3 python3-pip python3-venv
 ```
 
-because the quiz questions are stored in JavaScript rather than in the database.
+Install MySQL:
 
-This is acceptable for learning/demo purposes, but it is **not tamper-proof**.
+```bash
+sudo apt install mysql-server
+```
 
-For a production application, questions and correct answers should ideally be stored and validated on the server side.
+Start MySQL:
+
+```bash
+sudo systemctl start mysql
+```
+
+Clone project:
+
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd Vedic-Maths
+```
+
+Create environment:
+
+```bash
+python3 -m venv venv
+```
+
+Activate:
+
+```bash
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run:
+
+```bash
+python app.py
+```
 
 ---
 
-# 📌 Project Summary
+# 🪟 Windows Installation
 
-**Vedic Mathematics Learning Platform** provides an interactive environment for students to learn and practice Vedic Mathematics.
-
-The platform combines:
+Install:
 
 ```text
-Learning
-   ↓
-Practice
-   ↓
-Quiz
-   ↓
-Performance Tracking
-   ↓
-Streaks
-   ↓
-Sutra Mastery
-```
-
-The application uses:
-
-```text
-Frontend
-HTML + CSS + Bootstrap + JavaScript
-
-Backend
-Python + Flask
-
-Database
+Python
 MySQL
+Git
+```
 
-Additional Libraries
-python-dotenv
-Google Generative AI
-Pillow
+Then:
+
+```powershell
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd Vedic-Maths
+```
+
+Create virtual environment:
+
+```powershell
+python -m venv venv
+```
+
+Activate:
+
+```powershell
+venv\Scripts\activate
+```
+
+Install dependencies:
+
+```powershell
+pip install -r requirements.txt
+```
+
+Run:
+
+```powershell
+python app.py
+```
+
+Open:
+
+```text
+http://127.0.0.1:5000
+```
+
+---
+
+# 📌 Important Notes
+
+### Database
+
+The application expects:
+
+```text
+Database: vedic_math
+```
+
+### Python
+
+Use a virtual environment:
+
+```bash
+python -m venv venv
+```
+
+### Dependencies
+
+Install:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Application
+
+Run:
+
+```bash
+python app.py
+```
+
+### Website
+
+Open:
+
+```text
+http://127.0.0.1:5000
+```
+
+### AI
+
+Configure:
+
+```text
+GEMINI_API_KEY
+```
+
+### Google Login
+
+Configure your Google OAuth Client ID and allowed origins.
+
+---
+
+# 🎯 User Journey
+
+```text
+                    VEDIC MATHS
+                         │
+                         ▼
+                       HOME
+                         │
+              ┌──────────┴──────────┐
+              ▼                     ▼
+          REGISTER                 LOGIN
+              │                     │
+              └──────────┬──────────┘
+                         ▼
+                     DASHBOARD
+                         │
+       ┌─────────┬───────┼────────┬──────────┐
+       ▼         ▼       ▼        ▼          ▼
+     SUTRAS   PRACTICE  QUIZ    AI SCAN   PROFILE
+       │         │       │        │          │
+       └─────────┴───────┴────────┴──────────┘
+                         │
+                         ▼
+                  PROGRESS TRACKING
+                         │
+              ┌──────────┴──────────┐
+              ▼                     ▼
+         LEADERBOARD           CERTIFICATES
+```
+
+---
+
+# ❤️ Project Purpose
+
+The goal of this application is to make **Vedic Mathematics easy, interactive and accessible** for students.
+
+Students can:
+
+* Learn
+* Practice
+* Solve
+* Get instant explanations
+* Track their progress
+* Compete on the leaderboard
+* Earn achievements
+
+all from one platform.
+
+---
+
+# 👨‍💻 Developer
+
+**Vedic Mathematics Learning Platform**
+
+Built using:
+
+```text
+Python
+Flask
+MySQL
+HTML
+CSS
+JavaScript
+Google Gemini AI
+Google OAuth
 ```
 
 ---
 
 # 📄 License
 
-This project is developed for educational and learning purposes.
-
-You may modify and improve the project according to your requirements.
+This project can be used for educational and learning purposes.
 
 ---
 
-# 🙏 Acknowledgement
+# ⭐ Final Setup Checklist
 
-This project was developed as an educational project to demonstrate:
+Before sharing the application with users, verify:
 
-* Python Flask development
-* MySQL database integration
-* User authentication
-* CRUD operations
-* Quiz management
-* Progress tracking
-* Practice analytics
-* File uploads
-* JavaScript interaction
-* AI integration concepts
-* Web application development
+* [ ] Python installed
+* [ ] MySQL installed
+* [ ] MySQL service running
+* [ ] `vedic_math` database created
+* [ ] Database tables imported
+* [ ] Virtual environment created
+* [ ] Virtual environment activated
+* [ ] `requirements.txt` installed
+* [ ] `.env` configured
+* [ ] Gemini API key configured
+* [ ] Google Login configured
+* [ ] `static/uploads/` available
+* [ ] Application starts without errors
+* [ ] Registration works
+* [ ] Login works
+* [ ] Logout works
+* [ ] Dashboard works
+* [ ] Practice works
+* [ ] Quiz works
+* [ ] AI Scan works
+* [ ] Profile works
+* [ ] Leaderboard works
+* [ ] Certificates work
+* [ ] Multiple users see separate data
+
+---
+
+## 🚀 Start the Application
+
+```bash
+# Activate virtual environment
+venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start Flask application
+python app.py
+```
+
+Open:
+
+```text
+http://127.0.0.1:5000
+```
+
+**Your Vedic Mathematics Learning Platform is ready to use! 🎉**
