@@ -228,6 +228,7 @@ Add:
 
 ```text
 Flask
+Flask-Mail
 mysql-connector-python
 Pillow
 google-generativeai
