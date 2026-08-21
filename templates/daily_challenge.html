@@ -47,7 +47,18 @@
             <div class="dash-card challenge-question-card">
                 <h2 class="challenge-question-text">{{ question.q_text }}</h2>
                 <form method="POST">
-                    <input type="text" name="user_ans" placeholder="Your answer" required class="challenge-input">
+                    <input type="text" name="user_ans" placeholder="Your Answer"
+                            style="background: #1e1f3b;
+                                   border: 2px solid rgba(255,255,255,0.15);
+                                   border-radius: 12px;
+                                   color: #ffffff;
+                                   padding: 6px 20px;
+                                   font-size: 1.1rem;
+                                   width: 179px;
+                                   outline: none;
+                                   transition: all 0.3s ease;"
+                            onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 10px rgba(99,102,241,0.4)'"
+                            onblur="this.style.borderColor='rgba(255,255,255,0.15)'; this.style.boxShadow='none'">
                     <button type="submit" class="btn">Submit Answer →</button>
                 </form>
             </div>

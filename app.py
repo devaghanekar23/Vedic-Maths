@@ -1,16 +1,19 @@
 import os
 import base64
+import secrets
+import random
+import mysql.connector
 from io import BytesIO
 from PIL import Image
 import google.generativeai as genai
 from dotenv import load_dotenv
+from flask_mail import Mail, Message
 
 load_dotenv()
 
 from datetime import datetime, timedelta
 
-import random
-import mysql.connector
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask import make_response
 from google.oauth2 import id_token
@@ -48,6 +51,13 @@ GOOGLE_CLIENT_ID = "976524200976-9rkjn3etb9qgnvpp5vsvfo5v2uclqadb.apps.googleuse
 
 app = Flask(__name__)
 app.secret_key = "vedic-maths-secret-key-2026"
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+mail = Mail(app)
 
 
 # ============================================================
@@ -1031,6 +1041,87 @@ def google_login():
         if conn:
             conn.close()
 
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id FROM students WHERE email = %s", (email,))
+        student = cursor.fetchone()
+
+        if student:
+            # Token generate karo
+            token = secrets.token_urlsafe(32)
+            expiry = datetime.utcnow() + timedelta(hours=1)
+
+            # DB me save karo
+            cursor.execute("""
+                UPDATE students 
+                SET reset_token = %s, reset_token_expiry = %s 
+                WHERE email = %s
+            """, (token, expiry, email))
+            conn.commit()
+
+            # Reset link email karo
+            reset_link = url_for('reset_password', token=token, _external=True)
+            msg = Message(
+                subject="VedicMath - Password Reset",
+                sender=os.getenv("MAIL_USERNAME"),
+                recipients=[email]
+            )
+            msg.body = f"Password reset link (valid 1 hour):\n\n{reset_link}"
+            mail.send(msg)
+
+        cursor.close()
+        conn.close()
+
+        # Email exist kare ya na kare — same message dikho (security)
+        flash("If this email exists, a reset link has been sent.")
+        return redirect(url_for('forgot_password'))
+
+    return render_template("forgot_password.html")
+
+@app.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT id FROM students 
+        WHERE reset_token = %s AND reset_token_expiry > %s
+    """, (token, datetime.utcnow()))
+    student = cursor.fetchone()
+
+    if not student:
+        cursor.close()
+        conn.close()
+        flash("Reset link is invalid or expired.")
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        new_password = request.form.get("password", "").strip()
+
+        if len(new_password) < 6:
+            flash("Password must be at least 6 characters.")
+            return render_template("reset_password.html", token=token)
+
+        cursor.execute("""
+            UPDATE students 
+            SET password = %s, reset_token = NULL, reset_token_expiry = NULL 
+            WHERE id = %s
+        """, (new_password, student["id"]))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash("Password updated! Please login.")
+        return redirect(url_for('login'))
+
+    cursor.close()
+    conn.close()
+    return render_template("reset_password.html", token=token)
 
 @app.route("/logout")
 def logout():
@@ -1441,9 +1532,23 @@ def ai_scan():
             pil_image = Image.open(BytesIO(image_bytes))
 
         system_instruction = (
-            "You are a Vedic Mathematics tutor. Solve the given maths problem "
-            "step by step using Vedic Maths sutras where applicable. "
-            "Explain clearly and give the final answer at the end."
+            "You are a Vedic Mathematics tutor. Solve the given maths problem in a simple, clean format.\n\n"
+            "Rules:\n"
+            "- NO markdown, NO LaTeX, NO symbols like ** or $$ or ```\n"
+            "- Write in plain simple English\n"
+            "- Use this exact format:\n\n"
+            "Let's solve [problem] with a detailed explanation.\n"
+            "Step 1: [step title]\n"
+            "[explanation]\n"
+            "Step 2: [step title]\n"
+            "[explanation]\n"
+            "... and so on\n\n"
+            "Final Answer\n"
+            "[problem] = [answer]\n\n"
+            "Quick Vedic Math Trick\n"
+            "[one short alternative trick if applicable]\n\n"
+            "Answer = [answer]\n\n"
+            "Keep it short, clear and beginner-friendly. No long paragraphs."
         )
 
         content_parts = [system_instruction]

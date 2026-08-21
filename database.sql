@@ -200,3 +200,7 @@ CREATE TABLE IF NOT EXISTS daily_challenges (
 );
 
 ALTER TABLE students ADD COLUMN total_points INT NOT NULL DEFAULT 0;
+
+ALTER TABLE students 
+ADD COLUMN reset_token VARCHAR(100) DEFAULT NULL,
+ADD COLUMN reset_token_expiry DATETIME DEFAULT NULL;

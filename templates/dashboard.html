@@ -14,7 +14,11 @@
     <nav class="dashboard-nav">
         <div class="logo">🧮 VedicMath</div>
         <div class="nav-search">
-            <input type="text" placeholder="🔍 Search for Sutras, practice sets...">
+            <form onsubmit="handleSearch(event)" style="margin:0;">
+                <input type="text" id="searchInput" 
+                        placeholder="🔍 Search for Sutras, practice sets..."
+                        autocomplete="off">
+            </form>
         </div>
         <div class="nav-right">
             <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
@@ -141,6 +145,45 @@
 
     </div>
 
+    <script>
+function handleSearch(e) {
+    e.preventDefault();
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (!query) return;
+
+    const pages = [
+        { name: "ekadhikena purvena", url: "/sutra/1" },
+        { name: "nikhilam", url: "/sutra/2" },
+        { name: "urdhva tiryagbhyam", url: "/sutra/3" },
+        { name: "paravartya", url: "/sutra/4" },
+        { name: "shunyam", url: "/sutra/5" },
+        { name: "anurupyena", url: "/sutra/6" },
+        { name: "sankalana", url: "/sutra/7" },
+        { name: "puranapuranabhyam", url: "/sutra/8" },
+        { name: "chalana", url: "/sutra/9" },
+        { name: "yavadunam", url: "/sutra/10" },
+        { name: "vyastisamanstih", url: "/sutra/11" },
+        { name: "shesanyankena", url: "/sutra/12" },
+        { name: "sopantyadvaya", url: "/sutra/13" },
+        { name: "ekanyunena", url: "/sutra/14" },
+        { name: "gunitasamuccayah", url: "/sutra/15" },
+        { name: "gunakasamuccayah", url: "/sutra/16" },
+        { name: "practice", url: "/practice" },
+        { name: "quiz", url: "/quiz" },
+        { name: "leaderboard", url: "/leaderboard" },
+        { name: "ai scan", url: "/ai-scan" },
+        { name: "speed test", url: "/speed-test" },
+        { name: "profile", url: "/profile" },
+        { name: "certificates", url: "/certificates" },
+        { name: "daily challenge", url: "/challenge" },
+        { name: "formulas", url: "/formulas" },
+        { name: "sutras", url: "/sutras" },
+    ];
+
+    const match = pages.find(p => p.name.includes(query));
+    window.location.href = match ? match.url : "/sutras";
+}
+</script>
 </body>
 
 </html>

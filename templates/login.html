@@ -196,7 +196,21 @@
 
                 <div class="input-box">
                     <i class="bi bi-lock"></i>
-                    <input type="password" name="password" placeholder="Enter Password" required>
+                    <input type="password" name="password" id="passwordInput" 
+                           placeholder="Enter Password" required
+                           style="padding-right: 45px;">
+                    <i class="bi bi-eye-slash" id="togglePassword"
+                       style="position: absolute; right: 15px; top: 50%; 
+                              transform: translateY(-50%); cursor: pointer; 
+                              color: #94a3b8; font-size: 1.1rem; left: auto;">
+                    </i>
+                </div>
+
+                <div class="text-end mb-2">
+                    <a href="{{ url_for('forgot_password') }}" 
+                       style="color: #a78bfa; font-size: 0.85rem; text-decoration: none;">
+                        Forgot Password?
+                    </a>
                 </div>
 
                 <button type="submit" class="login-submit">
@@ -234,6 +248,21 @@
     <!-- Bootstrap JS -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
+
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('passwordInput');
+
+            togglePassword.addEventListener('click', function () {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    this.classList.remove('bi-eye-slash');
+                    this.classList.add('bi-eye');
+                } else {
+                    passwordInput.type = 'password';
+                    this.classList.remove('bi-eye');
+                    this.classList.add('bi-eye-slash');
+                }
+            });
         async function handleGoogleLogin(response) {
             try {
                 const res = await fetch('/google_login', {

@@ -655,6 +655,18 @@ img{
     font-size: 20px;
 }
 
+#searchInput {
+    width: 272px !important;
+    height: 36px !important;
+    font-size: 0.85rem !important;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    border: none !important;
+    outline: none !important;
+    background: #1e1f3b;
+    color: #cfd0e6;
+}
+
 .nav-search input {
     width: 320px;
     padding: 8px 14px;
