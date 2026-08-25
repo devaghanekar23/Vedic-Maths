@@ -52,7 +52,6 @@ img{
 
 
 
-
 /* ================= PAGE BACKGROUND ================= */
 
 
@@ -2847,7 +2846,6 @@ body{
 }
 
 
-
 /* NAVBAR */
 
 .navbar{
@@ -2934,9 +2932,8 @@ body{
     align-items:center;
 
 
-    background:
-
-    radial-gradient(circle at right,#7c3aed55,transparent 30%);
+    background:radial-gradient(circle at right,#7c3aed55,transparent 30%);
+    margin-top: 0px;
 
 
 }
@@ -3041,7 +3038,7 @@ body{
 
     margin-top:25px;
 
-    padding: 8px 33px;
+    padding: 9px 79px;
     border-radius:40px;
 
     background:
@@ -3050,28 +3047,30 @@ body{
     color:white;
 
     font-weight:bold;
-    margin-left: 47px;
+    margin-left: 5px;
 
 }
 
 .start-btn-practice{
     display:inline-block;
     margin-top:9px;
-    padding: 9px 38px;
+    padding: 11px 67px;
     border-radius:40px;
     background:
     linear-gradient(90deg,#2563eb,#7c3aed);
-    margin-left: 90px;
+    margin-left: 57px;
+    margin-right: 50px;
 
 }
 .start-btn-practice-3{
     display:inline-block;
     margin-top:9px;
-    padding: 9px 38px;
+    padding: 11px 86px;
     border-radius:40px;
     background:
     linear-gradient(90deg,#2563eb,#7c3aed);
-    margin-left: 109px;
+    margin-left: 58px;
+    margin-right: 68px;
 
 }
 
@@ -5437,13 +5436,14 @@ margin:30px 0;
 .nav-btn,
 .submit-btn{
 flex:1;
-padding:18px;
+padding:11px;
 border:none;
 border-radius:12px;
-font-size:17px;
+font-size:13px;
 font-weight:700;
 cursor:pointer;
 transition:.3s;
+width:124px;
 }
 
 .prev-btn{
@@ -6890,4 +6890,29 @@ grid-template-columns:1fr;
 .cert-signature p {
     font-size: 12px;
     color: #6b5c45;
+}
+
+/* Body and Layout Adjustments */
+body {
+    overflow-x: hidden;
+    padding-top: 0px; /* Fixed navbar height adjustment */
+}
+
+.section {
+    padding: 50px 0;
+}
+
+.circle-img,
+.gallery-media img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Card Height Alignment */
+.card-box-sutraa,
+.card-box-practice {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }

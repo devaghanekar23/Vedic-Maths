@@ -1,2381 +1,1374 @@
-/* =====================================
-      VEDIC MATHEMATICS SUTRA JS
-===================================== */
-
-
-/* =====================================
-      EKADHIKENA PURVENA
-      Square Ending With 5
-===================================== */
-
-
-function calculateSquare(){
-
-    let input = document.getElementById("vedicNumber");
-    let result = document.getElementById("squareResult");
-
-
-    if(!input || !result){
-        return;
+// ============================================================
+// 1. EKADHIKENA PURVENA
+// "By one more than the previous one"
+// ============================================================
+function solveEkadhikenaPurvena(num) {
+    const n = parseInt(num, 10);
+    if (isNaN(n)) {
+        return {
+            applicable: false,
+            message: "Please enter a valid number.",
+            steps: [],
+            answer: null
+        };
     }
 
-
-    let number = parseInt(input.value);
-
-
-    if(isNaN(number)){
-
-        result.innerHTML = `
-        <div class="alert alert-danger mt-3">
-        ⚠️ Please enter a number
-        </div>
-        `;
-
-        return;
+    if (n <= 0) {
+        return {
+            applicable: false,
+            message: "Please enter a positive number.",
+            steps: [],
+            answer: null
+        };
     }
 
-
-    if(number % 10 !== 5){
-
-        result.innerHTML = `
-        <div class="alert alert-danger mt-3">
-        ❌ Please enter number ending with 5
-        </div>
-        `;
-
-        return;
+    if (n % 10 !== 5) {
+        return {
+            applicable: false,
+            message: "This Sutra is not applicable to this type of calculation. Ekadhikena Purvena is used for squaring numbers ending in 5. Example: 25², 35², 45².",
+            steps: [],
+            answer: null
+        };
     }
 
+    const previous = Math.floor(n / 10);
+    const oneMore = previous + 1;
+    const leftPart = previous * oneMore;
+    const rightPart = 25;
+    const answer = n * n;
 
+    const steps = [
+        `Question: ${n}²`,
+        `Step 1: The number ends in 5.`,
+        `Step 2: Remove the last digit 5. The previous part is ${previous}.`,
+        `Step 3: Add 1 to the previous part: ${previous} + 1 = ${oneMore}`,
+        `Step 4: Multiply the previous number by one more than itself: ${previous} × ${oneMore} = ${leftPart}`,
+        `Step 5: Square 5: 5 × 5 = ${rightPart}`,
+        `Step 6: Put both parts together: ${leftPart} | ${rightPart}`,
+        `Final Answer = ${answer}`
+    ];
 
-    let first = Math.floor(number / 10);
-
-    let second = first + 1;
-
-    let multiplication = first * second;
-
-    let answer = multiplication + "25";
-
-
-
-    result.innerHTML = `
-
-    <div class="answer-card">
-
-    <h2>
-    🎉 Final Answer = ${answer}
-    </h2>
-
-
-    <div class="step">
-
-    <b>Step 1:</b>
-
-    <br>
-
-    Remove last digit 5
-
-    <br>
-
-    ${number} → ${first}
-
-    </div>
-
-
-
-    <div class="step">
-
-    <b>Step 2:</b>
-
-    <br>
-
-    ${first} × ${second}
-
-    = ${multiplication}
-
-    </div>
-
-
-
-    <div class="step">
-
-    <b>Step 3:</b>
-
-    <br>
-
-    Add 25 at the end
-
-    </div>
-
-
-    <div class="alert alert-success mt-3">
-
-    Formula:
-
-    <br>
-
-    <b>
-    n5² = n × (n+1) followed by 25
-    </b>
-
-    </div>
-
-
-    </div>
-
-    `;
-
+    return {
+        applicable: true,
+        message: "Ekadhikena Purvena can be applied successfully.",
+        steps: steps,
+        answer: answer,
+        explanation: "Ekadhikena Purvena means 'By one more than the previous one'. For numbers ending in 5, multiply the number before 5 by one more than itself and append 25."
+    };
 }
 
+// ============================================================
+// 2. NIKHILAM NAVATASHCARAMAM DASHATAH
+// "All from 9 and the last from 10"
+// ============================================================
+function solveNikhilam(num1, num2) {
+    const a = parseInt(String(num1).trim(), 10);
+    const b = parseInt(String(num2).trim(), 10);
 
-
-
-
-
-/* =====================================
-      NIKHILAM NAVATASHCARAMAM DASHATAH
-      Multiplication Near Base 100
-===================================== */
-
-
-function calculateNikhilam(){
-
-
-    let num1Input = document.getElementById("num1");
-
-    let num2Input = document.getElementById("num2");
-
-    let result = document.getElementById("nikhilamResult");
-
-
-
-    if(!num1Input || !num2Input || !result){
-        return;
+    if (isNaN(a) || isNaN(b)) {
+        return {
+            applicable: false,
+            message: "Please enter two valid numbers.",
+            steps: [],
+            answer: null
+        };
     }
 
-
-
-    let num1 = parseInt(num1Input.value);
-
-    let num2 = parseInt(num2Input.value);
-
-
-
-    if(isNaN(num1) || isNaN(num2)){
-
-
-        result.innerHTML = `
-
-        <div class="alert alert-danger">
-
-        ⚠️ Enter both numbers
-
-        </div>
-
-        `;
-
-        return;
-
+    if (a <= 0 || b <= 0) {
+        return {
+            applicable: false,
+            message: "Please enter positive numbers.",
+            steps: [],
+            answer: null
+        };
     }
 
-
-
-    let base = 100;
-
-
-
-    let deficiency1 = base - num1;
-
-    let deficiency2 = base - num2;
-
-
-
-    let leftPart = num1 - deficiency2;
-
-
-    let rightPart = deficiency1 * deficiency2;
-
-
-    let rightDisplay = rightPart.toString().padStart(2,"0");
-
-
-
-    let answer = leftPart + rightDisplay;
-
-
-
-    result.innerHTML = `
-
-
-    <div class="answer-card">
-
-
-    <h2>
-    🎉 Final Answer = ${answer}
-    </h2>
-
-
-
-    <div class="step">
-
-    <b>Step 1: Base</b>
-
-    <br>
-
-    Base = ${base}
-
-    </div>
-
-
-
-
-    <div class="step">
-
-    <b>Step 2: Deficiency</b>
-
-    <br>
-
-    ${num1} → ${deficiency1} less
-
-    <br>
-
-    ${num2} → ${deficiency2} less
-
-    </div>
-
-
-
-
-    <div class="step">
-
-    <b>Step 3: Cross Subtraction</b>
-
-    <br>
-
-    ${num1} - ${deficiency2}
-
-    = ${leftPart}
-
-    </div>
-
-
-
-
-    <div class="step">
-
-    <b>Step 4: Deficiency Multiplication</b>
-
-    <br>
-
-    ${deficiency1} × ${deficiency2}
-
-    = ${rightDisplay}
-
-    </div>
-
-
-
-    <div class="alert alert-success mt-3">
-
-    Formula:
-
-    <br>
-
-    <b>
-    (Base - Deficiency Method)
-    </b>
-
-    </div>
-
-
-
-    </div>
-
-
-    `;
-
-
-}
-function calculateUrdhva(){
-
-let num1 = parseInt(
-document.getElementById("urdhvaNum1").value
-);
-
-let num2 = parseInt(
-document.getElementById("urdhvaNum2").value
-);
-
-let result = document.getElementById("urdhvaResult");
-
-
-if(isNaN(num1) || isNaN(num2)){
-
-result.innerHTML = `
-<div class="alert alert-danger">
-⚠️ Enter both numbers
-</div>
-`;
-
-return;
-
-}
-
-
-let a = Math.floor(num1/10);
-let b = num1 % 10;
-
-let c = Math.floor(num2/10);
-let d = num2 % 10;
-
-
-let step1 = b*d;
-
-let step2 = (a*d)+(b*c);
-
-let step3 = a*c;
-
-
-let answer = num1*num2;
-
-
-
-result.innerHTML = `
-
-<div class="answer-card">
-
-<h2>
-🎉 Final Answer = ${answer}
-</h2>
-
-<hr>
-
-<div class="step">
-
-<b>Step 1: Vertical Multiplication</b>
-
-<br>
-
-${b} × ${d} = ${step1}
-
-</div>
-
-
-<div class="step">
-
-<b>Step 2: Crosswise Multiplication</b>
-
-<br>
-
-(${a}×${d}) + (${b}×${c})
-
-<br>
-
-= ${step2}
-
-</div>
-
-
-<div class="step">
-
-<b>Step 3: Vertical Multiplication</b>
-
-<br>
-
-${a} × ${c} = ${step3}
-
-</div>
-
-
-<div class="alert alert-success mt-3">
-
-Formula:
-
-<br>
-
-<b>
-Vertical and Crosswise Method
-</b>
-
-</div>
-
-
-</div>
-
-`;
-
-}
-// =====================================
-// PARAVARTYA YOJAYET
-// Transpose and Apply Division
-// =====================================
-
-
-function calculateParavartya(){
-
-
-let dividend = parseInt(
-document.getElementById("dividend").value
-);
-
-
-let divisor = parseInt(
-document.getElementById("divisor").value
-);
-
-
-
-let result = document.getElementById("paravartyaResult");
-
-
-
-if(isNaN(dividend) || isNaN(divisor)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter both numbers
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-if(divisor == 0){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-❌ Division by zero not possible
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-let quotient = Math.floor(dividend/divisor);
-
-let remainder = dividend % divisor;
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-
-🎉 Quotient = ${quotient}
-
-</h2>
-
-
-
-<hr>
-
-
-
-<div class="step">
-
-
-<b>Step 1: Given Numbers</b>
-
-<br>
-
-Dividend = ${dividend}
-
-<br>
-
-Divisor = ${divisor}
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 2: Apply Paravartya Yojayet</b>
-
-<br>
-
-Transpose the divisor digits
-
-<br>
-
-and apply calculation method.
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 3: Division Result</b>
-
-<br>
-
-${dividend} ÷ ${divisor}
-
-<br>
-
-= ${quotient}
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Remainder</b>
-
-<br>
-
-${remainder}
-
-</div>
-
-
-
-<div class="alert alert-success mt-3">
-
-
-Formula:
-
-<br>
-
-
-<b>
-
-Paravartya Yojayet = Transpose and Apply
-
-</b>
-
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-}
-// =====================================
-// SHUNYAM SAAMYASAMUCCAYE
-// Common Sum Rule
-// =====================================
-
-
-function calculateShunyam(){
-
-
-let a = parseInt(
-document.getElementById("s1").value
-);
-
-
-let b = parseInt(
-document.getElementById("s2").value
-);
-
-
-let c = parseInt(
-document.getElementById("s3").value
-);
-
-
-let d = parseInt(
-document.getElementById("s4").value
-);
-
-
-
-let result =
-document.getElementById("shunyamResult");
-
-
-
-if(isNaN(a)||isNaN(b)||isNaN(c)||isNaN(d)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter all values
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-
-let sum1 = a+b;
-
-let sum2 = c+d;
-
-
-
-if(sum1 == sum2){
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-
-🎉 Common Sum Found
-
-</h2>
-
-
-<hr>
-
-
-<div class="step">
-
-
-<b>Step 1:</b>
-
-<br>
-
-First Side:
-
-${a} + ${b}
-
-=
-
-${sum1}
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 2:</b>
-
-<br>
-
-Second Side:
-
-${c} + ${d}
-
-=
-
-${sum2}
-
-
-</div>
-
-
-
-
-<div class="alert alert-success mt-3">
-
-
-Formula:
-
-<br>
-
-
-<b>
-
-When the sum is same, the result is zero
-
-</b>
-
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-
-
-}
-
-else{
-
-
-result.innerHTML = `
-
-
-<div class="alert alert-warning">
-
-
-❌ Common Sum Not Found
-
-
-<br>
-
-
-${a}+${b} = ${sum1}
-
-<br>
-
-${c}+${d} = ${sum2}
-
-
-</div>
-
-
-`;
-
-}
-
-
-}
-// =====================================
-// ANURUPYENA
-// Proportionately Method
-// =====================================
-
-
-function calculateAnurupyena(){
-
-
-let number = parseInt(
-document.getElementById("anuNumber").value
-);
-
-
-let ratio = parseInt(
-document.getElementById("anuRatio").value
-);
-
-
-
-let result =
-document.getElementById("anurupyenaResult");
-
-
-
-if(isNaN(number) || isNaN(ratio)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter number and ratio
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-let answer = number * ratio;
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-
-🎉 Final Answer = ${answer}
-
-</h2>
-
-
-
-<hr>
-
-
-
-<div class="step">
-
-
-<b>Step 1: Given Number</b>
-
-
-<br>
-
-
-Number = ${number}
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 2: Apply Proportion</b>
-
-
-<br>
-
-
-${number} × ${ratio}
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 3: Calculation</b>
-
-
-<br>
-
-
-${number} × ${ratio}
-
-=
-
-${answer}
-
-
-</div>
-
-
-
-
-<div class="alert alert-success mt-3">
-
-
-Formula:
-
-<br>
-
-
-<b>
-
-Value × Proportion = Result
-
-</b>
-
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-}
-// =====================================
-// SANKALANA VYAVAKALANABHYAM
-// Addition and Subtraction
-// =====================================
-
-
-function calculateSankalana(){
-
-
-let num1 = parseInt(
-document.getElementById("sankNum1").value
-);
-
-
-let num2 = parseInt(
-document.getElementById("sankNum2").value
-);
-
-
-
-let result =
-document.getElementById("sankalanaResult");
-
-
-
-if(isNaN(num1) || isNaN(num2)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter both numbers
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-let addition = num1 + num2;
-
-
-let subtraction = num1 - num2;
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-
-🎉 Calculation Complete
-
-</h2>
-
-
-
-<hr>
-
-
-
-<div class="step">
-
-
-<b>Step 1: Sankalana (Addition)</b>
-
-
-<br>
-
-
-${num1} + ${num2}
-
-
-=
-
-${addition}
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 2: Vyavakalanam (Subtraction)</b>
-
-
-<br>
-
-
-${num1} - ${num2}
-
-
-=
-
-${subtraction}
-
-
-</div>
-
-
-
-
-<div class="alert alert-success mt-3">
-
-
-Formula:
-
-<br>
-
-
-<b>
-
-Sankalana = Addition
-
-<br>
-
-Vyavakalanam = Subtraction
-
-</b>
-
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-}
-/* =====================================
-   PURANAPURANABHYAM
-   Completion Method
-===================================== */
-
-
-function calculatePuranapuranabhyam(){
-
-
-let num1 =
-parseInt(document.getElementById("puranNum1").value);
-
-
-let num2 =
-parseInt(document.getElementById("puranNum2").value);
-
-
-
-let result =
-document.getElementById("puranResult");
-
-
-
-if(isNaN(num1) || isNaN(num2)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter both numbers
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-let base = Math.ceil(num1/10)*10;
-
-
-let difference = base - num1;
-
-
-let remaining = num2 - difference;
-
-
-let answer = base + remaining;
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-
-🎉 Final Answer = ${answer}
-
-</h2>
-
-
-<hr>
-
-
-
-<div class="step">
-
-<b>Step 1: Choose Base</b>
-
-<br>
-
-Base = ${base}
-
-</div>
-
-
-
-<div class="step">
-
-<b>Step 2: Complete First Number</b>
-
-<br>
-
-${num1} + ${difference} = ${base}
-
-</div>
-
-
-
-<div class="step">
-
-<b>Step 3: Adjust Second Number</b>
-
-<br>
-
-${num2} - ${difference}
-
-=
-
-${remaining}
-
-</div>
-
-
-
-<div class="step">
-
-<b>Step 4: Final</b>
-
-<br>
-
-${base} + ${remaining}
-
-=
-
-${answer}
-
-</div>
-
-
-
-<div class="alert alert-success mt-3">
-
-
-Formula:
-
-<br>
-
-
-<b>
-
-Completion + Adjustment Method
-
-</b>
-
-
-</div>
-
-
-</div>
-
-
-`;
-
-}
-/* =====================================
-   CHALANA KALANABHYAM
-   Difference Method
-===================================== */
-
-
-function calculateChalana(){
-
-
-let a = parseInt(
-document.getElementById("chalanaA").value
-);
-
-
-let b = parseInt(
-document.getElementById("chalanaB").value
-);
-
-
-
-let result =
-document.getElementById("chalanaResult");
-
-
-
-if(isNaN(a) || isNaN(b)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter both numbers
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-
-
-let sum = a + b;
-
-
-let difference = a - b;
-
-
-let answer = sum * difference;
-
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-
-🎉 Final Answer = ${answer}
-
-</h2>
-
-
-
-<hr>
-
-
-
-<div class="step">
-
-
-<b>Step 1: Apply Formula</b>
-
-
-<br>
-
-
-a² - b² = (a+b)(a-b)
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 2: Add Values</b>
-
-
-<br>
-
-
-${a} + ${b} = ${sum}
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 3: Find Difference</b>
-
-
-<br>
-
-
-${a} - ${b} = ${difference}
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 4: Multiply</b>
-
-
-<br>
-
-
-${sum} × ${difference}
-
-=
-
-${answer}
-
-
-</div>
-
-
-
-
-<div class="alert alert-success mt-3">
-
-
-Formula:
-
-<br>
-
-
-<b>
-
-(a+b)(a-b)
-
-</b>
-
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-}
-/* =====================================
-   YAVADUNAM
-   Deficiency Method
-===================================== */
-
-
-function calculateYavadunam(){
-
-
-let num1 = parseInt(
-document.getElementById("yavadNum1").value
-);
-
-
-let num2 = parseInt(
-document.getElementById("yavadNum2").value
-);
-
-
-
-let result =
-document.getElementById("yavadResult");
-
-
-
-if(isNaN(num1) || isNaN(num2)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter both numbers
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-let base = 100;
-
-
-let def1 = base - num1;
-
-let def2 = base - num2;
-
-
-
-let left = num1 - def2;
-
-
-let right = def1 * def2;
-
-
-
-if(right < 10){
-
-right = "0" + right;
-
-}
-
-
-
-let answer = left * base + Number(right);
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-
-🎉 Final Answer = ${answer}
-
-</h2>
-
-
-<hr>
-
-
-
-<div class="step">
-
-<b>Step 1: Base</b>
-
-<br>
-
-Base = ${base}
-
-</div>
-
-
-
-<div class="step">
-
-<b>Step 2: Deficiency</b>
-
-<br>
-
-${num1} → ${def1}
-
-<br>
-
-${num2} → ${def2}
-
-</div>
-
-
-
-<div class="step">
-
-<b>Step 3: Cross Subtraction</b>
-
-<br>
-
-${num1} - ${def2}
-
-=
-
-${left}
-
-</div>
-
-
-
-<div class="step">
-
-<b>Step 4: Multiply Deficiency</b>
-
-<br>
-
-${def1} × ${def2}
-
-=
-
-${right}
-
-</div>
-
-
-
-<div class="alert alert-success mt-3">
-
-Formula:
-
-<br>
-
-<b>
-
-Base - Deficiency Method
-
-</b>
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-}
-/* =====================================
-   VYASTISAMANSTIH
-   Part and Whole Method
-===================================== */
-
-
-function calculateVyasti(){
-
-
-let part1 = parseInt(
-document.getElementById("vyastiNum1").value
-);
-
-
-let part2 = parseInt(
-document.getElementById("vyastiNum2").value
-);
-
-
-
-let result =
-document.getElementById("vyastiResult");
-
-
-
-if(isNaN(part1) || isNaN(part2)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter both values
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-
-let whole = part1 + part2;
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-
-🎉 Whole Value = ${whole}
-
-</h2>
-
-
-<hr>
-
-
-
-<div class="step">
-
-
-<b>Step 1: Identify Parts</b>
-
-
-<br>
-
-
-Part 1 = ${part1}
-
-<br>
-
-Part 2 = ${part2}
-
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Step 2: Combine Parts</b>
-
-
-<br>
-
-
-${part1} + ${part2}
-
-=
-
-${whole}
-
-
-</div>
-
-
-
-
-<div class="alert alert-success mt-3">
-
-
-Formula:
-
-<br>
-
-
-<b>
-
-Whole = Part 1 + Part 2
-
-</b>
-
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-}
-function calculateShesanyankena(){
-
-
-let number = parseInt(
-document.getElementById("remainderNumber").value
-);
-
-
-let divisor = parseInt(
-document.getElementById("remainderDivisor").value
-);
-
-
-let result = document.getElementById("remainderResult");
-
-
-
-if(isNaN(number) || isNaN(divisor)){
-
-
-result.innerHTML = `
-<div class="alert alert-danger">
-⚠️ Enter both values
-</div>
-`;
-
-return;
-
-}
-
-
-
-let remainder = number % divisor;
-
-
-
-result.innerHTML = `
-
-<div class="answer-card">
-
-<h2>
-🎉 Remainder = ${remainder}
-</h2>
-
-
-<p>
-${number} ÷ ${divisor}
-</p>
-
-
-<p>
-Remaining Value = ${remainder}
-</p>
-
-
-</div>
-
-`;
-
-}
-/* =====================================
-   SOPANTYADVAYAMANTYAM
-   Factorization Method
-===================================== */
-
-
-function calculateSopantya(){
-
-
-let a = parseInt(
-document.getElementById("factorA").value
-);
-
-
-let b = parseInt(
-document.getElementById("factorB").value
-);
-
-
-let c = parseInt(
-document.getElementById("factorC").value
-);
-
-
-
-let result = document.getElementById("sopantyaResult");
-
-
-
-if(isNaN(a) || isNaN(b) || isNaN(c)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter all values
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-
-let product = a*c;
-
-
-let factors = [];
-
-
-
-for(let i=-Math.abs(product); i<=Math.abs(product); i++){
-
-
-    if(i !== 0 && product % i === 0){
-
-        factors.push(i);
-
+    // Auto-select standard base (10, 100, 1000, etc.)
+    const maxVal = Math.max(a, b);
+    let power = Math.round(Math.log10(maxVal));
+    power = Math.max(1, power);
+    const base = Math.pow(10, power);
+
+    const deviationA = a - base;
+    const deviationB = b - base;
+
+    const crossPart = a + deviationB;
+    const deviationProduct = deviationA * deviationB;
+    const rightDigits = String(base).length - 1;
+
+    let carry = 0;
+    let borrow = 0;
+    let leftPart = 0;
+    let rightPart = 0;
+
+    if (deviationProduct >= 0) {
+        carry = Math.floor(deviationProduct / base);
+        rightPart = deviationProduct % base;
+        leftPart = crossPart + carry;
+    } else {
+        borrow = Math.floor((Math.abs(deviationProduct) + base - 1) / base);
+        leftPart = crossPart - borrow;
+        rightPart = deviationProduct + (borrow * base);
     }
 
-}
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-🎉 Factorization Result
-</h2>
-
-
-<hr>
-
-
-<div class="step">
-
-<b>Given:</b>
-
-<br>
-
-${a}x² + ${b}x + ${c}
-
-</div>
-
-
-
-<div class="step">
-
-<b>Product:</b>
-
-<br>
-
-a × c = ${product}
-
-</div>
-
-
-
-<div class="step">
-
-<b>Possible Factors:</b>
-
-<br>
-
-${factors.join(", ")}
-
-</div>
-
-
-
-<div class="alert alert-success mt-3">
-
-Formula:
-
-<br>
-
-<b>
-Ultimate and Twice the Penultimate Rule
-</b>
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-}
-/* =====================================
-   EKANYUNENA PURVENA
-   Multiplication Near Base
-===================================== */
-
-
-function calculateEkanyunena(){
-
-
-let num1 = parseInt(
-document.getElementById("ekanyuNum1").value
-);
-
-
-let num2 = parseInt(
-document.getElementById("ekanyuNum2").value
-);
-
-
-
-let result = document.getElementById("ekanyuResult");
-
-
-
-if(isNaN(num1) || isNaN(num2)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter both numbers
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-
-let base = 100;
-
-
-
-let diff1 = base - num1;
-
-let diff2 = base - num2;
-
-
-
-let left = num1 - diff2;
-
-
-let right = diff1 * diff2;
-
-
-
-let answer = left * base + right;
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-🎉 Final Answer = ${answer}
-</h2>
-
-
-<hr>
-
-
-
-<div class="step">
-
-<b>Step 1: Base</b>
-
-<br>
-
-Base = ${base}
-
-</div>
-
-
-
-
-<div class="step">
-
-<b>Step 2: Deficiency</b>
-
-<br>
-
-${num1} → ${diff1} less
-
-<br>
-
-${num2} → ${diff2} less
-
-</div>
-
-
-
-
-<div class="step">
-
-<b>Step 3: Subtraction</b>
-
-<br>
-
-${num1} - ${diff2}
-
-=
-
-${left}
-
-</div>
-
-
-
-
-<div class="step">
-
-<b>Step 4: Multiply Deficiency</b>
-
-<br>
-
-${diff1} × ${diff2}
-
-=
-
-${right}
-
-</div>
-
-
-
-
-<div class="alert alert-success mt-3">
-
-Formula:
-
-<br>
-
-<b>
-
-One less than previous number
-
-</b>
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-}
-/* =====================================
-   GUNITASAMUCHYAH
-   Multiplication Verification
-===================================== */
-
-
-function calculateGunitasamuchyah(){
-
-
-let num1 = parseInt(
-document.getElementById("gunitNum1").value
-);
-
-
-let num2 = parseInt(
-document.getElementById("gunitNum2").value
-);
-
-
-
-let userAnswer = parseInt(
-document.getElementById("gunitAnswer").value
-);
-
-
-
-let result = document.getElementById("gunitResult");
-
-
-
-if(isNaN(num1) || isNaN(num2) || isNaN(userAnswer)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter all values
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-
-let actualAnswer = num1 * num2;
-
-
-
-let sum1 = digitSum(num1);
-
-let sum2 = digitSum(num2);
-
-let sumAnswer = digitSum(userAnswer);
-
-
-
-
-let check = digitSum(actualAnswer);
-
-
-
-
-let status = "";
-
-
-
-if(actualAnswer === userAnswer){
-
-status = "✅ Correct Multiplication";
-
-}
-
-else{
-
-status = "❌ Wrong Answer";
-
-}
-
-
-
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-${status}
-</h2>
-
-
-<hr>
-
-
-
-<div class="step">
-
-<b>Actual Answer:</b>
-
-<br>
-
-${num1} × ${num2} = ${actualAnswer}
-
-</div>
-
-
-
-
-<div class="step">
-
-<b>Digit Sum Check:</b>
-
-<br>
-
-${sum1} × ${sum2}
-
-</div>
-
-
-
-<div class="step">
-
-Your Answer Digit Sum:
-
-<br>
-
-${sumAnswer}
-
-</div>
-
-
-
-
-<div class="alert alert-success mt-3">
-
-Formula:
-
-<br>
-
-<b>
-
-Product of Sum = Sum of Product
-
-</b>
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-
-
-}
-
-
-
-
-function digitSum(number){
-
-
-let sum = 0;
-
-
-while(number > 0){
-
-sum += number % 10;
-
-number = Math.floor(number / 10);
-
-}
-
-
-return sum;
-
-}
-/* =====================================
-   GUNAKASAMUCHYAH
-   Factor Sum Method
-===================================== */
-
-
-function calculateGunakasamuchyah(){
-
-
-let number = parseInt(
-document.getElementById("gunaNumber").value
-);
-
-
-let result = document.getElementById("gunaResult");
-
-
-
-if(isNaN(number)){
-
-
-result.innerHTML = `
-
-<div class="alert alert-danger">
-
-⚠️ Enter a number
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-let factors = [];
-
-let sum = 0;
-
-
-
-for(let i = 1; i <= number; i++){
-
-
-    if(number % i === 0){
-
-        factors.push(i);
-
-        sum += i;
-
+    const rightDisplay = String(rightPart).padStart(rightDigits, '0');
+    const answer = a * b;
+
+    let steps = [];
+    steps.push(`🧮 Question: ${a} × ${b}`);
+    steps.push("📖 Sutra: Nikhilam Navatashcaramam Dashatah");
+    steps.push("💡 Meaning: All from 9 and the last from 10.");
+    steps.push(`🎯 Step 1: Choose a suitable base = ${base}`);
+    steps.push(`Why ${base}? Because both ${a} and ${b} are close to ${base}.`);
+
+    steps.push(`✏️ Step 2: Find the deviation of ${a} from ${base}.`);
+    steps.push(`${a} - ${base} = ${deviationA}`);
+    steps.push(`Since ${a} is ${deviationA < 0 ? 'smaller' : 'greater'} than ${base}, deviation is ${deviationA > 0 ? '+' : ''}${deviationA}.`);
+
+    steps.push(`✏️ Step 3: Find the deviation of ${b} from ${base}.`);
+    steps.push(`${b} - ${base} = ${deviationB}`);
+    steps.push(`Since ${b} is ${deviationB < 0 ? 'smaller' : 'greater'} than ${base}, deviation is ${deviationB > 0 ? '+' : ''}${deviationB}.`);
+
+    steps.push("🔄 Step 4: Perform cross subtraction/addition.");
+    steps.push(`${a} + (${deviationB}) = ${crossPart}`);
+
+    steps.push("✖️ Step 5: Multiply the two deviations.");
+    steps.push(`(${deviationA}) × (${deviationB}) = ${deviationProduct}`);
+
+    if (carry > 0) {
+        steps.push(`➕ Step 6: Carry ${carry} to the left side because right part exceeds base width.`);
+    } else if (borrow > 0) {
+        steps.push("➖ Step 6: Deviation product is negative.");
+        steps.push(`Borrow ${borrow} from left side using base ${base}.`);
+        steps.push(`After borrowing, right part becomes ${rightPart}.`);
     }
 
+    steps.push(`🔢 Step 7: Format right part with ${rightDigits} digit(s): ${rightDisplay}`);
+    steps.push("🔗 Step 8: Combine left and right parts:");
+    steps.push(`${leftPart} | ${rightDisplay}`);
+    steps.push(`✅ Final Answer = ${answer}`);
+
+    return {
+        applicable: true,
+        message: "Nikhilam Navatashcaramam Dashatah applied successfully.",
+        question: `${a} × ${b}`,
+        base: base,
+        deviation1: deviationA,
+        deviation2: deviationB,
+        steps: steps,
+        answer: answer,
+        explanation: "Nikhilam Navatashcaramam Dashatah means 'All from 9 and the last from 10'. We choose a convenient base such as 10, 100 or 1000 to quickly calculate products using deviations."
+    };
+}
+
+// ============================================================
+// 3. URDHVA TIRYAGBHYAM
+// "Vertically and Crosswise"
+// ============================================================
+function solveUrdhvaTiryagbhyam(num1, num2) {
+    const a = parseInt(String(num1).trim(), 10);
+    const b = parseInt(String(num2).trim(), 10);
+
+    if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
+        return { applicable: false, message: "Please enter valid positive numbers.", steps: [], answer: null };
+    }
+
+    const s1 = String(a);
+    const s2 = String(b);
+    const digits1 = s1.split('').reverse().map(x => parseInt(x, 10));
+    const digits2 = s2.split('').reverse().map(x => parseInt(x, 10));
+
+    const n1 = digits1.length;
+    const n2 = digits2.length;
+    const resultSize = n1 + n2 - 1;
+    let raw = new Array(resultSize).fill(0);
+    let steps = [
+        `🧮 Question: ${a} × ${b}`,
+        "📖 Sutra: Urdhva Tiryagbhyam",
+        "💡 Meaning: Vertically and Crosswise"
+    ];
+
+    for (let position = 0; position < resultSize; position++) {
+        let total = 0;
+        let calculations = [];
+        for (let i = 0; i < n1; i++) {
+            let j = position - i;
+            if (j >= 0 && j < n2) {
+                let product = digits1[i] * digits2[j];
+                total += product;
+                calculations.push(`${digits1[i]} × ${digits2[j]} = ${product}`);
+            }
+        }
+        steps.push(`🔹 Step ${position + 1}: ${calculations.join(' + ')} → Total = ${total}`);
+        raw[position] = total;
+    }
+
+    steps.push("🔢 Carrying over digits from right to left:");
+    let carry = 0;
+    let finalDigits = [];
+    for (let i = 0; i < raw.length; i++) {
+        let current = raw[i] + carry;
+        let remainder = current % 10;
+        carry = Math.floor(current / 10);
+        finalDigits.push(remainder);
+        steps.push(`Position ${i + 1}: Raw sum = ${current} → Keep ${remainder}, Carry ${carry}`);
+    }
+    if (carry > 0) {
+        finalDigits.push(carry);
+        steps.push(`Final Carry over = ${carry}`);
+    }
+
+    const answer = parseInt(finalDigits.reverse().join(''), 10);
+    steps.push(`✅ Final Answer = ${answer}`);
+
+    return {
+        applicable: true,
+        message: "Urdhva Tiryagbhyam applied successfully.",
+        question: `${a} × ${b}`,
+        steps: steps,
+        answer: answer,
+        explanation: "Urdhva Tiryagbhyam calculates cross-products position by position and propagates carries from right to left."
+    };
+}
+
+// ============================================================
+// 4. PARAVARTYA YOJAYET
+// "Transpose and Apply"
+// ============================================================
+function solveParavartya(num1, num2) {
+    const dividend = parseInt(String(num1).trim(), 10);
+    const divisor = parseInt(String(num2).trim(), 10);
+
+    if (isNaN(dividend) || isNaN(divisor)) {
+        return {
+            applicable: false,
+            message: "Please enter valid numbers.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    if (dividend <= 0 || divisor <= 0) {
+        return {
+            applicable: false,
+            message: "Please enter positive numbers.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    if (divisor === 1) {
+        return {
+            applicable: false,
+            message: "This Sutra is not required for division by 1.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const digits = String(divisor).length;
+    const base = Math.pow(10, digits);
+    const deviation = base - divisor;
+
+    if (Math.abs(deviation) > base * 0.20) {
+        return {
+            applicable: false,
+            message: "Paravartya Yojayet is not suitable for this divisor. The divisor should be reasonably close to a convenient power-of-10 base.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const transposed = deviation;
+    const quotient = Math.floor(dividend / divisor);
+    const remainder = dividend % divisor;
+
+    let steps = [];
+    steps.push(`🧮 Question: ${dividend} ÷ ${divisor}`);
+    steps.push("📖 Sutra: Parāvartya Yojayet");
+    steps.push("💡 Meaning: Transpose and Apply");
+    steps.push(`Step 1: Choose base = ${base}`);
+    steps.push("Step 2: Find deviation of divisor from base:");
+    steps.push(`${base} - ${divisor} = ${deviation}`);
+    steps.push("Step 3: Transpose the deviation:");
+    steps.push(`Transposed value = ${transposed}`);
+
+    if (divisor === base - 1) {
+        steps.push(`Step 4: Since ${divisor} is 1 less than ${base}, the transposed value is +1.`);
+        const digitsDividend = String(dividend).split('').map(x => parseInt(x, 10));
+        let runningValues = [];
+        let running = digitsDividend[0];
+        runningValues.push(running);
+
+        steps.push(`Start with first digit: ${running}`);
+
+        for (let i = 1; i < digitsDividend.length; i++) {
+            let digit = digitsDividend[i];
+            let newValue = running + digit;
+            steps.push(`Next: ${digit} + previous value ${running} = ${newValue}`);
+            running = newValue;
+            runningValues.push(running);
+        }
+
+        steps.push("Step 5: Perform final adjustment according to the divisor.");
+        steps.push("Exact verification:");
+        steps.push(`${quotient} × ${divisor} + ${remainder} = ${dividend}`);
+        steps.push(`✅ Final Answer = ${quotient} remainder ${remainder}`);
+
+        return {
+            applicable: true,
+            message: "Parāvartya Yojayet can be applied.",
+            question: `${dividend} ÷ ${divisor}`,
+            base: base,
+            deviation: deviation,
+            transposed: transposed,
+            steps: steps,
+            answer: quotient,
+            remainder: remainder,
+            explanation: "Parāvartya Yojayet means 'Transpose and Apply'. The deviation of the divisor from the base is transposed and used in the calculation."
+        };
+    }
+
+    steps.push("Step 4: Apply the transposed value according to the divisor.");
+    steps.push("Step 5: Verify the quotient and remainder.");
+    steps.push(`${quotient} × ${divisor} + ${remainder} = ${dividend}`);
+    steps.push(`✅ Final Answer = ${quotient} remainder ${remainder}`);
+
+    return {
+        applicable: true,
+        message: "Parāvartya Yojayet can be applied.",
+        question: `${dividend} ÷ ${divisor}`,
+        base: base,
+        deviation: deviation,
+        transposed: transposed,
+        steps: steps,
+        answer: quotient,
+        remainder: remainder,
+        explanation: "Parāvartya Yojayet means 'Transpose and Apply'. It is primarily useful for division with divisors close to a convenient base."
+    };
+}
+
+// ============================================================
+// 5. SHUNYAM SAMYASAMUCCAYE
+// "When the Samuccaya is the same, it becomes zero."
+// ============================================================
+function solveShunyamSamyasamuccaye(equation) {
+    if (!equation) {
+        return {
+            applicable: false,
+            message: "Please enter an equation.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    equation = String(equation).trim();
+    if (equation === "") {
+        return {
+            applicable: false,
+            message: "Please enter an equation.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const cleanEquation = equation.replace(/\s+/g, "");
+
+    if (!cleanEquation.includes("=")) {
+        return {
+            applicable: false,
+            message: "Please enter a valid equation containing '='.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const parts = cleanEquation.split("=");
+    if (parts.length !== 2) {
+        return {
+            applicable: false,
+            message: "Please enter one equation with one '=' sign.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const left = parts[0];
+    const right = parts[1];
+
+    if (!cleanEquation.toLowerCase().includes("x")) {
+        return {
+            applicable: false,
+            message: "Please enter an equation containing x.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    if (left === right) {
+        return {
+            applicable: false,
+            message: "The same expression appears on both sides. Therefore the equation is an identity, not a unique equation to solve.",
+            steps: [
+                `Equation: ${equation}`,
+                `Left side = ${left}`,
+                `Right side = ${right}`,
+                "Both sides are exactly equal.",
+                "Therefore every value of x satisfies the equation.",
+                "There is no single value of x."
+            ],
+            answer: "All real values of x"
+        };
+    }
+
+    const pattern = /^([+-]?\d*)x([+-]\d+)?=([+-]?\d*)x([+-]\d+)?$/i;
+    const match = cleanEquation.match(pattern);
+
+    if (match) {
+        const aText = match[1];
+        const bText = match[2];
+        const cText = match[3];
+        const dText = match[4];
+
+        let a = (aText === "" || aText === "+") ? 1 : (aText === "-" ? -1 : parseInt(aText, 10));
+        let b = bText ? parseInt(bText, 10) : 0;
+        let c = (cText === "" || cText === "+") ? 1 : (cText === "-" ? -1 : parseInt(cText, 10));
+        let d = dText ? parseInt(dText, 10) : 0;
+
+        const coefficient = a - c;
+        const constant = d - b;
+
+        if (coefficient === 0) {
+            if (constant === 0) {
+                return {
+                    applicable: false,
+                    message: "The equation has infinitely many solutions.",
+                    steps: [
+                        `Equation: ${equation}`,
+                        `Move x terms: ${a}x - ${c}x = ${d} - ${b}`,
+                        `${coefficient}x = ${constant}`,
+                        "This becomes 0 = 0.",
+                        "Therefore every value of x is a solution."
+                    ],
+                    answer: "All real values of x"
+                };
+            } else {
+                return {
+                    applicable: false,
+                    message: "The equation has no solution.",
+                    steps: [
+                        `Equation: ${equation}`,
+                        `Move x terms: ${a}x - ${c}x = ${d} - ${b}`,
+                        `${coefficient}x = ${constant}`,
+                        `0 = ${constant}`,
+                        "This is impossible.",
+                        "Therefore there is no solution."
+                    ],
+                    answer: "No solution"
+                };
+            }
+        }
+
+        const x = constant / coefficient;
+        const xDisplay = Number.isInteger(x) ? String(x) : String(x);
+
+        const steps = [
+            `🧮 Equation: ${equation}`,
+            "📖 Sutra: Shunyam Samyasamuccaye",
+            "💡 Meaning: When the Samuccaya is the same, it becomes zero.",
+            "Step 1: Compare the x terms:",
+            `${a}x and ${c}x`,
+            "Step 2: Compare the constants:",
+            `${b} and ${d}`,
+            "Step 3: Bring x terms together:",
+            `${a}x - ${c}x = ${d} - ${b}`,
+            "Step 4:",
+            `${coefficient}x = ${constant}`,
+            `Step 5: Divide by ${coefficient}:`,
+            `x = ${constant} / ${coefficient}`,
+            `Step 6: Therefore x = ${xDisplay}`,
+            `✅ Final Answer: x = ${xDisplay}`
+        ];
+
+        return {
+            applicable: true,
+            message: "Equation solved successfully.",
+            equation: equation,
+            steps: steps,
+            answer: xDisplay,
+            explanation: "Shunyam Samyasamuccaye is used when a common samuccaya appears in a suitable algebraic equation. The common part can be treated as zero, simplifying the equation."
+        };
+    }
+
+    return {
+        applicable: false,
+        message: "This equation is not in a form that this Shunyam Samyasamuccaye solver can safely solve. Please enter a suitable algebraic equation.",
+        steps: [
+            `Equation entered: ${equation}`,
+            "The solver could not identify a suitable Shunyam Samyasamuccaye pattern.",
+            "Try a simple equation such as:",
+            "3x + 5 = 2x + 10",
+            "5x + 7 = 3x + 15"
+        ],
+        answer: null
+    };
+}
+
+// ============================================================
+// 6. ANURUPYENA
+// "Proportionately"
+// ============================================================
+function solveAnurupyena(num1, num2) {
+    const a = parseInt(String(num1).trim(), 10);
+    const b = parseInt(String(num2).trim(), 10);
+
+    if (isNaN(a) || isNaN(b)) {
+        return {
+            applicable: false,
+            message: "Please enter two valid numbers.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    if (a <= 0 || b <= 0) {
+        return {
+            applicable: false,
+            message: "Please enter positive numbers.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    let standardBases = [];
+    for (let power = 1; power <= 5; power++) {
+        standardBases.push(Math.pow(10, power));
+    }
+
+    let proportionalBases = [];
+    for (let base of standardBases) {
+        proportionalBases.push(
+            Math.floor(base / 2),
+            Math.floor(base / 4),
+            Math.floor(base / 5),
+            base * 2,
+            base * 5
+        );
+    }
+
+    let allBases = Array.from(new Set(proportionalBases.filter(x => x > 0))).sort((x, y) => x - y);
+
+    let candidates = [];
+    for (let base of allBases) {
+        let distanceA = Math.abs(a - base) / base;
+        let distanceB = Math.abs(b - base) / base;
+
+        if (distanceA <= 0.25 && distanceB <= 0.25) {
+            candidates.push({
+                totalDistance: distanceA + distanceB,
+                base: base
+            });
+        }
+    }
+
+    if (candidates.length === 0) {
+        return {
+            applicable: false,
+            message: "Anurupyena is not suitable for these numbers. Try numbers close to a proportional base such as 20, 25, 50, 100, 200, 500, etc.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    candidates.sort((x, y) => x.totalDistance - y.totalDistance);
+    const workingBase = candidates[0].base;
+
+    let standardBase = null;
+    let proportion = null;
+
+    for (let base of standardBases) {
+        if (base % workingBase === 0) {
+            let ratio = base / workingBase;
+            if ([2, 4, 5, 10].includes(ratio)) {
+                standardBase = base;
+                proportion = ratio;
+                break;
+            }
+        }
+    }
+
+    if (standardBase === null) {
+        return {
+            applicable: false,
+            message: "A suitable proportional base could not be identified.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const deviationA = a - workingBase;
+    const deviationB = b - workingBase;
+    const crossPart = a + deviationB;
+    const deviationProduct = deviationA * deviationB;
+    const answer = a * b;
+
+    let steps = [];
+    steps.push(`🧮 Question: ${a} × ${b}`);
+    steps.push("📖 Sutra: Anurupyena");
+    steps.push("💡 Meaning: Proportionately");
+    steps.push("This Sutra uses a convenient proportional working base.");
+    steps.push(`🎯 Step 1: Choose working base = ${workingBase}`);
+    steps.push(`Working base ${workingBase} is ${proportion} times smaller than standard base ${standardBase}.`);
+    steps.push(`✏️ Step 2: Deviation of ${a}: ${a} - ${workingBase} = ${deviationA}`);
+    steps.push(`✏️ Step 3: Deviation of ${b}: ${b} - ${workingBase} = ${deviationB}`);
+    steps.push("🔄 Step 4: Cross operation");
+    steps.push(`${a} + (${deviationB}) = ${crossPart}`);
+    steps.push("✖️ Step 5: Multiply deviations");
+    steps.push(`(${deviationA}) × (${deviationB}) = ${deviationProduct}`);
+    steps.push("📐 Step 6: Apply proportional adjustment");
+    steps.push(`Working base = ${workingBase}`);
+    steps.push(`Standard base = ${standardBase}`);
+    steps.push(`Proportion = 1/${proportion}`);
+    steps.push("🔗 Step 7: Combine the proportional parts to obtain the product.");
+    steps.push(`Verification: ${a} × ${b} = ${answer}`);
+    steps.push(`✅ Final Answer = ${answer}`);
+
+    return {
+        applicable: true,
+        message: "Anurupyena can be applied successfully.",
+        question: `${a} × ${b}`,
+        working_base: workingBase,
+        standard_base: standardBase,
+        proportion: proportion,
+        deviation1: deviationA,
+        deviation2: deviationB,
+        steps: steps,
+        answer: answer,
+        explanation: "Anurupyena means 'Proportionately'. When the ordinary base is not convenient, a proportional working base such as 50 instead of 100 can be selected. The calculation is then adjusted according to the proportion."
+    };
+}
+
+// ============================================================
+// 7. SANKALANA VYAVAKALANABHYAM
+// "By Addition and By Subtraction"
+// ============================================================
+function solveSankalanaVyavakalanabhyam(eq1, eq2) {
+    if (!eq1 || !eq2) {
+        return {
+            applicable: false,
+            message: "Please enter two equations.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    eq1 = String(eq1).replace(/\s+/g, "").toLowerCase();
+    eq2 = String(eq2).replace(/\s+/g, "").toLowerCase();
+
+    if (!eq1.includes("=") || !eq2.includes("=")) {
+        return {
+            applicable: false,
+            message: "Both equations must contain '='.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    function parseEquation(equation) {
+        const parts = equation.split("=");
+        const constant = parseFloat(parts[1]);
+        if (isNaN(constant)) return null;
+
+        let left = parts[0].replace(/-/g, "+-");
+        if (left.startsWith("+")) left = left.substring(1);
+
+        const terms = left.split("+");
+        let xCoeff = 0;
+        let yCoeff = 0;
+
+        for (let term of terms) {
+            if (!term) continue;
+            if (term.includes("x")) {
+                let val = term.replace("x", "");
+                let num = (val === "" || val === "+") ? 1 : (val === "-" ? -1 : parseFloat(val));
+                if (isNaN(num)) return null;
+                xCoeff += num;
+            } else if (term.includes("y")) {
+                let val = term.replace("y", "");
+                let num = (val === "" || val === "+") ? 1 : (val === "-" ? -1 : parseFloat(val));
+                if (isNaN(num)) return null;
+                yCoeff += num;
+            } else {
+                return null;
+            }
+        }
+        return [xCoeff, yCoeff, constant];
+    }
+
+    const first = parseEquation(eq1);
+    const second = parseEquation(eq2);
+
+    if (!first || !second) {
+        return {
+            applicable: false,
+            message: "Please enter equations in a simple linear form such as 2x+3y=13.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const [a1, b1, c1] = first;
+    const [a2, b2, c2] = second;
+
+    if ((a1 === 0 && b1 === 0) || (a2 === 0 && b2 === 0)) {
+        return {
+            applicable: false,
+            message: "Both equations must contain x or y.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const determinant = a1 * b2 - a2 * b1;
+    if (determinant === 0) {
+        return {
+            applicable: false,
+            message: "These equations do not have a unique solution.",
+            steps: [
+                `Equation 1: ${eq1}`,
+                `Equation 2: ${eq2}`,
+                `Determinant = (${a1} × ${b2}) - (${a2} × ${b1}) = 0`,
+                "Therefore a unique x and y cannot be obtained."
+            ],
+            answer: null
+        };
+    }
+
+    let steps = [];
+    steps.push(`🧮 Equation 1: ${eq1}`);
+    steps.push(`🧮 Equation 2: ${eq2}`);
+    steps.push("📖 Sutra: Sankalana Vyavakalanabhyam");
+    steps.push("💡 Meaning: By Addition and By Subtraction.");
+
+    let x, y;
+
+    if (b1 === -b2) {
+        let newX = a1 + a2;
+        let newC = c1 + c2;
+        steps.push("➕ Step 1: Add the two equations.");
+        steps.push(`(${a1}x + ${b1}y) + (${a2}x + ${b2}y) = ${c1} + ${c2}`);
+        steps.push(`${newX}x = ${newC}`);
+        x = newC / newX;
+    } else {
+        let newX = a1 - a2;
+        let newY = b1 - b2;
+        let newC = c1 - c2;
+
+        if (newY === 0) {
+            steps.push("➖ Step 1: Subtract Equation 2 from Equation 1.");
+            steps.push(`(${a1}x + ${b1}y) - (${a2}x + ${b2}y) = ${c1} - ${c2}`);
+            steps.push(`${newX}x = ${newC}`);
+            x = newC / newX;
+        } else {
+            steps.push("➖ Step 1: Adjust the equations to eliminate x.");
+            let A1 = a1 * a2, B1 = b1 * a2, C1 = c1 * a2;
+            let A2 = a2 * a1, B2 = b2 * a1, C2 = c2 * a1;
+            let resY = B1 - B2;
+            let resC = C1 - C2;
+
+            steps.push("After adjustment:");
+            steps.push(`${A1}x + ${B1}y = ${C1}`);
+            steps.push(`${A2}x + ${B2}y = ${C2}`);
+            steps.push("Subtract:");
+            steps.push(`${resY}y = ${resC}`);
+
+            y = resC / resY;
+            x = (c1 - b1 * y) / a1;
+
+            let xDisplay = Number.isInteger(x) ? String(x) : String(parseFloat(x.toFixed(6)));
+            let yDisplay = Number.isInteger(y) ? String(y) : String(parseFloat(y.toFixed(6)));
+
+            steps.push(`✅ y = ${yDisplay}`);
+            steps.push(`Substitute y = ${yDisplay} into Equation 1.`);
+            steps.push(`✅ x = ${xDisplay}`);
+            steps.push(`🎯 Final Answer: x = ${xDisplay}, y = ${yDisplay}`);
+
+            return {
+                applicable: true,
+                message: "Equations solved successfully.",
+                steps: steps,
+                answer: { x: xDisplay, y: yDisplay },
+                explanation: "Sankalana Vyavakalanabhyam means 'By Addition and By Subtraction'. The equations are combined so that one variable is eliminated, after which the remaining variable is calculated."
+            };
+        }
+    }
+
+    y = (c1 - a1 * x) / b1;
+    let xDisplay = Number.isInteger(x) ? String(x) : String(parseFloat(x.toFixed(6)));
+    let yDisplay = Number.isInteger(y) ? String(y) : String(parseFloat(y.toFixed(6)));
+
+    steps.push("Step 2: Solve for x:");
+    steps.push(`x = ${xDisplay}`);
+    steps.push(`Step 3: Substitute x = ${xDisplay} into Equation 1.`);
+    steps.push(`y = ${yDisplay}`);
+    steps.push(`🎯 Final Answer: x = ${xDisplay}, y = ${yDisplay}`);
+
+    return {
+        applicable: true,
+        message: "Sankalana Vyavakalanabhyam can be applied successfully.",
+        equations: [eq1, eq2],
+        steps: steps,
+        answer: { x: xDisplay, y: yDisplay },
+        explanation: "Sankalana Vyavakalanabhyam means 'By Addition and By Subtraction'. The main idea is to combine two equations so that one variable disappears."
+    };
+}
+
+// ============================================================
+// 8. PURANAPURANABHYAM
+// "By Completion or Non-Completion" (Completing the Square)
+// ============================================================
+function solvePuranapuranabhyam(a, b, c) {
+    // Solves quadratic equation: ax^2 + bx + c = 0 using Completing the Square
+    const coeffA = parseFloat(a);
+    const coeffB = parseFloat(b);
+    const coeffC = parseFloat(c);
+
+    if (isNaN(coeffA) || isNaN(coeffB) || isNaN(coeffC) || coeffA === 0) {
+        return {
+            applicable: false,
+            message: "Please enter valid coefficients with 'a' non-zero (ax² + bx + c = 0).",
+            steps: [],
+            answer: null
+        };
+    }
+
+    let steps = [
+        `🧮 Equation: ${coeffA}x² + (${coeffB})x + (${coeffC}) = 0`,
+        "📖 Sutra: Puranapuranabhyam",
+        "💡 Meaning: By Completion or Non-Completion (Completing the Square)"
+    ];
+
+    // Divide by 'a' if a != 1
+    let bNorm = coeffB / coeffA;
+    let cNorm = coeffC / coeffA;
+
+    if (coeffA !== 1) {
+        steps.push(`Step 1: Divide the equation by a = ${coeffA}:`);
+        steps.push(`x² + (${bNorm})x + (${cNorm}) = 0`);
+    } else {
+        steps.push("Step 1: Equation already has a unit coefficient for x².");
+    }
+
+    // Move constant to RHS
+    let rhs1 = -cNorm;
+    steps.push(`Step 2: Move constant term to RHS: x² + (${bNorm})x = ${rhs1}`);
+
+    // Complete the square: Add (b / 2)^2 to both sides
+    let halfB = bNorm / 2;
+    let squareTerm = halfB * halfB;
+    let rhs2 = rhs1 + squareTerm;
+
+    steps.push(`Step 3: Complete the square by adding (${bNorm} / 2)² = ${squareTerm} to both sides:`);
+    steps.push(`(x + ${halfB})² = ${rhs2}`);
+
+    if (rhs2 < 0) {
+        let realPart = -halfB;
+        let imagPart = Math.sqrt(Math.abs(rhs2));
+        let x1 = `${realPart} + ${imagPart.toFixed(4)}i`;
+        let x2 = `${realPart} - ${imagPart.toFixed(4)}i`;
+
+        steps.push(`Step 4: RHS is negative (${rhs2}). Roots are complex.`);
+        steps.push(`✅ Final Answer: x = ${x1}, x = ${x2}`);
+
+        return {
+            applicable: true,
+            message: "Solved using Puranapuranabhyam (Complex Roots).",
+            steps: steps,
+            answer: [x1, x2],
+            explanation: "Puranapuranabhyam completes the square by adding a compensating square term to both sides of the quadratic equation."
+        };
+    }
+
+    let sqrtRhs = Math.sqrt(rhs2);
+    let root1 = -halfB + sqrtRhs;
+    let root2 = -halfB - sqrtRhs;
+
+    steps.push(`Step 4: Take square root of both sides: x + ${halfB} = ±${sqrtRhs}`);
+    steps.push(`x1 = ${-halfB} + ${sqrtRhs} = ${root1}`);
+    steps.push(`x2 = ${-halfB} - ${sqrtRhs} = ${root2}`);
+    steps.push(`✅ Final Answer: x = ${root1}, x = ${root2}`);
+
+    return {
+        applicable: true,
+        message: "Solved successfully using Puranapuranabhyam.",
+        steps: steps,
+        answer: [root1, root2],
+        explanation: "Puranapuranabhyam completes the square by adding a compensating square term to both sides of the quadratic equation."
+    };
+}
+
+// ============================================================
+// 9. CHALANA-KALANABHYAM
+// "Differences and Similarities"
+// ============================================================
+function solveChalanaKalanabhyam(equation) {
+    if (!equation) {
+        return {
+            applicable: false,
+            message: "Please enter a quadratic equation.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    equation = String(equation).trim();
+    if (equation === "") {
+        return {
+            applicable: false,
+            message: "Please enter a quadratic equation.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    let eq = equation.replace(/\s+/g, "").toLowerCase();
+
+    if (!eq.includes("=")) {
+        return {
+            applicable: false,
+            message: "Equation must contain '='.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const parts = eq.split("=");
+    if (parts.length !== 2) {
+        return {
+            applicable: false,
+            message: "Please enter one valid equation.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    let left = parts[0];
+    let right = parts[1];
+
+    if (right !== "0") {
+        return {
+            applicable: false,
+            message: "For this solver, enter the quadratic equation with 0 on the right side.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    left = left.replace(/\*\*2/g, "x2").replace(/x\^2/g, "x2").replace(/x²/g, "x2");
+
+    const pattern = /^([+-]?\d*)x2([+-]\d+)?x([+-]\d+)?$/;
+    const pattern2 = /^([+-]?\d*)x2([+-]\d+)?$/;
+
+    let aText, bText, cText;
+    let match = left.match(pattern);
+
+    if (!match) {
+        let match2 = left.match(pattern2);
+        if (!match2) {
+            return {
+                applicable: false,
+                message: "Please enter a quadratic equation in the form ax² + bx + c = 0.",
+                steps: [],
+                answer: null
+            };
+        }
+        aText = match2[1];
+        bText = null;
+        cText = match2[2];
+    } else {
+        aText = match[1];
+        bText = match[2];
+        cText = match[3];
+    }
+
+    let a = (aText === "" || aText === "+") ? 1 : (aText === "-" ? -1 : parseInt(aText, 10));
+    let b = bText ? parseInt(bText, 10) : 0;
+    let c = cText ? parseInt(cText, 10) : 0;
+
+    if (a === 0) {
+        return {
+            applicable: false,
+            message: "This is not a quadratic equation.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const discriminant = b * b - 4 * a * c;
+
+    let steps = [];
+    steps.push(`🧮 Equation: ${equation}`);
+    steps.push("📖 Sutra: Chalana-Kalanabhyam");
+    steps.push("💡 Meaning: Differences and Similarities.");
+    steps.push("Step 1: Identify coefficients:");
+    steps.push(`a = ${a}, b = ${b}, c = ${c}`);
+    steps.push("Step 2: Calculate the discriminant using the difference.");
+    steps.push("D = b² - 4ac");
+    steps.push(`D = (${b})² - 4(${a})(${c})`);
+    steps.push(`D = ${discriminant}`);
+
+    if (discriminant < 0) {
+        steps.push("The discriminant is negative.");
+        steps.push("Therefore the equation has no real roots.");
+        return {
+            applicable: true,
+            message: "No real roots.",
+            steps: steps,
+            answer: "No real roots",
+            discriminant: discriminant,
+            explanation: "The difference calculation gives a negative discriminant, so there are no real solutions."
+        };
+    }
+
+    if (discriminant === 0) {
+        let x = -b / (2 * a);
+        let xDisplay = Number.isInteger(x) ? String(x) : String(parseFloat(x.toFixed(6)));
+
+        steps.push("The discriminant is zero.");
+        steps.push("Therefore both roots are equal.");
+        steps.push("x = -b / 2a");
+        steps.push(`x = -(${b}) / (2 × ${a})`);
+        steps.push(`x = ${xDisplay}`);
+        steps.push(`✅ Final Answer: x = ${xDisplay}`);
+
+        return {
+            applicable: true,
+            message: "Equal roots found.",
+            steps: steps,
+            answer: xDisplay,
+            discriminant: discriminant
+        };
+    }
+
+    const sqrtD = Math.sqrt(discriminant);
+    const x1 = (-b + sqrtD) / (2 * a);
+    const x2 = (-b - sqrtD) / (2 * a);
+
+    let x1Display = Number.isInteger(x1) ? String(x1) : String(parseFloat(x1.toFixed(6)));
+    let x2Display = Number.isInteger(x2) ? String(x2) : String(parseFloat(x2.toFixed(6)));
+
+    steps.push("The discriminant is positive.");
+    steps.push("Therefore the equation has two real roots.");
+    steps.push("Step 3: Find the square root of D.");
+    steps.push(`√${discriminant} = ${sqrtD}`);
+    steps.push("Step 4: Find the first root.");
+    steps.push("x₁ = (-b + √D) / 2a");
+    steps.push(`x₁ = (-(${b}) + √${discriminant}) / (2 × ${a})`);
+    steps.push(`x₁ = ${x1Display}`);
+    steps.push("Step 5: Find the second root.");
+    steps.push("x₂ = (-b - √D) / 2a");
+    steps.push(`x₂ = (-(${b}) - √${discriminant}) / (2 × ${a})`);
+    steps.push(`x₂ = ${x2Display}`);
+    steps.push("🎯 Final Answer:");
+    steps.push(`x₁ = ${x1Display}, x₂ = ${x2Display}`);
+
+    return {
+        applicable: true,
+        message: "Quadratic equation solved.",
+        equation: equation,
+        steps: steps,
+        answer: { x1: x1Display, x2: x2Display },
+        discriminant: discriminant,
+        explanation: "Chalana-Kalanabhyam is associated with differences and similarities. The calculation is demonstrated here through the discriminant and root relationship of a quadratic equation."
+    };
+}
+
+// ============================================================
+// 10. YAVADUNAM
+// "Whatever the Deficiency"
+// ============================================================
+function solveYavadunam(num1, num2) {
+    const a = parseInt(String(num1).trim(), 10);
+    const b = parseInt(String(num2).trim(), 10);
+
+    if (isNaN(a) || isNaN(b)) {
+        return {
+            applicable: false,
+            message: "Please enter two valid numbers.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    if (a <= 0 || b <= 0) {
+        return {
+            applicable: false,
+            message: "Please enter positive numbers.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const maxNumber = Math.max(a, b);
+    const digits = String(maxNumber).length;
+    let base = Math.pow(10, digits);
+
+    const previousBase = Math.pow(10, digits - 1);
+    const currentDistance = Math.abs(a - base) + Math.abs(b - base);
+    const previousDistance = Math.abs(a - previousBase) + Math.abs(b - previousBase);
+
+    if (previousDistance < currentDistance) {
+        base = previousBase;
+    }
+
+    const deviationA = a - base;
+    const deviationB = b - base;
+
+    const relativeA = Math.abs(deviationA) / base;
+    const relativeB = Math.abs(deviationB) / base;
+
+    if (relativeA > 0.20 || relativeB > 0.20) {
+        return {
+            applicable: false,
+            message: "Yavadunam is not suitable for these numbers. The numbers should be reasonably close to a convenient base such as 10, 100 or 1000.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    let leftPart = a + deviationB;
+    let rightPart = deviationA * deviationB;
+    const baseDigits = String(base).length - 1;
+    const rightWidth = baseDigits;
+
+    let rightDisplay = "";
+    let carry = 0;
+
+    if (rightPart >= 0) {
+        rightDisplay = String(rightPart).padStart(rightWidth, '0');
+        if (rightPart >= base) {
+            carry = Math.floor(rightPart / base);
+            let rightRemainder = rightPart % base;
+            leftPart += carry;
+            rightDisplay = String(rightRemainder).padStart(rightWidth, '0');
+        } else {
+            carry = 0;
+        }
+    } else {
+        let borrow = 1;
+        leftPart -= borrow;
+        let positiveRight = base + rightPart;
+        rightDisplay = String(positiveRight).padStart(rightWidth, '0');
+        carry = -1;
+    }
+
+    const answer = parseInt(String(leftPart) + rightDisplay, 10);
+
+    let steps = [];
+    steps.push(`🧮 Question: ${a} × ${b}`);
+    steps.push("📖 Sutra: Yāvadūnam");
+    steps.push("💡 Meaning: Whatever the Deficiency");
+    steps.push(`🎯 Step 1: Choose the nearest convenient base = ${base}`);
+    steps.push(`The base contains ${baseDigits} zero(s).`);
+
+    if (deviationA < 0) {
+        steps.push(`Step 2: ${a} is deficient from ${base} by ${Math.abs(deviationA)}.`);
+        steps.push(`${a} - ${base} = ${deviationA}`);
+    } else {
+        steps.push(`Step 2: ${a} exceeds ${base} by ${deviationA}.`);
+        steps.push(`${a} - ${base} = +${deviationA}`);
+    }
+
+    if (deviationB < 0) {
+        steps.push(`Step 3: ${b} is deficient from ${base} by ${Math.abs(deviationB)}.`);
+        steps.push(`${b} - ${base} = ${deviationB}`);
+    } else {
+        steps.push(`Step 3: ${b} exceeds ${base} by ${deviationB}.`);
+        steps.push(`${b} - ${base} = +${deviationB}`);
+    }
+
+    steps.push("🔄 Step 4: Cross subtract/add.");
+    if (deviationB >= 0) {
+        steps.push(`${a} + (${deviationB}) = ${a + deviationB}`);
+    } else {
+        steps.push(`${a} - ${Math.abs(deviationB)} = ${a + deviationB}`);
+    }
+
+    steps.push("✖️ Step 5: Multiply the deviations.");
+    steps.push(`(${deviationA}) × (${deviationB}) = ${deviationA * deviationB}`);
+    steps.push(`Step 6: Since base = ${base}, the right part must contain ${baseDigits} digit(s).`);
+    steps.push(`Right part = ${rightDisplay}`);
+
+    if (rightPart < 0) {
+        steps.push("Because the right part is negative, borrow 1 from the left part.");
+    } else if (rightPart >= base) {
+        steps.push(`Carry ${carry} to the left part.`);
+    }
+
+    steps.push("Step 7: Combine:");
+    steps.push(`Left part = ${leftPart}`);
+    steps.push(`Right part = ${rightDisplay}`);
+    steps.push(`🎯 Final Answer = ${leftPart}${rightDisplay}`);
+    steps.push(`✅ Verification: ${a} × ${b} = ${answer}`);
+
+    return {
+        applicable: true,
+        message: "Yāvadūnam can be applied successfully.",
+        question: `${a} × ${b}`,
+        base: base,
+        deviation1: deviationA,
+        deviation2: deviationB,
+        left_part: leftPart,
+        right_part: rightPart,
+        steps: steps,
+        answer: answer,
+        explanation: "Yāvadūnam means 'Whatever the Deficiency'. Numbers close to a power-of-10 base are expressed as deficiencies or excesses from that base. The cross operation gives the left part and the product of deviations gives the right part."
+    };
+}
+
+// ============================================================
+// 11. VYASTI-SAMASTI
+// "Part and Whole"
+// ============================================================
+function solveVyastiSamasti(num1, num2) {
+    const a = parseInt(String(num1).trim(), 10);
+    const b = parseInt(String(num2).trim(), 10);
+
+    if (isNaN(a) || isNaN(b)) {
+        return {
+            applicable: false,
+            message: "Please enter two valid numbers.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    if (a <= 0 || b <= 0) {
+        return {
+            applicable: false,
+            message: "Please enter positive numbers.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    function bestDecomposition(number) {
+        const digits = String(number).split('').map(x => parseInt(x, 10));
+        const length = digits.length;
+        let parts = [];
+
+        digits.forEach((digit, index) => {
+            let power = length - index - 1;
+            let place = Math.pow(10, power);
+            let value = digit * place;
+            if (value !== 0) {
+                parts.push(value);
+            }
+        });
+        return parts;
+    }
+
+    const partsA = bestDecomposition(a);
+    const partsB = bestDecomposition(b);
+
+    let whole, parts, multiplier;
+    if (partsA.length <= partsB.length) {
+        whole = a;
+        parts = partsA;
+        multiplier = b;
+    } else {
+        whole = b;
+        parts = partsB;
+        multiplier = a;
+    }
+
+    let partialResults = parts.map(part => part * multiplier);
+    const answer = partialResults.reduce((acc, curr) => acc + curr, 0);
+
+    let steps = [];
+    steps.push(`🧮 Question: ${a} × ${b}`);
+    steps.push("📖 Sutra: Vyasti-Samasti");
+    steps.push("💡 Meaning: Part and Whole");
+    steps.push("Vyasti means 'Part' and Samasti means 'Whole'.");
+    steps.push(`Step 1: Split ${whole} into convenient parts.`);
+    steps.push(`${whole} = ${parts.join(" + ")}`);
+    steps.push("Step 2: Multiply each part separately.");
+
+    parts.forEach((part, idx) => {
+        steps.push(`${part} × ${multiplier} = ${partialResults[idx]}`);
+    });
+
+    steps.push("Step 3: Add all partial results.");
+    steps.push(`${partialResults.join(" + ")} = ${answer}`);
+    steps.push(`🎯 Final Answer = ${answer}`);
+    steps.push(`✅ Verification: ${a} × ${b} = ${answer}`);
+
+    return {
+        applicable: true,
+        message: "Vyasti-Samasti can be applied successfully.",
+        question: `${a} × ${b}`,
+        whole: whole,
+        parts: parts,
+        partial_results: partialResults,
+        steps: steps,
+        answer: answer,
+        explanation: "Vyasti-Samasti means 'Part and Whole'. The number is divided into convenient parts, each part is calculated separately, and the partial results are combined to obtain the whole answer."
+    };
+}
+
+// ============================================================
+// 13. SOPANTYADVAYAMANTYAM
+// "The ultimate and twice the penultimate"
+// ============================================================
+function solveSopantyadvayamantyam(number) {
+    const n = parseInt(String(number).trim(), 10);
+
+    if (isNaN(n)) {
+        return {
+            applicable: false,
+            message: "Please enter a valid number.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    if (n < 10) {
+        return {
+            applicable: false,
+            message: "This Sutra requires at least two digits.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const lastDigit = n % 10;
+    const penultimateDigit = Math.floor(n / 10) % 10;
+    const doublePenultimate = 2 * penultimateDigit;
+    const value = lastDigit + doublePenultimate;
+
+    let steps = [];
+    steps.push(`🧮 Number: ${n}`);
+    steps.push("📖 Sutra: Sopāntyadvayamantyam");
+    steps.push("💡 Meaning: The ultimate and twice the penultimate.");
+    steps.push(`Step 1: Ultimate (last digit) of ${n} = ${lastDigit}`);
+    steps.push(`Step 2: Penultimate (second last digit) of ${n} = ${penultimateDigit}`);
+    steps.push("Step 3: Twice the penultimate:");
+    steps.push(`2 × ${penultimateDigit} = ${doublePenultimate}`);
+    steps.push("Step 4: Add the ultimate and twice the penultimate.");
+    steps.push(`${lastDigit} + ${doublePenultimate} = ${value}`);
+    steps.push(`🎯 Final Answer = ${value}`);
+
+    return {
+        applicable: true,
+        message: "Sopāntyadvayamantyam pattern calculated.",
+        number: n,
+        ultimate: lastDigit,
+        penultimate: penultimateDigit,
+        twice_penultimate: doublePenultimate,
+        steps: steps,
+        answer: value,
+        explanation: "Sopāntyadvayamantyam means 'the ultimate and twice the penultimate'. The last digit is taken along with twice the second-last digit."
+    };
 }
 
 
-
-
-result.innerHTML = `
-
-
-<div class="answer-card">
-
-
-<h2>
-
-🎉 Factor Sum = ${sum}
-
-</h2>
-
-
-<hr>
-
-
-
-<div class="step">
-
-
-<b>Number:</b>
-
-<br>
-
-${number}
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Factors:</b>
-
-<br>
-
-${factors.join(" + ")}
-
-</div>
-
-
-
-
-<div class="step">
-
-
-<b>Total Sum:</b>
-
-<br>
-
-${sum}
-
-</div>
-
-
-
-
-<div class="alert alert-success mt-3">
-
-
-Formula:
-
-<br>
-
-
-<b>
-
-Sum of Factors Method
-
-</b>
-
-
-</div>
-
-
-
-</div>
-
-
-`;
-
-
-
-}

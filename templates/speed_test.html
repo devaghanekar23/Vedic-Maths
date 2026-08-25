@@ -195,6 +195,23 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
         }
+        .go-dash {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: #2563eb; /* blue */
+        border: 1px solid #3b82f6;
+        border-radius: 10px;
+        color: #ffffff;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s ease;
+        }
+
+        .go-dash:hover {
+        background: #1d4ed8;
+        }
     </style>
 </head>
 
@@ -205,7 +222,7 @@
         <div class="speed-logo">
             ⚡ VedicMath Speed Test
         </div>
-        <a href="{{ url_for('dashboard') }}">
+        <a href="{{ url_for('dashboard') }}" class="go-dash">
             <i class="fa-solid fa-arrow-left me-1"></i> Dashboard
         </a>
     </nav>

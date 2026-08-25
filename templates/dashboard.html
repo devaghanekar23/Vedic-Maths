@@ -184,6 +184,121 @@ function handleSearch(e) {
     window.location.href = match ? match.url : "/sutras";
 }
 </script>
+<style>
+
+/* ===== DASHBOARD MOBILE RESPONSIVE ===== */
+
+@media (max-width: 992px) {
+
+    /* Layout — sidebar hide, single column */
+    .dashboard-layout {
+        grid-template-columns: 1fr !important;
+        padding: 15px !important;
+        gap: 15px !important;
+    }
+
+    /* Sidebar hide on mobile */
+    .dashboard-sidebar {
+        display: none !important;
+    }
+
+    /* Right panel neeche aayega */
+    .dashboard-right {
+        order: 3;
+    }
+
+    /* Navbar */
+    .dashboard-nav {
+        padding: 10px 15px !important;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* Search bar chhota */
+    .nav-search input {
+        width: 160px !important;
+        font-size: 0.8rem !important;
+        height: 32px !important;
+        padding: 4px 10px !important;
+    }
+
+    /* Cards grid — 2 per row */
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    /* Welcome card */
+    .welcome-card {
+        padding: 1.2rem !important;
+    }
+
+    /* Progress ring chhota */
+    .progress-ring {
+        width: 120px !important;
+        height: 120px !important;
+    }
+}
+
+@media (max-width: 600px) {
+
+    /* Navbar */
+    .dashboard-nav {
+        padding: 8px 12px !important;
+    }
+
+    .logo {
+        font-size: 1rem !important;
+    }
+
+    /* Search hide on very small */
+    .nav-search {
+        display: none !important;
+    }
+
+    /* Cards — 1 per row on small mobile */
+    .dashboard-cards {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    /* Dash card */
+    .dash-card {
+        padding: 1rem !important;
+    }
+
+    .dash-card h2 {
+        font-size: 1.5rem !important;
+    }
+
+    .dash-card h3 {
+        font-size: 1rem !important;
+    }
+
+    .dash-card p {
+        font-size: 0.85rem !important;
+    }
+
+    /* Welcome card */
+    .student-name {
+        font-size: 1.3rem !important;
+    }
+
+    .welcome-avatar {
+        width: 70px !important;
+        height: 70px !important;
+    }
+
+    /* Right panel */
+    .progress-ring-wrapper {
+        transform: scale(0.85);
+    }
+
+    .progress-stats li {
+        font-size: 0.85rem !important;
+    }
+}
+</style>
 </body>
 
 </html>

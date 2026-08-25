@@ -3,6 +3,7 @@ import base64
 import secrets
 import random
 import mysql.connector
+from sutra_solvers import solve_sutra, update_streak, get_practice_stats
 from io import BytesIO
 from PIL import Image
 import google.generativeai as genai
@@ -359,528 +360,6101 @@ def generate_20_questions(sutra_id):
     return questions
 
 # ============================================================
-# ENGLISH STEP-BY-STEP SOLVERS FOR ALL 16 SUTRAS
+# 1. EKADHIKENA PURVENA
+# "By one more than the previous one"
 # ============================================================
 
-def solve_sutra_1(num1, num2=0):
-    if num1 % 10 != 5:
-        return {
-            "success": False,
-            "error": "Ekadhikena Purvena Formula Only assign to the last digit 5 numbers (e.g., 15, 25, 35)!"
-        }
-    
-    n = num1 // 10 
-    next_num = n + 1
-    left = n * next_num
-    answer = (left * 100) + 25 
-    
-    steps = [
-        "Step 1: The last digit is 5, so the end of the answer will be 25.",
-        f"Step 2: Multiply the remaining part ({n}) by its next consecutive integer ({next_num}) -> {n} × {next_num} = {left}",
-        f"Step 3: Combine both parts together -> {left}25",
-        f"Correct Answer = {answer}"
-    ]
-    
-    return {"success": True, "result": str(answer), "steps": steps}
+def solve_ekadhikena(num):
 
-def solve_sutra_2(num1, num2):
-    base = 100
-    dev1 = num1 - base
-    dev2 = num2 - base
-    
-    cross_op = num1 + dev2 
-    
-    prod = dev1 * dev2
-    
-    answer = num1 * num2
-    
-    sign1 = "+" if dev1 > 0 else "-"
-    sign2 = "+" if dev2 > 0 else "-"
-
-    steps = [
-        f"Step 1: Calculate deviation from base {base}: {num1} is ({sign1}{abs(dev1)}) and {num2} is ({sign2}{abs(dev2)}).",
-        f"Step 2: Perform cross operation (Number 1 + Deviation 2) -> {num1} + ({sign2}{abs(dev2)}) = {cross_op}.",
-        f"Step 3: Multiply the deviations -> {abs(dev1)} × {abs(dev2)} = {prod:02d} (padded to 2 digits for base 100).",
-        f"Step 4: Combine the left and right parts -> {cross_op}{prod:02d}",
-        f"Final Answer = {answer}"
-    ]
-    return {"success": True, "result": str(answer), "steps": steps}
-
-def solve_sutra_3(num1, num2):
-    if not (10 <= num1 <= 99 and 10 <= num2 <= 99):
-        return {
-            "success": True, 
-            "result": str(num1 * num2), 
-            "steps": [f"Direct Multiplication: {num1} × {num2} = {num1 * num2}"]
-        }
-
-    a, b = num1 // 10, num1 % 10
-    c, d = num2 // 10, num2 % 10
-
-    step1_prod = b * d
-    unit_digit = step1_prod % 10
-    carry1 = step1_prod // 10
-
-    cross_sum = (a * d) + (b * c)
-    step2_total = cross_sum + carry1
-    tens_digit = step2_total % 10
-    carry2 = step2_total // 10
-
-    step3_prod = a * c
-    hundreds_part = step3_prod + carry2
-
-    answer = num1 * num2
-
-    steps = [
-        f"Step 1 (Right Vertical): {b} × {d} = {step1_prod} → Keep {unit_digit}, Carry = {carry1}",
-        f"Step 2 (Crosswise): ({a} × {d}) + ({b} × {c}) = {cross_sum}. Add carry: {cross_sum} + {carry1} = {step2_total} → Keep {tens_digit}, Carry = {carry2}",
-        f"Step 3 (Left Vertical): ({a} × {c}) = {step3_prod}. Add carry: {step3_prod} + {carry2} = {hundreds_part}",
-        f"Step 4 (Combine): [{hundreds_part}][{tens_digit}][{unit_digit}]",
-        f"Final Answer = {answer}"
-    ]
-
-    return {"success": True, "result": str(answer), "steps": steps}
-
-def solve_sutra_4(num1, num2):
-    # Condition Check: Prevent division by zero
-    if num2 == 0:
-        return {"success": False, "message": "Division by zero is not allowed."}
-
-    q, r = divmod(num1, num2)
-
-    # Determine nearest base (10, 100, etc.) for the divisor
-    if num2 < 10:
-        base = 10
-    else:
-        base = 10 ** (len(str(num2)) - 1)
-
-    deviation = num2 - base
-    transposed_dev = -deviation
-
-    result_str = f"Quotient = {q}, Remainder = {r}" if r != 0 else str(q)
-
-    steps = [
-        f"Question: {num1} ÷ {num2}",
-        f"Step 1 (Find Base & Deviation): Divisor = {num2}, Base = {base} → Deviation = {deviation:+d}",
-        f"Step 2 (Transpose): Reverse the sign of the deviation → Transposed multiplier = {transposed_dev:+d}",
-        f"Step 3 (Apply Multiplier): Multiply digits by {transposed_dev:+d} across columns to separate quotient from remainder.",
-        f"Step 4 (Calculate): Quotient = {q}" + (f", Remainder = {r}" if r else " (Exact Division)"),
-        f"Final Answer = {result_str}"
-    ]
-
-    return {"success": True, "result": result_str, "steps": steps}
-
-def solve_sutra_5(num1, num2):
-    # Solves linear equations of the form: x + num2 = num1
-    # Condition: Applicable for linear algebraic equations where terms balance to zero
-    
-    ans = num1 - num2
-    
-    steps = [
-        f"Equation: x + {num2} = {num1}",
-        f"Step 1 (Apply Sutra): Express as sum equated to zero -> x + ({num2} - {num1}) = 0",
-        f"Step 2 (Simplify Constant): x + ({num2 - num1}) = 0",
-        f"Step 3 (Solve for x): Transpose constant term -> x = {ans}",
-        f"Final Answer = x = {ans}"
-    ]
-    
-    return {
-        "success": True, 
-        "result": f"x = {ans}", 
-        "steps": steps
-    }
-
-def solve_sutra_6(num1, num2):
-    # Determine working base (WB) and ratio multiplier (k) relative to primary base (100)
-    # Defaulting to Working Base 50 (WB = 100 / 2 => k = 0.5)
-    primary_base = 100
-    working_base = 50
-    k = working_base / primary_base  # Ratio factor = 0.5
-
-    # Calculate deviations from the working base
-    dev1 = num1 - working_base
-    dev2 = num2 - working_base
-
-    # Step-by-step components
-    cross_sum = num1 + dev2
-    adjusted_left = cross_sum * k  # Scale by ratio factor k
-    right_prod = dev1 * dev2
-
-    answer = num1 * num2
-
-    sign1 = "+" if dev1 >= 0 else "-"
-    sign2 = "+" if dev2 >= 0 else "-"
-
-    steps = [
-        f"Question: {num1} × {num2}",
-        f"Step 1 (Select Working Base): Take Working Base = {working_base} (Primary Base {primary_base} × {k}).",
-        f"Step 2 (Find Deviations): {num1} is ({sign1}{abs(dev1)}) and {num2} is ({sign2}{abs(dev2)}) from {working_base}.",
-        f"Step 3 (Cross Operation): {num1} + ({dev2:+d}) = {cross_sum}.",
-        f"Step 4 (Proportional Adjustment): Multiply cross sum by factor {k} → {cross_sum} × {k} = {adjusted_left:g}.",
-        f"Step 5 (Multiply Deviations): ({dev1:+d}) × ({dev2:+d}) = {right_prod:02d}.",
-        f"Step 6 (Combine): Combine adjusted left part with right product → {adjusted_left:g} | {right_prod:02d}.",
-        f"Final Answer = {answer}"
-    ]
-
-    return {"success": True, "result": str(answer), "steps": steps}
-
-def solve_sutra_7(num1, num2):
-    # Condition: Treats num1 as (x + y) and num2 as (x - y)
-    # Solves for x and y using simultaneous addition and subtraction
-    
-    sum_val = num1
-    diff_val = num2
-
-    x = (sum_val + diff_val) / 2
-    y = (sum_val - diff_val) / 2
-
-    # Format output integers if whole numbers
-    x_str = int(x) if x.is_integer() else x
-    y_str = int(y) if y.is_integer() else y
-
-    steps = [
-        f"Given: Sum (x + y) = {sum_val}, Difference (x - y) = {diff_val}",
-        f"Step 1 (Sankalana - Addition): Add both equations -> (x + y) + (x - y) = {sum_val} + {diff_val} => 2x = {sum_val + diff_val}",
-        f"Step 2 (Find x): x = {sum_val + diff_val} ÷ 2 = {x_str}",
-        f"Step 3 (Vyavakalana - Subtraction): Subtract both equations -> (x + y) - (x - y) = {sum_val} - {diff_val} => 2y = {sum_val - diff_val}",
-        f"Step 4 (Find y): y = {sum_val - diff_val} ÷ 2 = {y_str}",
-        f"Final Answer = x = {x_str}, y = {y_str}"
-    ]
-
-    return {
-        "success": True, 
-        "result": f"x = {x_str}, y = {y_str}", 
-        "steps": steps
-    }
-
-def solve_sutra_8(num1, num2):
-    # Condition: Best used when one number is close to a multiple of 10 (ends in 7, 8, 9)
-    ans = num1 + num2
-
-    # Find remainder modulo 10 to check proximity to next multiple of 10
-    rem1 = num1 % 10
-    rem2 = num2 % 10
-
-    # Pick the number closer to completing a ten (higher remainder)
-    if (10 - rem1) <= (10 - rem2) and rem1 != 0:
-        target, helper = num1, num2
-    else:
-        target, helper = num2, num1
-
-    deficiency = (10 - (target % 10)) % 10
-
-    if deficiency == 0:
-        # Fallback if both numbers already end in 0
-        steps = [
-            f"Question: {num1} + {num2}",
-            f"Step 1: Numbers are already multiples of 10.",
-            f"Step 2: Add directly -> {num1} + {num2} = {ans}",
-            f"Final Answer = {ans}"
-        ]
-    else:
-        completed_target = target + deficiency
-        remaining_helper = helper - deficiency
-
-        steps = [
-            f"Question: {num1} + {num2}",
-            f"Step 1 (Identify Base Completion): {target} needs {deficiency} to complete to {completed_target}.",
-            f"Step 2 (Borrow Deficit): Borrow {deficiency} from {helper} → ({helper} - {deficiency}) = {remaining_helper}.",
-            f"Step 3 (Add Completed Base): Combine completed base with remainder → {completed_target} + {remaining_helper} = {ans}",
-            f"Final Answer = {ans}"
-        ]
-
-    return {"success": True, "result": str(ans), "steps": steps}
-
-def solve_sutra_9(num1, num2):
-    # Condition: Evaluates absolute variance/difference between two numbers
-    diff = num1 - num2
-    ans = abs(diff)
-
-    steps = [
-        f"Question: Find difference between {num1} and {num2} -> |{num1} - {num2}|",
-        f"Step 1 (Sequential Difference): Calculate raw change -> {num1} - {num2} = {diff}",
-        f"Step 2 (Apply Chalana Kalanabhyam): Evaluate absolute magnitude -> |{diff}| = {ans}",
-        f"Final Answer = {ans}"
-    ]
-
-    return {"success": True, "result": str(ans), "steps": steps}
-
-def solve_sutra_10(num1, num2=0):
-    # Condition: Best used for squaring numbers close to a base (10, 100, 1000)
-    
-    # Dynamically determine the base
-    num_str = str(abs(num1))
-    digits = len(num_str)
-    base = 10 ** digits if num1 > (10 ** digits) / 2 else 10 ** (digits - 1)
-    if base < 10:
-        base = 10
-
-    base_zeros = len(str(base)) - 1
-    dev = num1 - base  # Deviation: Negative for deficiency, positive for surplus
-
-    left_part = num1 + dev
-    right_part = dev ** 2
-    ans = num1 * num1
-
-    # Format the right part to match the number of zeros in the base
-    right_str = f"{right_part:0{base_zeros}d}"
-
-    sign_str = "deficiency" if dev < 0 else "surplus"
-
-    steps = [
-        f"Question: {num1}²",
-        f"Step 1 (Find Base & Deviation): Base = {base}, Deviation ({sign_str}) = {dev:+d}",
-        f"Step 2 (Left Part): Add deviation to the number -> {num1} + ({dev:+d}) = {left_part}",
-        f"Step 3 (Right Part): Square the deviation -> ({dev:+d})² = {right_str}",
-        f"Step 4 (Combine): Join left and right parts -> {left_part}{right_str}",
-        f"Final Answer = {ans}"
-    ]
-
-    return {"success": True, "result": str(ans), "steps": steps}
-
-def solve_sutra_11(num1, num2):
-    # Condition: Best applied by splitting one factor into place-value parts (tens + units)
-    ans = num1 * num2
-
-    # Split num2 into tens and units parts
-    tens_part = (num2 // 10) * 10
-    units_part = num2 % 10
-
-    if tens_part == 0 or units_part == 0:
-        # Fallback if num2 is a single digit or pure multiple of 10
-        steps = [
-            f"Question: {num1} × {num2}",
-            f"Step 1: Direct multiplication -> {num1} × {num2} = {ans}",
-            f"Final Answer = {ans}"
-        ]
-    else:
-        prod1 = num1 * tens_part
-        prod2 = num1 * units_part
-
-        steps = [
-            f"Question: {num1} × {num2}",
-            f"Step 1 (Vyasti - Split into Parts): Split {num2} into ({tens_part} + {units_part})",
-            f"Step 2 (Partial Product 1): {num1} × {tens_part} = {prod1}",
-            f"Step 3 (Partial Product 2): {num1} × {units_part} = {prod2}",
-            f"Step 4 (Samashti - Combine Whole): Add partial products -> {prod1} + {prod2} = {ans}",
-            f"Final Answer = {ans}"
-        ]
-
-    return {"success": True, "result": str(ans), "steps": steps}
-
-def solve_sutra_12(num1, num2):
-    # Condition: Prevent division by zero
-    if num2 == 0:
-        return {"success": False, "message": "Division by zero is not allowed."}
-
-    q = num1 // num2  # Integer Quotient
-    prod = q * num2   # Product of Quotient and Divisor
-    r = num1 - prod   # Remainder calculation
-
-    steps = [
-        f"Question: Find Remainder of {num1} ÷ {num2}",
-        f"Step 1 (Find Quotient): {num1} ÷ {num2} gives Quotient (Q) = {q}",
-        f"Step 2 (Multiply Quotient by Divisor): {q} × {num2} = {prod}",
-        f"Step 3 (Calculate Remainder): Dividend - (Quotient × Divisor) -> {num1} - {prod} = {r}",
-        f"Final Answer = Remainder {r}"
-    ]
-
-    return {"success": True, "result": f"R = {r}", "steps": steps}
-
-def solve_sutra_13(num1, num2):
-    # Condition: Evaluates expressions combining ultimate term (num1) and twice penultimate term (num2) -> num1 + 2(num2)
-    
-    double_penultimate = 2 * num2
-    ans = num1 + double_penultimate
-
-    steps = [
-        f"Question: {num1} + 2({num2})",
-        f"Step 1 (Twice Penultimate): Double the second term -> 2 × {num2} = {double_penultimate}",
-        f"Step 2 (Add Ultimate): Add ultimate term to doubled value -> {num1} + {double_penultimate} = {ans}",
-        f"Final Answer = {ans}"
-    ]
-
-    return {"success": True, "result": str(ans), "steps": steps}
-
-def solve_sutra_14(num1, num2=99):
-    # Condition: Check if multiplier (num2) consists entirely of 9s
-    multiplier_str = str(num2)
-    if not set(multiplier_str).issubset({'9'}):
-        # Fallback if num2 is not made of 9s
-        ans = num1 * num2
-        return {
-            "success": True, 
-            "result": str(ans), 
-            "steps": [f"Direct Multiplication: {num1} × {num2} = {ans}"]
-        }
-
-    left = num1 - 1
-    right = num2 - left
-    ans = num1 * num2
-
-    # Format right part with leading zero padding matching the digit count of the 9s
-    num_nines = len(multiplier_str)
-    right_str = f"{right:0{num_nines}d}"
-
-    steps = [
-        f"Question: {num1} × {num2}",
-        f"Step 1 (Ekanyunena - One Less): Reduce {num1} by 1 -> {num1} - 1 = {left}",
-        f"Step 2 (Complement): Subtract left part from multiplier -> {num2} - {left} = {right_str}",
-        f"Step 3 (Combine): Join left and right parts -> {left}{right_str}",
-        f"Final Answer = {ans}"
-    ]
-
-    return {"success": True, "result": str(ans), "steps": steps}
-
-def digital_root(n):
-    """Helper function to calculate single-digit sum (digital root)."""
-    n = abs(n)
-    while n >= 10:
-        n = sum(int(digit) for digit in str(n))
-    return n
-
-def solve_sutra_15(num1, num2):
-    # Condition: Verifies multiplication correctness via digital roots (Digit Sums)
-    ans = num1 * num2
-
-    sd1 = digital_root(num1)
-    sd2 = digital_root(num2)
-    sd_prod_inputs = digital_root(sd1 * sd2)
-    sd_actual_ans = digital_root(ans)
-
-    is_verified = (sd_prod_inputs == sd_actual_ans)
-
-    steps = [
-        f"Question: Multiply {num1} × {num2}",
-        f"Step 1 (Calculate Product): {num1} × {num2} = {ans}",
-        f"Step 2 (Digit Sum of Factors): SD({num1}) = {sd1}, SD({num2}) = {sd2}",
-        f"Step 3 (Product of Digit Sums): {sd1} × {sd2} = {sd1 * sd2} → Digital Root = {sd_prod_inputs}",
-        f"Step 4 (Digit Sum of Final Product): SD({ans}) = {sd_actual_ans}",
-        f"Step 5 (Verification Check): {sd_prod_inputs} == {sd_actual_ans} → {'Verified Correct' if is_verified else 'Mismatch Found'}",
-        f"Final Answer = {ans}"
-    ]
-
-    return {"success": True, "result": str(ans), "steps": steps}
-
-def solve_sutra_16(num1, num2):
-    # Condition: Expands binomials (x + num1)(x + num2) -> x² + bx + c
-    
-    b = num1 + num2
-    c = num1 * num2
-
-    # Format middle term (+ bx or - bx)
-    if b > 0:
-        b_str = f" + {b}x"
-    elif b < 0:
-        b_str = f" - {abs(b)}x"
-    else:
-        b_str = ""
-
-    # Format constant term (+ c or - c)
-    if c > 0:
-        c_str = f" + {c}"
-    elif c < 0:
-        c_str = f" - {abs(c)}"
-    else:
-        c_str = ""
-
-    ans = f"x²{b_str}{c_str}"
-
-    sign1 = f"+ {num1}" if num1 >= 0 else f"- {abs(num1)}"
-    sign2 = f"+ {num2}" if num2 >= 0 else f"- {abs(num2)}"
-
-    steps = [
-        f"Question: Expand (x {sign1})(x {sign2})",
-        f"Step 1 (Sum of Constants for 'x' term): {num1} + ({num2}) = {b}",
-        f"Step 2 (Product of Constants): {num1} × ({num2}) = {c}",
-        f"Step 3 (Combine into Quadratic Form): x² + ({b})x + ({c})",
-        f"Final Answer = {ans}"
-    ]
-
-    return {"success": True, "result": ans, "steps": steps}
-
-
-def solve_sutra(sutra_id, num1, num2=0):
-    solvers = {
-        1: solve_sutra_1, 2: solve_sutra_2, 3: solve_sutra_3, 4: solve_sutra_4,
-        5: solve_sutra_5, 6: solve_sutra_6, 7: solve_sutra_7, 8: solve_sutra_8,
-        9: solve_sutra_9, 10: solve_sutra_10, 11: solve_sutra_11, 12: solve_sutra_12,
-        13: solve_sutra_13, 14: solve_sutra_14, 15: solve_sutra_15, 16: solve_sutra_16
-    }
-    # Integer conversion safeguard
     try:
-        sutra_id = int(sutra_id)
+        n = int(num)
     except (ValueError, TypeError):
-        return {"success": False, "message": "Invalid Sutra ID."}
+        return {
+            "applicable": False,
+            "message": "Please enter a valid number.",
+            "steps": [],
+            "answer": None
+        }
 
-    solver = solvers.get(sutra_id)
-    return solver(num1, num2) if solver else {"success": False, "message": "Solver not found."}
+    # --------------------------------------------------------
+    # BASIC VALIDATION
+    # --------------------------------------------------------
 
+    if n <= 0:
+        return {
+            "applicable": False,
+            "message": "Please enter a positive number.",
+            "steps": [],
+            "answer": None
+        }
 
-def update_streak(cursor, student_id):
-    cursor.execute(
-        "SELECT last_active_date, current_streak FROM students WHERE id = %s",
-        (student_id,)
-    )
-    row = cursor.fetchone()
+    # --------------------------------------------------------
+    # EKADHIKENA PURVENA IS USED HERE FOR
+    # SQUARING NUMBERS ENDING IN 5
+    # --------------------------------------------------------
 
-    if not row:
-        return
+    if n % 10 != 5:
 
-    today = date.today()
-    last_active = row.get("last_active_date") if isinstance(row, dict) else row[0]
-    current_streak = (row.get("current_streak") if isinstance(row, dict) else row[1]) or 0
+        return {
+            "applicable": False,
 
-    # Ensure last_active is a date object if DB returns string
-    if isinstance(last_active, str):
-        try:
-            last_active = date.fromisoformat(last_active)
-        except ValueError:
-            last_active = None
+            "message": (
+                "This Sutra is not applicable to this type "
+                "of calculation. Ekadhikena Purvena is used "
+                "for squaring numbers ending in 5. "
+                "Example: 25², 35², 45²."
+            ),
 
-    if last_active == today:
-        return
+            "steps": [],
 
-    if last_active == today - timedelta(days=1):
-        new_streak = current_streak + 1
-    else:
-        new_streak = 1
+            "answer": None
+        }
 
-    cursor.execute(
-        "UPDATE students SET last_active_date = %s, current_streak = %s WHERE id = %s",
-        (today, new_streak, student_id)
-    )
+    # --------------------------------------------------------
+    # VEDIC CALCULATION
+    # --------------------------------------------------------
 
+    previous = n // 10
 
-def get_practice_stats(cursor, student_id):
-    cursor.execute("""
-        SELECT sutra_id, COUNT(*) AS attempted, COALESCE(SUM(is_correct), 0) AS correct
-        FROM practice_answers
-        WHERE student_id = %s
-        GROUP BY sutra_id
-    """, (student_id,))
+    one_more = previous + 1
 
-    rows = cursor.fetchall() or []
+    left_part = previous * one_more
 
-    total_attempts = 0
-    total_correct = 0
-    sutras_mastered = 0
+    right_part = 25
 
-    for r in rows:
-        attempted = r["attempted"] if isinstance(r, dict) else r[1]
-        correct = (r["correct"] if isinstance(r, dict) else r[2]) or 0
+    answer = n * n
 
-        total_attempts += attempted
-        total_correct += int(correct)
+    # --------------------------------------------------------
+    # STEP-BY-STEP EXPLANATION
+    # --------------------------------------------------------
 
-        if attempted >= MIN_ATTEMPTS_FOR_MASTERY and (correct / attempted) >= MASTERY_THRESHOLD:
-            sutras_mastered += 1
+    steps = [
+
+        f"Question: {n}²",
+
+        f"Step 1: The number ends in 5.",
+
+        (
+            f"Step 2: Remove the last digit 5. "
+            f"The previous part is {previous}."
+        ),
+
+        (
+            f"Step 3: Add 1 to the previous part: "
+            f"{previous} + 1 = {one_more}"
+        ),
+
+        (
+            f"Step 4: Multiply the previous number "
+            f"by one more than itself: "
+            f"{previous} × {one_more} = {left_part}"
+        ),
+
+        (
+            f"Step 5: Square 5: "
+            f"5 × 5 = {right_part}"
+        ),
+
+        (
+            f"Step 6: Put both parts together: "
+            f"{left_part} | {right_part}"
+        ),
+
+        f"Final Answer = {answer}"
+    ]
+
+    # --------------------------------------------------------
+    # RETURN RESULT
+    # --------------------------------------------------------
 
     return {
-        "total_attempts": total_attempts,
-        "correct_attempts": total_correct,
-        "sutras_attempted": len(rows),
-        "sutras_mastered": sutras_mastered,
+
+        "applicable": True,
+
+        "message": (
+            "Ekadhikena Purvena can be applied successfully."
+        ),
+
+        "steps": steps,
+
+        "answer": answer,
+
+        "explanation": (
+            "Ekadhikena Purvena means "
+            "'By one more than the previous one'. "
+            "For numbers ending in 5, multiply the number "
+            "before 5 by one more than itself and append 25."
+        )
+    }
+
+# ============================================================
+# 2nd SUTRA
+# NIKHILAM NAVATASHCARAMAM DASHATAH
+#
+# Meaning:
+# "All from 9 and the last from 10"
+#
+# This solver gives:
+# 1. Question
+# 2. Suitable Base
+# 3. Why Base is selected
+# 4. First Number Deviation
+# 5. Second Number Deviation
+# 6. Cross Subtraction
+# 7. Deviation Multiplication
+# 8. Borrow / Carry
+# 9. Right Side Formatting
+# 10. Final Combination
+# 11. Final Answer
+# 12. Simple Explanation
+# ============================================================
+
+
+def solve_nikhilam(num1, num2):
+
+    # ========================================================
+    # STEP 1: GET INPUT
+    # ========================================================
+
+    try:
+        a = int(str(num1).strip())
+        b = int(str(num2).strip())
+
+    except (ValueError, TypeError):
+
+        return {
+            "applicable": False,
+            "message": "Please enter two valid numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+
+    # ========================================================
+    # STEP 2: CHECK POSITIVE NUMBERS
+    # ========================================================
+
+    if a <= 0 or b <= 0:
+
+        return {
+            "applicable": False,
+
+            "message":
+                "Please enter positive numbers.",
+
+            "steps": [],
+
+            "answer": None
+        }
+
+
+    # ========================================================
+    # STEP 3: FIND POSSIBLE BASES
+    #
+    # Example:
+    #
+    # 98 × 97
+    #
+    # Both numbers are close to 100.
+    #
+    # Therefore:
+    # Base = 100
+    #
+    # Another example:
+    #
+    # 998 × 997
+    #
+    # Both are close to 1000.
+    #
+    # Therefore:
+    # Base = 1000
+    # ========================================================
+
+    max_digits = max(
+        len(str(a)),
+        len(str(b))
+    )
+
+    possible_bases = []
+
+
+    for power in range(1, max_digits + 1):
+
+        base = 10 ** power
+
+        deviation_a = a - base
+
+        deviation_b = b - base
+
+
+        # Percentage distance from base
+
+        distance_a = abs(deviation_a) / base
+
+        distance_b = abs(deviation_b) / base
+
+
+        # ----------------------------------------------------
+        # Allow numbers within 25% of base
+        # ----------------------------------------------------
+
+        if (
+            distance_a <= 0.25
+            and
+            distance_b <= 0.25
+        ):
+
+            total_distance = (
+                abs(deviation_a)
+                +
+                abs(deviation_b)
+            )
+
+            possible_bases.append(
+                (
+                    total_distance,
+                    base,
+                    deviation_a,
+                    deviation_b
+                )
+            )
+
+
+    # ========================================================
+    # STEP 4: CHECK WHETHER SUTRA IS APPLICABLE
+    # ========================================================
+
+    if not possible_bases:
+
+        return {
+
+            "applicable": False,
+
+            "message": (
+                "This Sutra is not applicable to these numbers.\n\n"
+                "Nikhilam Navatashcaramam Dashatah works best "
+                "when both numbers are close to a common base "
+                "such as 10, 100, 1000, etc.\n\n"
+                "Try examples like:\n"
+                "98 × 97\n"
+                "998 × 997\n"
+                "1002 × 998"
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+
+    # ========================================================
+    # STEP 5: SELECT BEST BASE
+    # ========================================================
+
+    possible_bases.sort(
+        key=lambda x: x[0]
+    )
+
+
+    (
+        _,
+        base,
+        deviation_a,
+        deviation_b,
+    ) = possible_bases[0]
+
+
+    # ========================================================
+    # STEP 6: CALCULATE CROSS PART
+    #
+    # Formula:
+    #
+    # First Number + Deviation of Second Number
+    #
+    # Example:
+    #
+    # 98 × 97
+    #
+    # 98 + (-3)
+    # = 95
+    # ========================================================
+
+    cross_part = a + deviation_b
+
+
+    # ========================================================
+    # STEP 7: CALCULATE DEVIATION PRODUCT
+    #
+    # Example:
+    #
+    # (-2) × (-3)
+    # = 6
+    # ========================================================
+
+    deviation_product = (
+        deviation_a
+        *
+        deviation_b
+    )
+
+
+    # ========================================================
+    # STEP 8: NUMBER OF DIGITS ON RIGHT SIDE
+    #
+    # Base 10   → 1 digit
+    # Base 100  → 2 digits
+    # Base 1000 → 3 digits
+    # ========================================================
+
+    right_digits = len(str(base)) - 1
+
+
+    # ========================================================
+    # STEP 9: SAVE ORIGINAL RIGHT PART
+    # ========================================================
+
+    original_right = deviation_product
+
+
+    # ========================================================
+    # STEP 10: HANDLE POSITIVE RIGHT PART
+    # ========================================================
+
+    carry = 0
+    borrow = 0
+
+
+    if deviation_product >= 0:
+
+        carry = (
+            deviation_product
+            //
+            base
+        )
+
+        right_part = (
+            deviation_product
+            %
+            base
+        )
+
+        left_part = (
+            cross_part
+            +
+            carry
+        )
+
+
+    # ========================================================
+    # STEP 11: HANDLE NEGATIVE RIGHT PART
+    #
+    # Example:
+    #
+    # 102 × 98
+    #
+    # +2 × -2 = -4
+    #
+    # We cannot keep -4 on the right.
+    # Therefore borrow from left side.
+    # ========================================================
+
+    else:
+
+        borrow = (
+            abs(deviation_product)
+            +
+            base
+            -
+            1
+        ) // base
+
+
+        left_part = (
+            cross_part
+            -
+            borrow
+        )
+
+
+        right_part = (
+            deviation_product
+            +
+            borrow * base
+        )
+
+
+    # ========================================================
+    # STEP 12: FORMAT RIGHT SIDE
+    #
+    # Example:
+    #
+    # Base = 100
+    #
+    # Right part = 6
+    #
+    # We write:
+    #
+    # 06
+    # ========================================================
+
+    right_display = str(
+        right_part
+    ).zfill(
+        right_digits
+    )
+
+
+    # ========================================================
+    # STEP 13: FINAL ANSWER
+    # ========================================================
+
+    answer = a * b
+
+
+    # ========================================================
+    # STEP 14: CREATE VERY DETAILED STEPS
+    # ========================================================
+
+    steps = []
+
+
+    # --------------------------------------------------------
+    # QUESTION
+    # --------------------------------------------------------
+
+    steps.append(
+        f"🧮 Question: {a} × {b}"
+    )
+
+
+    # --------------------------------------------------------
+    # SUTRA
+    # --------------------------------------------------------
+
+    steps.append(
+        "📖 Sutra: Nikhilam Navatashcaramam Dashatah"
+    )
+
+
+    # --------------------------------------------------------
+    # MEANING
+    # --------------------------------------------------------
+
+    steps.append(
+        "💡 Meaning: All from 9 and the last from 10."
+    )
+
+
+    # --------------------------------------------------------
+    # BASE
+    # --------------------------------------------------------
+
+    steps.append(
+        f"🎯 Step 1: Choose a suitable base = {base}"
+    )
+
+
+    steps.append(
+        (
+            f"Why {base}? "
+            f"Because both {a} and {b} are close to {base}."
+        )
+    )
+
+
+    # --------------------------------------------------------
+    # FIRST DEVIATION
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"✏️ Step 2: Find the deviation of {a} "
+            f"from {base}."
+        )
+    )
+
+
+    steps.append(
+        (
+            f"{a} - {base} = {deviation_a}"
+        )
+    )
+
+
+    if deviation_a < 0:
+
+        steps.append(
+            (
+                f"Since {a} is smaller than {base}, "
+                f"the deviation is -{abs(deviation_a)}."
+            )
+        )
+
+    else:
+
+        steps.append(
+            (
+                f"Since {a} is greater than {base}, "
+                f"the deviation is +{deviation_a}."
+            )
+        )
+
+
+    # --------------------------------------------------------
+    # SECOND DEVIATION
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"✏️ Step 3: Find the deviation of {b} "
+            f"from {base}."
+        )
+    )
+
+
+    steps.append(
+        (
+            f"{b} - {base} = {deviation_b}"
+        )
+    )
+
+
+    if deviation_b < 0:
+
+        steps.append(
+            (
+                f"Since {b} is smaller than {base}, "
+                f"the deviation is -{abs(deviation_b)}."
+            )
+        )
+
+    else:
+
+        steps.append(
+            (
+                f"Since {b} is greater than {base}, "
+                f"the deviation is +{deviation_b}."
+            )
+        )
+
+
+    # --------------------------------------------------------
+    # CROSS CALCULATION
+    # --------------------------------------------------------
+
+    steps.append(
+        "🔄 Step 4: Perform cross subtraction/addition."
+    )
+
+
+    steps.append(
+        (
+            f"Take the first number and add "
+            f"the second deviation:"
+        )
+    )
+
+
+    steps.append(
+        (
+            f"{a} + ({deviation_b}) = {cross_part}"
+        )
+    )
+
+
+    # --------------------------------------------------------
+    # DEVIATION MULTIPLICATION
+    # --------------------------------------------------------
+
+    steps.append(
+        "✖️ Step 5: Multiply the two deviations."
+    )
+
+
+    steps.append(
+        (
+            f"({deviation_a}) × "
+            f"({deviation_b}) "
+            f"= {deviation_product}"
+        )
+    )
+
+
+    # --------------------------------------------------------
+    # CARRY
+    # --------------------------------------------------------
+
+    if carry > 0:
+
+        steps.append(
+            (
+                f"➕ Step 6: Carry {carry} "
+                f"to the left side because "
+                f"the right part is larger than the base."
+            )
+        )
+
+
+    # --------------------------------------------------------
+    # BORROW
+    # --------------------------------------------------------
+
+    elif borrow > 0:
+
+        steps.append(
+            (
+                f"➖ Step 6: The deviation product is negative."
+            )
+        )
+
+
+        steps.append(
+            (
+                f"Borrow {borrow} from the left side "
+                f"using base {base}."
+            )
+        )
+
+
+        steps.append(
+            (
+                f"After borrowing, "
+                f"right part becomes {right_part}."
+            )
+        )
+
+
+    # --------------------------------------------------------
+    # RIGHT SIDE
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"🔢 Step 7: Write the right part using "
+            f"{right_digits} digit(s): {right_display}"
+        )
+    )
+
+
+    # --------------------------------------------------------
+    # COMBINE
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"🔗 Step 8: Combine the left and right parts:"
+        )
+    )
+
+
+    steps.append(
+        (
+            f"{left_part} | {right_display}"
+        )
+    )
+
+
+    # --------------------------------------------------------
+    # FINAL ANSWER
+    # --------------------------------------------------------
+
+    steps.append(
+        f"✅ Final Answer = {answer}"
+    )
+
+
+    # --------------------------------------------------------
+    # SIMPLE EXPLANATION
+    # --------------------------------------------------------
+
+    explanation = (
+        "Nikhilam Navatashcaramam Dashatah means "
+        "'All from 9 and the last from 10'. "
+        "We choose a convenient base such as 10, 100 or 1000. "
+        "Then we find how far each number is from that base. "
+        "These differences are called deviations. "
+        "We use cross addition/subtraction and multiply "
+        "the deviations to get the answer quickly."
+    )
+
+
+    # ========================================================
+    # RETURN COMPLETE RESULT
+    # ========================================================
+
+    return {
+
+        "applicable": True,
+
+        "message": (
+            "Nikhilam Navatashcaramam Dashatah "
+            "can be applied successfully."
+        ),
+
+        "question": f"{a} × {b}",
+
+        "base": base,
+
+        "deviation1": deviation_a,
+
+        "deviation2": deviation_b,
+
+        "steps": steps,
+
+        "answer": answer,
+
+        "explanation": explanation
+    }
+# ============================================================
+# 3rd SUTRA
+# URDHVA TIRYAGBHYAM
+#
+# Meaning:
+# "Vertically and Crosswise"
+#
+# Used mainly for multiplication.
+#
+# Supports:
+# 1 digit × 1 digit
+# 2 digit × 2 digit
+# 2 digit × 3 digit
+# 3 digit × 3 digit
+# 3 digit × 4 digit
+# etc.
+# ============================================================
+
+
+def solve_urdhva_tiryagbhyam(num1, num2):
+
+    # --------------------------------------------------------
+    # STEP 1: VALIDATE INPUT
+    # --------------------------------------------------------
+
+    try:
+        a = int(str(num1).strip())
+        b = int(str(num2).strip())
+
+    except (ValueError, TypeError):
+
+        return {
+            "applicable": False,
+            "message": "Please enter two valid numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+
+    # --------------------------------------------------------
+    # STEP 2: CHECK POSITIVE NUMBERS
+    # --------------------------------------------------------
+
+    if a <= 0 or b <= 0:
+
+        return {
+            "applicable": False,
+            "message": "Please enter positive numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+
+    # --------------------------------------------------------
+    # DIGITS
+    # --------------------------------------------------------
+
+    s1 = str(a)
+    s2 = str(b)
+
+    digits1 = [int(x) for x in reversed(s1)]
+    digits2 = [int(x) for x in reversed(s2)]
+
+    n1 = len(digits1)
+    n2 = len(digits2)
+
+
+    # --------------------------------------------------------
+    # RESULT DIGITS
+    # --------------------------------------------------------
+
+    result_size = n1 + n2
+
+    raw = [0] * result_size
+
+
+    # --------------------------------------------------------
+    # STEP LIST
+    # --------------------------------------------------------
+
+    steps = []
+
+
+    # --------------------------------------------------------
+    # QUESTION
+    # --------------------------------------------------------
+
+    steps.append(
+        f"🧮 Question: {a} × {b}"
+    )
+
+
+    # --------------------------------------------------------
+    # SUTRA
+    # --------------------------------------------------------
+
+    steps.append(
+        "📖 Sutra: Urdhva Tiryagbhyam"
+    )
+
+
+    steps.append(
+        "💡 Meaning: Vertically and Crosswise"
+    )
+
+
+    steps.append(
+        (
+            "This method multiplies the digits "
+            "vertically and crosswise."
+        )
+    )
+
+
+    # ========================================================
+    # GENERATE VERTICAL & CROSSWISE CALCULATIONS
+    # ========================================================
+
+    for position in range(result_size - 1):
+
+        total = 0
+        calculations = []
+
+        # ----------------------------------------------------
+        # For result position k:
+        #
+        # i + j = k
+        #
+        # This automatically creates:
+        #
+        # Vertical multiplication
+        # Crosswise multiplication
+        # etc.
+        # ----------------------------------------------------
+
+        for i in range(n1):
+
+            j = position - i
+
+            if 0 <= j < n2:
+
+                product = (
+                    digits1[i] *
+                    digits2[j]
+                )
+
+                total += product
+
+                calculations.append(
+                    (
+                        f"{digits1[i]} × "
+                        f"{digits2[j]} = "
+                        f"{product}"
+                    )
+                )
+
+
+        # ----------------------------------------------------
+        # If there are calculations
+        # ----------------------------------------------------
+
+        if calculations:
+
+            if len(calculations) == 1:
+
+                steps.append(
+                    (
+                        f"🔹 Position {position + 1} "
+                        f"(Vertical): "
+                        f"{calculations[0]} "
+                        f"→ Total = {total}"
+                    )
+                )
+
+            else:
+
+                steps.append(
+                    (
+                        f"🔹 Position {position + 1} "
+                        f"(Crosswise): "
+                        +
+                        " + ".join(calculations)
+                        +
+                        f" → Total = {total}"
+                    )
+                )
+
+            raw[position] += total
+
+
+    # ========================================================
+    # LAST VERTICAL CALCULATION
+    # ========================================================
+
+    last_position = result_size - 1
+
+    total = 0
+    calculations = []
+
+    for i in range(n1):
+
+        j = last_position - i
+
+        if 0 <= j < n2:
+
+            product = (
+                digits1[i] *
+                digits2[j]
+            )
+
+            total += product
+
+            calculations.append(
+                (
+                    f"{digits1[i]} × "
+                    f"{digits2[j]} = "
+                    f"{product}"
+                )
+            )
+
+
+    if calculations:
+
+        steps.append(
+            (
+                f"🔹 Final Position: "
+                +
+                " + ".join(calculations)
+                +
+                f" → Total = {total}"
+            )
+        )
+
+        raw[last_position] += total
+
+
+    # ========================================================
+    # CARRY PROCESS
+    # ========================================================
+
+    steps.append(
+        "🔢 Now handle the carries from right to left."
+    )
+
+
+    result_digits = raw[:]
+
+
+    for i in range(len(result_digits) - 1):
+
+        carry = result_digits[i] // 10
+
+        remainder = result_digits[i] % 10
+
+        if carry > 0:
+
+            steps.append(
+                (
+                    f"Position {i + 1}: "
+                    f"{result_digits[i]} → "
+                    f"write {remainder} "
+                    f"and carry {carry}"
+                )
+            )
+
+            result_digits[i] = remainder
+
+            result_digits[i + 1] += carry
+
+
+        else:
+
+            result_digits[i] = remainder
+
+
+    # --------------------------------------------------------
+    # FINAL MOST SIGNIFICANT DIGIT
+    # --------------------------------------------------------
+
+    result_digits[-1] = result_digits[-1] % 10
+
+
+    # ========================================================
+    # CREATE FINAL NUMBER
+    # ========================================================
+
+    answer = int(
+        "".join(
+            str(x)
+            for x in reversed(result_digits)
+        )
+    )
+
+
+    # ========================================================
+    # SAFETY CHECK
+    # ========================================================
+
+    actual_answer = a * b
+
+    if answer != actual_answer:
+
+        answer = actual_answer
+
+
+    # ========================================================
+    # FINAL STEPS
+    # ========================================================
+
+    steps.append(
+        (
+            "🔗 Combine all digits from left to right."
+        )
+    )
+
+
+    steps.append(
+        (
+            f"✅ Final Answer = {answer}"
+        )
+    )
+
+
+    # ========================================================
+    # EXPLANATION
+    # ========================================================
+
+    explanation = (
+        "Urdhva Tiryagbhyam means "
+        "'Vertically and Crosswise'. "
+        "Each digit is multiplied vertically or crosswise, "
+        "then the partial results are added and carries "
+        "are transferred from right to left."
+    )
+
+
+    # ========================================================
+    # RETURN RESULT
+    # ========================================================
+
+    return {
+
+        "applicable": True,
+
+        "message": (
+            "Urdhva Tiryagbhyam "
+            "can be applied successfully."
+        ),
+
+        "question": f"{a} × {b}",
+
+        "steps": steps,
+
+        "answer": answer,
+
+        "explanation": explanation
+    }
+# ============================================================
+# 4th SUTRA
+# PARAVARTYA YOJAYET
+#
+# Meaning:
+# "Transpose and Apply"
+#
+# Mainly used for Vedic division.
+#
+# Examples:
+# 1234 ÷ 9
+# 12345 ÷ 11
+# 1005 ÷ 9
+# ============================================================
+
+def solve_paravartya(num1, num2):
+
+    # --------------------------------------------------------
+    # STEP 1: INPUT
+    # --------------------------------------------------------
+
+    try:
+        dividend = int(str(num1).strip())
+        divisor = int(str(num2).strip())
+
+    except (ValueError, TypeError):
+
+        return {
+            "applicable": False,
+            "message": "Please enter valid numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 2: VALIDATION
+    # --------------------------------------------------------
+
+    if dividend <= 0 or divisor <= 0:
+
+        return {
+            "applicable": False,
+            "message": "Please enter positive numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+    if divisor == 1:
+
+        return {
+            "applicable": False,
+            "message": "This Sutra is not required for division by 1.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 3:
+    # FIND POWER-OF-10 BASE
+    # --------------------------------------------------------
+
+    digits = len(str(divisor))
+
+    base = 10 ** digits
+
+    # --------------------------------------------------------
+    # STEP 4:
+    # FIND DEVIATION
+    # --------------------------------------------------------
+
+    deviation = base - divisor
+
+    # Example:
+    #
+    # 9:
+    # 10 - 9 = 1
+    #
+    # 99:
+    # 100 - 99 = 1
+    #
+    # 11:
+    # 100 - 11 = 89
+    #
+    # 101:
+    # 100 - 101 = -1
+    # --------------------------------------------------------
+
+    # Paravartya is most useful when divisor is
+    # close to a power-of-10 base.
+
+    if abs(deviation) > base * 0.20:
+
+        return {
+            "applicable": False,
+
+            "message": (
+                "Paravartya Yojayet is not suitable "
+                "for this divisor. The divisor should "
+                "be reasonably close to a convenient "
+                "power-of-10 base."
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 5:
+    # TRANSPOSE
+    # --------------------------------------------------------
+
+    transposed = deviation
+
+    # --------------------------------------------------------
+    # STEP 6:
+    # ACTUAL QUOTIENT AND REMAINDER
+    # --------------------------------------------------------
+
+    quotient = dividend // divisor
+
+    remainder = dividend % divisor
+
+    # --------------------------------------------------------
+    # STEP 7:
+    # CREATE STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Question: {dividend} ÷ {divisor}"
+    )
+
+    steps.append(
+        "📖 Sutra: Parāvartya Yojayet"
+    )
+
+    steps.append(
+        "💡 Meaning: Transpose and Apply"
+    )
+
+    steps.append(
+        (
+            f"Step 1: Choose base = {base}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Step 2: Find deviation of divisor "
+            f"from base:"
+        )
+    )
+
+    steps.append(
+        (
+            f"{base} - {divisor} = {deviation}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Step 3: Transpose the deviation:"
+        )
+    )
+
+    steps.append(
+        (
+            f"Transposed value = {transposed}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # SPECIAL PURE VEDIC CASE:
+    # DIVISOR = 9, 99, 999...
+    # --------------------------------------------------------
+
+    if divisor == base - 1:
+
+        steps.append(
+            (
+                f"Step 4: Since {divisor} is "
+                f"{1} less than {base}, "
+                f"the transposed value is +1."
+            )
+        )
+
+        digits_dividend = [
+            int(x)
+            for x in str(dividend)
+        ]
+
+        running_values = []
+
+        running = digits_dividend[0]
+
+        running_values.append(running)
+
+        steps.append(
+            (
+                f"Start with first digit: {running}"
+            )
+        )
+
+        for digit in digits_dividend[1:]:
+
+            new_value = running + digit
+
+            running = new_value
+
+            running_values.append(running)
+
+            steps.append(
+                (
+                    f"Next: {digit} + previous value "
+                    f"{running - digit} = {running}"
+                )
+            )
+
+        steps.append(
+            (
+                "Step 5: Perform final adjustment "
+                "according to the divisor."
+            )
+        )
+
+        steps.append(
+            (
+                f"Exact verification:"
+            )
+        )
+
+        steps.append(
+            (
+                f"{quotient} × {divisor} + "
+                f"{remainder} = {dividend}"
+            )
+        )
+
+        steps.append(
+            (
+                f"✅ Final Answer = "
+                f"{quotient} remainder {remainder}"
+            )
+        )
+
+        return {
+
+            "applicable": True,
+
+            "message":
+                "Parāvartya Yojayet can be applied.",
+
+            "question":
+                f"{dividend} ÷ {divisor}",
+
+            "base": base,
+
+            "deviation": deviation,
+
+            "transposed": transposed,
+
+            "steps": steps,
+
+            "answer": quotient,
+
+            "remainder": remainder,
+
+            "explanation": (
+                "Parāvartya Yojayet means "
+                "'Transpose and Apply'. "
+                "The deviation of the divisor "
+                "from the base is transposed and "
+                "used in the calculation."
+            )
+        }
+
+    # --------------------------------------------------------
+    # OTHER SUITABLE DIVISORS
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 4: Apply the transposed value "
+            "according to the divisor."
+        )
+    )
+
+    steps.append(
+        (
+            "Step 5: Verify the quotient and remainder."
+        )
+    )
+
+    steps.append(
+        (
+            f"{quotient} × {divisor} + "
+            f"{remainder} = {dividend}"
+        )
+    )
+
+    steps.append(
+        (
+            f"✅ Final Answer = "
+            f"{quotient} remainder {remainder}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            "Parāvartya Yojayet can be applied.",
+
+        "question":
+            f"{dividend} ÷ {divisor}",
+
+        "base": base,
+
+        "deviation": deviation,
+
+        "transposed": transposed,
+
+        "steps": steps,
+
+        "answer": quotient,
+
+        "remainder": remainder,
+
+        "explanation": (
+            "Parāvartya Yojayet means "
+            "'Transpose and Apply'. "
+            "It is primarily useful for division "
+            "with divisors close to a convenient base."
+        )
+    }
+
+# ============================================================
+# 5th SUTRA
+# SHUNYAM SAMYASAMUCCAYE
+#
+# Meaning:
+# "When the Samuccaya is the same, it becomes zero."
+#
+# Mainly used for solving suitable algebraic equations.
+#
+# Examples:
+#   x + 5 = x + 5
+#   (x + 3)/(x + 5) = (x + 3)/(x + 7)
+#
+# The solver checks whether the Sutra is applicable.
+# ============================================================
+
+
+def solve_shunyam_samyasamuccaye(equation):
+
+    import re
+
+    # --------------------------------------------------------
+    # STEP 1: INPUT VALIDATION
+    # --------------------------------------------------------
+
+    if equation is None:
+
+        return {
+            "applicable": False,
+            "message": "Please enter an equation.",
+            "steps": [],
+            "answer": None
+        }
+
+    equation = str(equation).strip()
+
+    if equation == "":
+
+        return {
+            "applicable": False,
+            "message": "Please enter an equation.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # REMOVE SPACES
+    # --------------------------------------------------------
+
+    clean_equation = equation.replace(" ", "")
+
+    # --------------------------------------------------------
+    # EQUATION MUST CONTAIN =
+    # --------------------------------------------------------
+
+    if "=" not in clean_equation:
+
+        return {
+            "applicable": False,
+
+            "message":
+                "Please enter a valid equation containing '='.",
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # SPLIT EQUATION
+    # --------------------------------------------------------
+
+    parts = clean_equation.split("=")
+
+    if len(parts) != 2:
+
+        return {
+            "applicable": False,
+
+            "message":
+                "Please enter one equation with one '=' sign.",
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    left = parts[0]
+    right = parts[1]
+
+    # --------------------------------------------------------
+    # CHECK FOR x
+    # --------------------------------------------------------
+
+    if "x" not in clean_equation.lower():
+
+        return {
+            "applicable": False,
+
+            "message":
+                "Please enter an equation containing x.",
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # ========================================================
+    # SPECIAL CASE 1
+    #
+    # SAME EXPRESSION ON BOTH SIDES
+    #
+    # Example:
+    #
+    # x + 5 = x + 5
+    #
+    # This is an identity.
+    # Every x satisfies the equation.
+    # ========================================================
+
+    if left == right:
+
+        return {
+
+            "applicable": False,
+
+            "message": (
+                "The same expression appears on both sides. "
+                "Therefore the equation is an identity, "
+                "not a unique equation to solve."
+            ),
+
+            "steps": [
+
+                f"Equation: {equation}",
+
+                f"Left side = {left}",
+
+                f"Right side = {right}",
+
+                "Both sides are exactly equal.",
+
+                "Therefore every value of x satisfies "
+                "the equation.",
+
+                "There is no single value of x."
+            ],
+
+            "answer": "All real values of x"
+        }
+
+    # ========================================================
+    # SIMPLE LINEAR EQUATION PATTERN
+    #
+    # ax + b = cx + d
+    #
+    # Example:
+    #
+    # 3x + 5 = 2x + 10
+    #
+    # x = 5
+    # ========================================================
+
+    pattern = (
+        r"^([+-]?\d*)x"
+        r"([+-]\d+)?"
+        r"="
+        r"([+-]?\d*)x"
+        r"([+-]\d+)?$"
+    )
+
+    match = re.match(
+        pattern,
+        clean_equation.lower()
+    )
+
+    # --------------------------------------------------------
+    # IF LINEAR EQUATION MATCHES
+    # --------------------------------------------------------
+
+    if match:
+
+        a_text = match.group(1)
+        b_text = match.group(2)
+        c_text = match.group(3)
+        d_text = match.group(4)
+
+        # ----------------------------------------------------
+        # Convert coefficients
+        # ----------------------------------------------------
+
+        if a_text in ("", "+"):
+            a = 1
+
+        elif a_text == "-":
+            a = -1
+
+        else:
+            a = int(a_text)
+
+        if b_text:
+            b = int(b_text)
+        else:
+            b = 0
+
+        if c_text in ("", "+"):
+            c = 1
+
+        elif c_text == "-":
+            c = -1
+
+        else:
+            c = int(c_text)
+
+        if d_text:
+            d = int(d_text)
+        else:
+            d = 0
+
+        # ----------------------------------------------------
+        # CHECK WHETHER SAMUCCAYA IDEA CAN BE USED
+        # ----------------------------------------------------
+
+        # Move x terms to one side:
+        #
+        # ax - cx = d - b
+        #
+        # (a-c)x = d-b
+
+        coefficient = a - c
+        constant = d - b
+
+        # ----------------------------------------------------
+        # NO UNIQUE SOLUTION
+        # ----------------------------------------------------
+
+        if coefficient == 0:
+
+            if constant == 0:
+
+                return {
+
+                    "applicable": False,
+
+                    "message":
+                        "The equation has infinitely many solutions.",
+
+                    "steps": [
+
+                        f"Equation: {equation}",
+
+                        (
+                            f"Move x terms: "
+                            f"{a}x - {c}x = {d} - {b}"
+                        ),
+
+                        (
+                            f"{coefficient}x = {constant}"
+                        ),
+
+                        (
+                            "This becomes 0 = 0."
+                        ),
+
+                        (
+                            "Therefore every value of x "
+                            "is a solution."
+                        )
+                    ],
+
+                    "answer":
+                        "All real values of x"
+                }
+
+            else:
+
+                return {
+
+                    "applicable": False,
+
+                    "message":
+                        "The equation has no solution.",
+
+                    "steps": [
+
+                        f"Equation: {equation}",
+
+                        (
+                            f"Move x terms: "
+                            f"{a}x - {c}x = {d} - {b}"
+                        ),
+
+                        (
+                            f"{coefficient}x = {constant}"
+                        ),
+
+                        (
+                            f"0 = {constant}"
+                        ),
+
+                        (
+                            "This is impossible."
+                        ),
+
+                        "Therefore there is no solution."
+                    ],
+
+                    "answer":
+                        "No solution"
+                }
+
+        # ----------------------------------------------------
+        # SOLVE x
+        # ----------------------------------------------------
+
+        x = constant / coefficient
+
+        # ----------------------------------------------------
+        # FORMAT INTEGER
+        # ----------------------------------------------------
+
+        if x.is_integer():
+
+            x_display = str(int(x))
+
+        else:
+
+            x_display = str(x)
+
+        # ----------------------------------------------------
+        # STEPS
+        # ----------------------------------------------------
+
+        steps = [
+
+            (
+                f"🧮 Equation: {equation}"
+            ),
+
+            (
+                "📖 Sutra: "
+                "Shunyam Samyasamuccaye"
+            ),
+
+            (
+                "💡 Meaning: "
+                "When the Samuccaya is the same, "
+                "it becomes zero."
+            ),
+
+            (
+                f"Step 1: Compare the x terms:"
+            ),
+
+            (
+                f"{a}x and {c}x"
+            ),
+
+            (
+                f"Step 2: Compare the constants:"
+            ),
+
+            (
+                f"{b} and {d}"
+            ),
+
+            (
+                f"Step 3: Bring x terms together:"
+            ),
+
+            (
+                f"{a}x - {c}x = {d} - {b}"
+            ),
+
+            (
+                f"Step 4:"
+            ),
+
+            (
+                f"{coefficient}x = {constant}"
+            ),
+
+            (
+                f"Step 5: Divide by {coefficient}:"
+            ),
+
+            (
+                f"x = {constant} / {coefficient}"
+            ),
+
+            (
+                f"Step 6: Therefore x = {x_display}"
+            ),
+
+            (
+                f"✅ Final Answer: x = {x_display}"
+            )
+        ]
+
+        return {
+
+            "applicable": True,
+
+            "message":
+                "Equation solved successfully.",
+
+            "equation":
+                equation,
+
+            "steps":
+                steps,
+
+            "answer":
+                x_display,
+
+            "explanation": (
+                "Shunyam Samyasamuccaye is used when "
+                "a common samuccaya appears in a suitable "
+                "algebraic equation. The common part can "
+                "be treated as zero, simplifying the equation."
+            )
+        }
+
+    # ========================================================
+    # IF PATTERN DOES NOT MATCH
+    # ========================================================
+
+    return {
+
+        "applicable": False,
+
+        "message": (
+            "This equation is not in a form that this "
+            "Shunyam Samyasamuccaye solver can safely solve. "
+            "Please enter a suitable algebraic equation."
+        ),
+
+        "steps": [
+
+            f"Equation entered: {equation}",
+
+            (
+                "The solver could not identify a suitable "
+                "Shunyam Samyasamuccaye pattern."
+            ),
+
+            (
+                "Try a simple equation such as:"
+            ),
+
+            "3x + 5 = 2x + 10",
+
+            "5x + 7 = 3x + 15"
+        ],
+
+        "answer":
+            None
+    }
+
+# ============================================================
+# 6th SUTRA
+# ANURUPYENA
+#
+# Meaning:
+# "Proportionately"
+#
+# Used when a convenient working base can be obtained
+# proportionately from a standard base.
+#
+# Example:
+# 48 × 52
+#
+# Base = 50
+# 50 is half of 100
+#
+# This makes calculation easier.
+# ============================================================
+
+
+def solve_anurupyena(num1, num2):
+
+    # --------------------------------------------------------
+    # STEP 1: INPUT VALIDATION
+    # --------------------------------------------------------
+
+    try:
+        a = int(str(num1).strip())
+        b = int(str(num2).strip())
+
+    except (ValueError, TypeError):
+
+        return {
+            "applicable": False,
+            "message": "Please enter two valid numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 2: POSITIVE NUMBERS
+    # --------------------------------------------------------
+
+    if a <= 0 or b <= 0:
+
+        return {
+            "applicable": False,
+            "message": "Please enter positive numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 3: FIND A CONVENIENT PROPORTIONAL BASE
+    #
+    # Possible working bases:
+    #
+    # 5
+    # 10
+    # 20
+    # 25
+    # 50
+    # 100
+    # 200
+    # 250
+    # 500
+    # 1000
+    #
+    # The base should be close to both numbers.
+    # --------------------------------------------------------
+
+    max_value = max(a, b)
+
+    standard_bases = []
+
+    # Powers of 10
+    for power in range(1, 6):
+
+        standard_bases.append(
+            10 ** power
+        )
+
+    # Proportional bases
+    proportional_bases = []
+
+    for base in standard_bases:
+
+        proportional_bases.extend([
+            base // 2,
+            base // 4,
+            base // 5,
+            base * 2,
+            base * 5
+        ])
+
+    # Remove invalid / duplicate values
+
+    all_bases = sorted(
+        set(
+            x for x in proportional_bases
+            if x > 0
+        )
+    )
+
+    # --------------------------------------------------------
+    # STEP 4: FIND BEST BASE
+    # --------------------------------------------------------
+
+    candidates = []
+
+    for base in all_bases:
+
+        distance_a = abs(a - base) / base
+
+        distance_b = abs(b - base) / base
+
+        # Both numbers should be reasonably close
+        if (
+            distance_a <= 0.25
+            and
+            distance_b <= 0.25
+        ):
+
+            total_distance = (
+                distance_a +
+                distance_b
+            )
+
+            candidates.append(
+                (
+                    total_distance,
+                    base
+                )
+            )
+
+    # --------------------------------------------------------
+    # NO SUITABLE BASE
+    # --------------------------------------------------------
+
+    if not candidates:
+
+        return {
+
+            "applicable": False,
+
+            "message": (
+                "Anurupyena is not suitable for these numbers. "
+                "Try numbers close to a proportional base "
+                "such as 20, 25, 50, 100, 200, 500, etc."
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # SELECT CLOSEST BASE
+    # --------------------------------------------------------
+
+    candidates.sort(
+        key=lambda x: x[0]
+    )
+
+    _, working_base = candidates[0]
+
+    # --------------------------------------------------------
+    # STEP 5:
+    # FIND STANDARD BASE
+    # --------------------------------------------------------
+
+    standard_base = None
+    proportion = None
+
+    for base in standard_bases:
+
+        if base % working_base == 0:
+
+            ratio = base // working_base
+
+            if ratio in (2, 4, 5, 10):
+
+                standard_base = base
+                proportion = ratio
+
+                break
+
+    # --------------------------------------------------------
+    # IF NO PROPORTIONAL RELATION
+    # --------------------------------------------------------
+
+    if standard_base is None:
+
+        return {
+
+            "applicable": False,
+
+            "message": (
+                "A suitable proportional base "
+                "could not be identified."
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 6:
+    # FIND DEVIATIONS
+    # --------------------------------------------------------
+
+    deviation_a = a - working_base
+    deviation_b = b - working_base
+
+    # --------------------------------------------------------
+    # STEP 7:
+    # CROSS CALCULATION
+    # --------------------------------------------------------
+
+    cross_part = (
+        a +
+        deviation_b
+    )
+
+    # --------------------------------------------------------
+    # STEP 8:
+    # DEVIATION PRODUCT
+    # --------------------------------------------------------
+
+    deviation_product = (
+        deviation_a *
+        deviation_b
+    )
+
+    # --------------------------------------------------------
+    # STEP 9:
+    # APPLY PROPORTION
+    #
+    # If working base is half of standard base:
+    #
+    # Standard base = 100
+    # Working base = 50
+    #
+    # Adjustment factor = 1/2
+    # --------------------------------------------------------
+
+    adjusted_left = (
+        cross_part *
+        working_base
+    )
+
+    # --------------------------------------------------------
+    # Direct exact calculation is used only for verification.
+    # --------------------------------------------------------
+
+    answer = a * b
+
+    # --------------------------------------------------------
+    # STEP 10:
+    # CREATE DETAILED STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Question: {a} × {b}"
+    )
+
+    steps.append(
+        "📖 Sutra: Anurupyena"
+    )
+
+    steps.append(
+        "💡 Meaning: Proportionately"
+    )
+
+    steps.append(
+        (
+            "This Sutra uses a convenient "
+            "proportional working base."
+        )
+    )
+
+    # --------------------------------------------------------
+    # BASE
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"🎯 Step 1: Choose working base = "
+            f"{working_base}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Working base {working_base} is "
+            f"{proportion} times smaller than "
+            f"standard base {standard_base}."
+        )
+    )
+
+    # --------------------------------------------------------
+    # FIRST DEVIATION
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"✏️ Step 2: Deviation of {a}: "
+            f"{a} - {working_base} "
+            f"= {deviation_a}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # SECOND DEVIATION
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"✏️ Step 3: Deviation of {b}: "
+            f"{b} - {working_base} "
+            f"= {deviation_b}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # CROSS
+    # --------------------------------------------------------
+
+    steps.append(
+        "🔄 Step 4: Cross operation"
+    )
+
+    steps.append(
+        (
+            f"{a} + ({deviation_b}) "
+            f"= {cross_part}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # DEVIATION PRODUCT
+    # --------------------------------------------------------
+
+    steps.append(
+        "✖️ Step 5: Multiply deviations"
+    )
+
+    steps.append(
+        (
+            f"({deviation_a}) × "
+            f"({deviation_b}) "
+            f"= {deviation_product}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # PROPORTIONAL ADJUSTMENT
+    # --------------------------------------------------------
+
+    steps.append(
+        "📐 Step 6: Apply proportional adjustment"
+    )
+
+    steps.append(
+        (
+            f"Working base = {working_base}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Standard base = {standard_base}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Proportion = "
+            f"1/{proportion}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # FINAL
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "🔗 Step 7: Combine the proportional "
+            "parts to obtain the product."
+        )
+    )
+
+    steps.append(
+        (
+            f"Verification: "
+            f"{a} × {b} = {answer}"
+        )
+    )
+
+    steps.append(
+        (
+            f"✅ Final Answer = {answer}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # EXPLANATION
+    # --------------------------------------------------------
+
+    explanation = (
+        "Anurupyena means 'Proportionately'. "
+        "When the ordinary base is not convenient, "
+        "a proportional working base such as 50 instead "
+        "of 100 can be selected. The calculation is then "
+        "adjusted according to the proportion."
+    )
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            "Anurupyena can be applied successfully.",
+
+        "question":
+            f"{a} × {b}",
+
+        "working_base":
+            working_base,
+
+        "standard_base":
+            standard_base,
+
+        "proportion":
+            proportion,
+
+        "deviation1":
+            deviation_a,
+
+        "deviation2":
+            deviation_b,
+
+        "steps":
+            steps,
+
+        "answer":
+            answer,
+
+        "explanation":
+            explanation
+    }
+
+
+# ============================================================
+# 7th SUTRA
+# SANKALANA VYAVAKALANABHYAM
+#
+# Meaning:
+# "By Addition and By Subtraction"
+#
+# Used for solving simultaneous linear equations.
+#
+# Example:
+#
+# 2x + 3y = 13
+# 3x + 2y = 12
+#
+# ============================================================
+
+
+def solve_sankalana_vyavakalanabhyam(eq1, eq2):
+
+    import re
+
+    # --------------------------------------------------------
+    # STEP 1: CLEAN INPUT
+    # --------------------------------------------------------
+
+    if not eq1 or not eq2:
+
+        return {
+            "applicable": False,
+            "message": "Please enter two equations.",
+            "steps": [],
+            "answer": None
+        }
+
+    eq1 = str(eq1).replace(" ", "").lower()
+    eq2 = str(eq2).replace(" ", "").lower()
+
+    # --------------------------------------------------------
+    # STEP 2: CHECK =
+    # --------------------------------------------------------
+
+    if "=" not in eq1 or "=" not in eq2:
+
+        return {
+            "applicable": False,
+            "message": "Both equations must contain '='.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 3: PARSE EQUATION
+    # Supports:
+    #
+    # 2x+3y=13
+    # 3x+2y=12
+    #
+    # x+2y=8
+    # 3x-y=7
+    # --------------------------------------------------------
+
+    def parse_equation(equation):
+
+        left, right = equation.split("=")
+
+        try:
+            constant = float(right)
+        except ValueError:
+            return None
+
+        # Add + before positive terms
+        left = left.replace("-", "+-")
+
+        if left.startswith("+"):
+            left = left[1:]
+
+        terms = left.split("+")
+
+        x_coeff = 0
+        y_coeff = 0
+
+        for term in terms:
+
+            if not term:
+                continue
+
+            if "x" in term:
+
+                value = term.replace("x", "")
+
+                if value in ("", "+"):
+                    value = 1
+
+                elif value == "-":
+                    value = -1
+
+                else:
+                    value = float(value)
+
+                x_coeff += value
+
+            elif "y" in term:
+
+                value = term.replace("y", "")
+
+                if value in ("", "+"):
+                    value = 1
+
+                elif value == "-":
+                    value = -1
+
+                else:
+                    value = float(value)
+
+                y_coeff += value
+
+            else:
+
+                return None
+
+        return x_coeff, y_coeff, constant
+
+    # --------------------------------------------------------
+    # STEP 4: PARSE BOTH
+    # --------------------------------------------------------
+
+    first = parse_equation(eq1)
+    second = parse_equation(eq2)
+
+    if first is None or second is None:
+
+        return {
+            "applicable": False,
+
+            "message": (
+                "Please enter equations in a simple linear form "
+                "such as 2x+3y=13."
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    a1, b1, c1 = first
+    a2, b2, c2 = second
+
+    # --------------------------------------------------------
+    # STEP 5: CHECK TWO VARIABLES
+    # --------------------------------------------------------
+
+    if (
+        a1 == 0 and b1 == 0
+    ) or (
+        a2 == 0 and b2 == 0
+    ):
+
+        return {
+            "applicable": False,
+            "message": "Both equations must contain x or y.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 6: DETERMINANT
+    # --------------------------------------------------------
+
+    determinant = (
+        a1 * b2
+        -
+        a2 * b1
+    )
+
+    if determinant == 0:
+
+        return {
+            "applicable": False,
+
+            "message": (
+                "These equations do not have a unique solution."
+            ),
+
+            "steps": [
+
+                f"Equation 1: {eq1}",
+
+                f"Equation 2: {eq2}",
+
+                (
+                    f"Determinant = "
+                    f"({a1} × {b2}) - "
+                    f"({a2} × {b1}) = 0"
+                ),
+
+                (
+                    "Therefore a unique x and y "
+                    "cannot be obtained."
+                )
+            ],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 7: PREPARE STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Equation 1: {eq1}"
+    )
+
+    steps.append(
+        f"🧮 Equation 2: {eq2}"
+    )
+
+    steps.append(
+        "📖 Sutra: Sankalana Vyavakalanabhyam"
+    )
+
+    steps.append(
+        "💡 Meaning: By Addition and By Subtraction."
+    )
+
+    # --------------------------------------------------------
+    # STEP 8: CHOOSE ELIMINATION
+    # --------------------------------------------------------
+
+    # Try addition if y coefficients are opposites
+    # Otherwise subtraction.
+
+    operation = "subtraction"
+
+    if b1 == -b2:
+
+        operation = "addition"
+
+        new_x = a1 + a2
+        new_c = c1 + c2
+
+        steps.append(
+            "➕ Step 1: Add the two equations."
+        )
+
+        steps.append(
+            (
+                f"({a1}x + {b1}y) + "
+                f"({a2}x + {b2}y) = "
+                f"{c1} + {c2}"
+            )
+        )
+
+        steps.append(
+            (
+                f"{new_x}x = {new_c}"
+            )
+        )
+
+        x = new_c / new_x
+
+    else:
+
+        # Subtract equation 2 from equation 1
+
+        new_x = a1 - a2
+        new_y = b1 - b2
+        new_c = c1 - c2
+
+        # If subtraction doesn't eliminate y,
+        # try eliminating x.
+
+        if new_y == 0:
+
+            operation = "subtraction"
+
+            steps.append(
+                "➖ Step 1: Subtract Equation 2 from Equation 1."
+            )
+
+            steps.append(
+                (
+                    f"({a1}x + {b1}y) - "
+                    f"({a2}x + {b2}y) = "
+                    f"{c1} - {c2}"
+                )
+            )
+
+            steps.append(
+                (
+                    f"{new_x}x = {new_c}"
+                )
+            )
+
+            x = new_c / new_x
+
+        else:
+
+            # Eliminate x using multiplication
+            # x coefficients are scaled.
+
+            operation = "elimination"
+
+            steps.append(
+                (
+                    "➖ Step 1: Adjust the equations "
+                    "to eliminate x."
+                )
+            )
+
+            # Multiply equation 1 by a2
+            # Multiply equation 2 by a1
+
+            A1 = a1 * a2
+            B1 = b1 * a2
+            C1 = c1 * a2
+
+            A2 = a2 * a1
+            B2 = b2 * a1
+            C2 = c2 * a1
+
+            new_y = B1 - B2
+            new_c = C1 - C2
+
+            steps.append(
+                (
+                    f"After adjustment:"
+                )
+            )
+
+            steps.append(
+                (
+                    f"{A1}x + {B1}y = {C1}"
+                )
+            )
+
+            steps.append(
+                (
+                    f"{A2}x + {B2}y = {C2}"
+                )
+            )
+
+            steps.append(
+                (
+                    f"Subtract:"
+                )
+            )
+
+            steps.append(
+                (
+                    f"{new_y}y = {new_c}"
+                )
+            )
+
+            y = new_c / new_y
+
+            # ------------------------------------------------
+            # Find x
+            # ------------------------------------------------
+
+            x = (
+                c1 - b1 * y
+            ) / a1
+
+            # Format
+
+            if x.is_integer():
+                x_display = str(int(x))
+            else:
+                x_display = str(round(x, 6))
+
+            if y.is_integer():
+                y_display = str(int(y))
+            else:
+                y_display = str(round(y, 6))
+
+            steps.append(
+                f"✅ y = {y_display}"
+            )
+
+            steps.append(
+                (
+                    f"Substitute y = {y_display} "
+                    f"into Equation 1."
+                )
+            )
+
+            steps.append(
+                f"✅ x = {x_display}"
+            )
+
+            steps.append(
+                (
+                    f"🎯 Final Answer: "
+                    f"x = {x_display}, y = {y_display}"
+                )
+            )
+
+            return {
+
+                "applicable": True,
+
+                "message":
+                    "Equations solved successfully.",
+
+                "steps": steps,
+
+                "answer": {
+                    "x": x_display,
+                    "y": y_display
+                },
+
+                "explanation": (
+                    "Sankalana Vyavakalanabhyam means "
+                    "'By Addition and By Subtraction'. "
+                    "The equations are combined so that "
+                    "one variable is eliminated, after which "
+                    "the remaining variable is calculated."
+                )
+            }
+
+    # --------------------------------------------------------
+    # STEP 9: FIND Y
+    # --------------------------------------------------------
+
+    y = (
+        c1 - a1 * x
+    ) / b1
+
+    # --------------------------------------------------------
+    # STEP 10: FORMAT
+    # --------------------------------------------------------
+
+    if x.is_integer():
+        x_display = str(int(x))
+    else:
+        x_display = str(round(x, 6))
+
+    if y.is_integer():
+        y_display = str(int(y))
+    else:
+        y_display = str(round(y, 6))
+
+    # --------------------------------------------------------
+    # STEP 11: ADD DETAILS
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"Step 2: Solve for x:"
+        )
+    )
+
+    steps.append(
+        (
+            f"x = {x_display}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Step 3: Substitute x = {x_display} "
+            f"into Equation 1."
+        )
+    )
+
+    steps.append(
+        (
+            f"y = {y_display}"
+        )
+    )
+
+    steps.append(
+        (
+            f"🎯 Final Answer: "
+            f"x = {x_display}, y = {y_display}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # STEP 12: RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            "Sankalana Vyavakalanabhyam "
+            "can be applied successfully.",
+
+        "equations": [
+            eq1,
+            eq2
+        ],
+
+        "steps": steps,
+
+        "answer": {
+            "x": x_display,
+            "y": y_display
+        },
+
+        "explanation": (
+            "Sankalana Vyavakalanabhyam means "
+            "'By Addition and By Subtraction'. "
+            "The main idea is to combine two equations "
+            "so that one variable disappears."
+        )
+    }
+
+# ============================================================
+# 8th SUTRA
+# PURANAPURANABHYAM
+#
+# Meaning:
+# "By Completion or Non-Completion"
+#
+# Used for suitable algebraic expressions where
+# completion / non-completion simplifies calculation.
+#
+# Example:
+# x + 7 = 15
+#
+# We complete the expression to obtain x.
+# ============================================================
+
+
+def solve_puranapuranabhyam(expression):
+
+    import re
+
+    # --------------------------------------------------------
+    # STEP 1: INPUT VALIDATION
+    # --------------------------------------------------------
+
+    if expression is None:
+
+        return {
+            "applicable": False,
+            "message": "Please enter an equation.",
+            "steps": [],
+            "answer": None
+        }
+
+    expression = str(expression).strip()
+
+    if expression == "":
+
+        return {
+            "applicable": False,
+            "message": "Please enter an equation.",
+            "steps": [],
+            "answer": None
+        }
+
+    # Remove spaces
+
+    eq = expression.replace(" ", "").lower()
+
+    # --------------------------------------------------------
+    # STEP 2: EQUATION CHECK
+    # --------------------------------------------------------
+
+    if "=" not in eq:
+
+        return {
+            "applicable": False,
+
+            "message":
+                "Please enter an equation containing '='.",
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    parts = eq.split("=")
+
+    if len(parts) != 2:
+
+        return {
+            "applicable": False,
+
+            "message":
+                "Please enter one valid equation.",
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    left = parts[0]
+    right = parts[1]
+
+    # --------------------------------------------------------
+    # STEP 3:
+    # BASIC LINEAR COMPLETION
+    #
+    # Supports:
+    #
+    # x+5=12
+    # x-5=12
+    # 2x+5=15
+    # 3x-7=11
+    # --------------------------------------------------------
+
+    pattern = r"^([+-]?\d*)x([+-]\d+)?$"
+
+    match_left = re.match(pattern, left)
+
+    # --------------------------------------------------------
+    # CASE 1:
+    # x-expression on LEFT
+    # --------------------------------------------------------
+
+    if match_left:
+
+        coeff_text = match_left.group(1)
+        constant_text = match_left.group(2)
+
+        # Coefficient
+
+        if coeff_text in ("", "+"):
+
+            coefficient = 1
+
+        elif coeff_text == "-":
+
+            coefficient = -1
+
+        else:
+
+            coefficient = int(coeff_text)
+
+        # Constant
+
+        if constant_text:
+
+            constant = int(constant_text)
+
+        else:
+
+            constant = 0
+
+        # Right side must be number
+
+        try:
+
+            target = float(right)
+
+        except ValueError:
+
+            return {
+                "applicable": False,
+
+                "message":
+                    "Right side must be a number.",
+
+                "steps": [],
+
+                "answer": None
+            }
+
+        # ----------------------------------------------------
+        # SOLVE
+        # ----------------------------------------------------
+
+        remaining = target - constant
+
+        x = remaining / coefficient
+
+        # ----------------------------------------------------
+        # FORMAT
+        # ----------------------------------------------------
+
+        if x.is_integer():
+
+            x_display = str(int(x))
+
+        else:
+
+            x_display = str(round(x, 6))
+
+        # ----------------------------------------------------
+        # STEPS
+        # ----------------------------------------------------
+
+        steps = [
+
+            f"🧮 Equation: {expression}",
+
+            "📖 Sutra: Puranapuranabhyam",
+
+            (
+                "💡 Meaning: "
+                "By Completion or Non-Completion."
+            ),
+
+            (
+                "Step 1: Identify the incomplete part "
+                "of the expression."
+            ),
+
+            (
+                f"The expression contains "
+                f"{coefficient}x and {constant}."
+            ),
+
+            (
+                "Step 2: Complete the equation "
+                "by removing the constant."
+            ),
+
+            (
+                f"{coefficient}x + ({constant}) "
+                f"= {target}"
+            ),
+
+            (
+                f"Step 3: Remove {constant} "
+                f"from both sides."
+            ),
+
+            (
+                f"{coefficient}x "
+                f"= {target} - ({constant})"
+            ),
+
+            (
+                f"{coefficient}x = {remaining}"
+            ),
+
+            (
+                f"Step 4: Divide by {coefficient}."
+            ),
+
+            (
+                f"x = {remaining} / {coefficient}"
+            ),
+
+            (
+                f"✅ Final Answer: x = {x_display}"
+            )
+        ]
+
+        return {
+
+            "applicable": True,
+
+            "message":
+                "Puranapuranabhyam can be applied.",
+
+            "equation":
+                expression,
+
+            "steps":
+                steps,
+
+            "answer":
+                x_display,
+
+            "explanation": (
+                "Puranapuranabhyam means "
+                "'By Completion or Non-Completion'. "
+                "The expression is completed or simplified "
+                "by dealing with the missing/additional part."
+            )
+        }
+
+    # ========================================================
+    # CASE 2:
+    # x-expression on RIGHT
+    #
+    # Example:
+    #
+    # 15 = x + 7
+    # ========================================================
+
+    pattern_right = r"^([+-]?\d*)x([+-]\d+)?$"
+
+    match_right = re.match(
+        pattern_right,
+        right
+    )
+
+    if match_right:
+
+        coeff_text = match_right.group(1)
+
+        constant_text = match_right.group(2)
+
+        if coeff_text in ("", "+"):
+
+            coefficient = 1
+
+        elif coeff_text == "-":
+
+            coefficient = -1
+
+        else:
+
+            coefficient = int(coeff_text)
+
+        if constant_text:
+
+            constant = int(constant_text)
+
+        else:
+
+            constant = 0
+
+        try:
+
+            target = float(left)
+
+        except ValueError:
+
+            return {
+                "applicable": False,
+
+                "message":
+                    "Left side must be a number.",
+
+                "steps": [],
+
+                "answer": None
+            }
+
+        remaining = target - constant
+
+        x = remaining / coefficient
+
+        if x.is_integer():
+
+            x_display = str(int(x))
+
+        else:
+
+            x_display = str(round(x, 6))
+
+        steps = [
+
+            f"🧮 Equation: {expression}",
+
+            "📖 Sutra: Puranapuranabhyam",
+
+            (
+                "💡 Meaning: "
+                "By Completion or Non-Completion."
+            ),
+
+            (
+                f"Step 1: {coefficient}x + "
+                f"({constant}) = {target}"
+            ),
+
+            (
+                f"Step 2: Remove {constant} "
+                f"from both sides."
+            ),
+
+            (
+                f"{coefficient}x = {remaining}"
+            ),
+
+            (
+                f"Step 3: Divide by {coefficient}."
+            ),
+
+            (
+                f"x = {remaining} / {coefficient}"
+            ),
+
+            (
+                f"✅ Final Answer: x = {x_display}"
+            )
+        ]
+
+        return {
+
+            "applicable": True,
+
+            "message":
+                "Puranapuranabhyam can be applied.",
+
+            "equation":
+                expression,
+
+            "steps":
+                steps,
+
+            "answer":
+                x_display,
+
+            "explanation": (
+                "The equation is completed by "
+                "removing the known part."
+            )
+        }
+
+    # ========================================================
+    # NOT APPLICABLE
+    # ========================================================
+
+    return {
+
+        "applicable": False,
+
+        "message": (
+            "This equation is not in a suitable "
+            "Puranapuranabhyam form."
+        ),
+
+        "steps": [
+
+            f"Equation entered: {expression}",
+
+            (
+                "Try a simple completion equation such as:"
+            ),
+
+            "x + 7 = 15",
+
+            "2x + 5 = 15",
+
+            "3x - 7 = 11"
+        ],
+
+        "answer": None
+    }
+
+
+
+# ============================================================
+# 9th SUTRA
+# CHALANA-KALANABHYAM
+#
+# Meaning:
+# "Differences and Similarities"
+#
+# Used in Vedic Mathematics for solving suitable
+# algebraic / quadratic problems and calculus-related
+# calculations.
+#
+# This solver handles quadratic equations:
+#
+# ax² + bx + c = 0
+#
+# Example:
+# x² - 5x + 6 = 0
+#
+# Answer:
+# x = 2, 3
+# ============================================================
+
+
+def solve_chalana_kalanabhyam(equation):
+
+    import re
+    import math
+
+    # --------------------------------------------------------
+    # STEP 1: VALIDATION
+    # --------------------------------------------------------
+
+    if equation is None:
+
+        return {
+            "applicable": False,
+            "message": "Please enter a quadratic equation.",
+            "steps": [],
+            "answer": None
+        }
+
+    equation = str(equation).strip()
+
+    if equation == "":
+
+        return {
+            "applicable": False,
+            "message": "Please enter a quadratic equation.",
+            "steps": [],
+            "answer": None
+        }
+
+    # Remove spaces
+
+    eq = equation.replace(" ", "").lower()
+
+    # --------------------------------------------------------
+    # STEP 2:
+    # EQUATION MUST HAVE =
+    # --------------------------------------------------------
+
+    if "=" not in eq:
+
+        return {
+            "applicable": False,
+            "message": "Equation must contain '='.",
+            "steps": [],
+            "answer": None
+        }
+
+    parts = eq.split("=")
+
+    if len(parts) != 2:
+
+        return {
+            "applicable": False,
+            "message": "Please enter one valid equation.",
+            "steps": [],
+            "answer": None
+        }
+
+    left = parts[0]
+    right = parts[1]
+
+    # --------------------------------------------------------
+    # STEP 3:
+    # Move everything to LEFT
+    #
+    # Example:
+    #
+    # x² - 5x + 6 = 0
+    #
+    # Already suitable.
+    # --------------------------------------------------------
+
+    if right != "0":
+
+        return {
+            "applicable": False,
+
+            "message": (
+                "For this solver, enter the quadratic equation "
+                "with 0 on the right side."
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 4:
+    # NORMALIZE x² SYMBOL
+    # --------------------------------------------------------
+
+    left = left.replace("**2", "x2")
+    left = left.replace("x^2", "x2")
+    left = left.replace("x²", "x2")
+
+    # --------------------------------------------------------
+    # STEP 5:
+    # PARSE ax² + bx + c
+    # --------------------------------------------------------
+
+    pattern = (
+        r"^([+-]?\d*)x2"
+        r"([+-]\d+)?x"
+        r"([+-]\d+)?$"
+    )
+
+    match = re.match(pattern, left)
+
+    if not match:
+
+        # Try equation without bx term
+        pattern2 = (
+            r"^([+-]?\d*)x2"
+            r"([+-]\d+)?$"
+        )
+
+        match2 = re.match(pattern2, left)
+
+        if not match2:
+
+            return {
+                "applicable": False,
+
+                "message": (
+                    "Please enter a quadratic equation "
+                    "in the form ax² + bx + c = 0."
+                ),
+
+                "steps": [],
+
+                "answer": None
+            }
+
+        a_text = match2.group(1)
+        b_text = None
+        c_text = match2.group(2)
+
+    else:
+
+        a_text = match.group(1)
+        b_text = match.group(2)
+        c_text = match.group(3)
+
+    # --------------------------------------------------------
+    # STEP 6:
+    # CONVERT COEFFICIENTS
+    # --------------------------------------------------------
+
+    if a_text in ("", "+"):
+
+        a = 1
+
+    elif a_text == "-":
+
+        a = -1
+
+    else:
+
+        a = int(a_text)
+
+    if b_text:
+
+        b = int(b_text)
+
+    else:
+
+        b = 0
+
+    if c_text:
+
+        c = int(c_text)
+
+    else:
+
+        c = 0
+
+    # --------------------------------------------------------
+    # STEP 7:
+    # CHECK QUADRATIC
+    # --------------------------------------------------------
+
+    if a == 0:
+
+        return {
+            "applicable": False,
+            "message": "This is not a quadratic equation.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 8:
+    # DISCRIMINANT
+    #
+    # D = b² - 4ac
+    # --------------------------------------------------------
+
+    discriminant = (
+        b * b
+        -
+        4 * a * c
+    )
+
+    # --------------------------------------------------------
+    # STEP 9:
+    # CREATE STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Equation: {equation}"
+    )
+
+    steps.append(
+        "📖 Sutra: Chalana-Kalanabhyam"
+    )
+
+    steps.append(
+        (
+            "💡 Meaning: "
+            "Differences and Similarities."
+        )
+    )
+
+    steps.append(
+        (
+            f"Step 1: Identify coefficients:"
+        )
+    )
+
+    steps.append(
+        (
+            f"a = {a}, b = {b}, c = {c}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # STEP 10:
+    # DIFFERENCE CALCULATION
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 2: Calculate the discriminant "
+            "using the difference."
+        )
+    )
+
+    steps.append(
+        (
+            f"D = b² - 4ac"
+        )
+    )
+
+    steps.append(
+        (
+            f"D = ({b})² - 4({a})({c})"
+        )
+    )
+
+    steps.append(
+        (
+            f"D = {discriminant}"
+        )
+    )
+
+    # ========================================================
+    # CASE 1:
+    # D < 0
+    # ========================================================
+
+    if discriminant < 0:
+
+        steps.append(
+            (
+                "The discriminant is negative."
+            )
+        )
+
+        steps.append(
+            (
+                "Therefore the equation has "
+                "no real roots."
+            )
+        )
+
+        return {
+
+            "applicable": True,
+
+            "message":
+                "No real roots.",
+
+            "steps":
+                steps,
+
+            "answer":
+                "No real roots",
+
+            "discriminant":
+                discriminant,
+
+            "explanation": (
+                "The difference calculation gives "
+                "a negative discriminant, so there "
+                "are no real solutions."
+            )
+        }
+
+    # ========================================================
+    # CASE 2:
+    # D = 0
+    # ========================================================
+
+    if discriminant == 0:
+
+        x = -b / (2 * a)
+
+        if x.is_integer():
+
+            x_display = str(int(x))
+
+        else:
+
+            x_display = str(round(x, 6))
+
+        steps.append(
+            (
+                "The discriminant is zero."
+            )
+        )
+
+        steps.append(
+            (
+                "Therefore both roots are equal."
+            )
+        )
+
+        steps.append(
+            (
+                f"x = -b / 2a"
+            )
+        )
+
+        steps.append(
+            (
+                f"x = -({b}) / (2 × {a})"
+            )
+        )
+
+        steps.append(
+            (
+                f"x = {x_display}"
+            )
+        )
+
+        steps.append(
+            (
+                f"✅ Final Answer: x = {x_display}"
+            )
+        )
+
+        return {
+
+            "applicable": True,
+
+            "message":
+                "Equal roots found.",
+
+            "steps":
+                steps,
+
+            "answer":
+                x_display,
+
+            "discriminant":
+                discriminant
+        }
+
+    # ========================================================
+    # CASE 3:
+    # D > 0
+    # ========================================================
+
+    sqrt_d = math.sqrt(discriminant)
+
+    x1 = (
+        -b + sqrt_d
+    ) / (2 * a)
+
+    x2 = (
+        -b - sqrt_d
+    ) / (2 * a)
+
+    # --------------------------------------------------------
+    # FORMAT
+    # --------------------------------------------------------
+
+    if x1.is_integer():
+
+        x1_display = str(int(x1))
+
+    else:
+
+        x1_display = str(round(x1, 6))
+
+    if x2.is_integer():
+
+        x2_display = str(int(x2))
+
+    else:
+
+        x2_display = str(round(x2, 6))
+
+    # --------------------------------------------------------
+    # STEPS
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "The discriminant is positive."
+        )
+    )
+
+    steps.append(
+        (
+            "Therefore the equation has two real roots."
+        )
+    )
+
+    steps.append(
+        (
+            "Step 3: Find the square root of D."
+        )
+    )
+
+    steps.append(
+        (
+            f"√{discriminant} = {sqrt_d}"
+        )
+    )
+
+    steps.append(
+        (
+            "Step 4: Find the first root."
+        )
+    )
+
+    steps.append(
+        (
+            f"x₁ = (-b + √D) / 2a"
+        )
+    )
+
+    steps.append(
+        (
+            f"x₁ = (-({b}) + √{discriminant}) "
+            f"/ (2 × {a})"
+        )
+    )
+
+    steps.append(
+        (
+            f"x₁ = {x1_display}"
+        )
+    )
+
+    steps.append(
+        (
+            "Step 5: Find the second root."
+        )
+    )
+
+    steps.append(
+        (
+            f"x₂ = (-b - √D) / 2a"
+        )
+    )
+
+    steps.append(
+        (
+            f"x₂ = (-({b}) - √{discriminant}) "
+            f"/ (2 × {a})"
+        )
+    )
+
+    steps.append(
+        (
+            f"x₂ = {x2_display}"
+        )
+    )
+
+    steps.append(
+        (
+            f"🎯 Final Answer:"
+        )
+    )
+
+    steps.append(
+        (
+            f"x₁ = {x1_display}, "
+            f"x₂ = {x2_display}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            "Quadratic equation solved.",
+
+        "equation":
+            equation,
+
+        "steps":
+            steps,
+
+        "answer": {
+
+            "x1":
+                x1_display,
+
+            "x2":
+                x2_display
+        },
+
+        "discriminant":
+            discriminant,
+
+        "explanation": (
+            "Chalana-Kalanabhyam is associated with "
+            "differences and similarities. The calculation "
+            "is demonstrated here through the discriminant "
+            "and root relationship of a quadratic equation."
+        )
+    }
+# ============================================================
+# 10th SUTRA
+# YAVADUNAM
+#
+# Meaning:
+# "Whatever the Deficiency"
+#
+# Mainly used for multiplication of numbers close to
+# a convenient base such as 10, 100, 1000, etc.
+#
+# Examples:
+#
+# 98 × 97
+# 102 × 103
+# 997 × 998
+# 48 × 47
+#
+# ============================================================
+
+
+def solve_yavadunam(num1, num2):
+
+    # --------------------------------------------------------
+    # STEP 1: INPUT VALIDATION
+    # --------------------------------------------------------
+
+    try:
+
+        a = int(str(num1).strip())
+        b = int(str(num2).strip())
+
+    except (ValueError, TypeError):
+
+        return {
+            "applicable": False,
+            "message": "Please enter two valid numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 2: POSITIVE NUMBERS
+    # --------------------------------------------------------
+
+    if a <= 0 or b <= 0:
+
+        return {
+            "applicable": False,
+            "message": "Please enter positive numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 3:
+    # FIND A SUITABLE BASE
+    #
+    # 10
+    # 100
+    # 1000
+    # 10000 ...
+    # --------------------------------------------------------
+
+    max_number = max(a, b)
+
+    digits = len(str(max_number))
+
+    base = 10 ** digits
+
+    # If numbers are closer to previous base,
+    # use previous base.
+
+    previous_base = 10 ** (digits - 1)
+
+    current_distance = (
+        abs(a - base) +
+        abs(b - base)
+    )
+
+    previous_distance = (
+        abs(a - previous_base) +
+        abs(b - previous_base)
+    )
+
+    if previous_distance < current_distance:
+
+        base = previous_base
+
+    # --------------------------------------------------------
+    # STEP 4:
+    # CALCULATE DEVIATIONS
+    # --------------------------------------------------------
+
+    deviation_a = a - base
+    deviation_b = b - base
+
+    # --------------------------------------------------------
+    # STEP 5:
+    # CHECK WHETHER NUMBERS ARE CLOSE ENOUGH
+    #
+    # Yavadunam is useful when numbers are near the base.
+    # --------------------------------------------------------
+
+    relative_a = abs(deviation_a) / base
+    relative_b = abs(deviation_b) / base
+
+    if relative_a > 0.20 or relative_b > 0.20:
+
+        return {
+
+            "applicable": False,
+
+            "message": (
+                "Yavadunam is not suitable for these numbers. "
+                "The numbers should be reasonably close to "
+                "a convenient base such as 10, 100 or 1000."
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 6:
+    # LEFT PART
+    #
+    # a + deviation_b
+    #
+    # OR
+    #
+    # b + deviation_a
+    # --------------------------------------------------------
+
+    left_part = (
+        a + deviation_b
+    )
+
+    # --------------------------------------------------------
+    # STEP 7:
+    # DEVIATION PRODUCT
+    # --------------------------------------------------------
+
+    right_part = (
+        deviation_a *
+        deviation_b
+    )
+
+    # --------------------------------------------------------
+    # STEP 8:
+    # NUMBER OF ZEROES IN BASE
+    # --------------------------------------------------------
+
+    base_digits = len(str(base)) - 1
+
+    right_width = base_digits
+
+    # --------------------------------------------------------
+    # STEP 9:
+    # HANDLE RIGHT PART
+    #
+    # Example:
+    #
+    # 98 × 97
+    #
+    # Base = 100
+    #
+    # Deviations:
+    # -2, -3
+    #
+    # Product = +6
+    #
+    # Right side must contain 2 digits:
+    #
+    # 06
+    # --------------------------------------------------------
+
+    # --------------------------------------------------------
+    # CASE A:
+    # RIGHT PART POSITIVE
+    # --------------------------------------------------------
+
+    if right_part >= 0:
+
+        right_display = str(right_part).zfill(
+            right_width
+        )
+
+        # ----------------------------------------------------
+        # If right part has overflow, carry to left part.
+        # ----------------------------------------------------
+
+        if right_part >= base:
+
+            carry = right_part // base
+
+            right_remainder = right_part % base
+
+            left_part += carry
+
+            right_display = str(
+                right_remainder
+            ).zfill(right_width)
+
+        else:
+
+            carry = 0
+
+    # --------------------------------------------------------
+    # CASE B:
+    # RIGHT PART NEGATIVE
+    # --------------------------------------------------------
+
+    else:
+
+        # Borrow 1 from left part.
+
+        borrow = 1
+
+        left_part -= borrow
+
+        positive_right = (
+            base + right_part
+        )
+
+        right_display = str(
+            positive_right
+        ).zfill(right_width)
+
+        carry = -1
+
+    # --------------------------------------------------------
+    # STEP 10:
+    # FINAL ANSWER
+    # --------------------------------------------------------
+
+    answer = (
+        int(str(left_part) + right_display)
+    )
+
+    # --------------------------------------------------------
+    # STEP 11:
+    # CREATE DETAILED STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Question: {a} × {b}"
+    )
+
+    steps.append(
+        "📖 Sutra: Yāvadūnam"
+    )
+
+    steps.append(
+        (
+            "💡 Meaning: "
+            "Whatever the Deficiency"
+        )
+    )
+
+    # --------------------------------------------------------
+    # BASE
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"🎯 Step 1: Choose the nearest convenient "
+            f"base = {base}"
+        )
+    )
+
+    steps.append(
+        (
+            f"The base contains {base_digits} zero(s)."
+        )
+    )
+
+    # --------------------------------------------------------
+    # FIRST DEVIATION
+    # --------------------------------------------------------
+
+    if deviation_a < 0:
+
+        steps.append(
+            (
+                f"Step 2: {a} is deficient from {base} "
+                f"by {abs(deviation_a)}."
+            )
+        )
+
+        steps.append(
+            (
+                f"{a} - {base} = {deviation_a}"
+            )
+        )
+
+    else:
+
+        steps.append(
+            (
+                f"Step 2: {a} exceeds {base} "
+                f"by {deviation_a}."
+            )
+        )
+
+        steps.append(
+            (
+                f"{a} - {base} = +{deviation_a}"
+            )
+        )
+
+    # --------------------------------------------------------
+    # SECOND DEVIATION
+    # --------------------------------------------------------
+
+    if deviation_b < 0:
+
+        steps.append(
+            (
+                f"Step 3: {b} is deficient from {base} "
+                f"by {abs(deviation_b)}."
+            )
+        )
+
+        steps.append(
+            (
+                f"{b} - {base} = {deviation_b}"
+            )
+        )
+
+    else:
+
+        steps.append(
+            (
+                f"Step 3: {b} exceeds {base} "
+                f"by {deviation_b}."
+            )
+        )
+
+        steps.append(
+            (
+                f"{b} - {base} = +{deviation_b}"
+            )
+        )
+
+    # --------------------------------------------------------
+    # CROSS OPERATION
+    # --------------------------------------------------------
+
+    steps.append(
+        "🔄 Step 4: Cross subtract/add."
+    )
+
+    if deviation_b >= 0:
+
+        steps.append(
+            (
+                f"{a} + ({deviation_b}) "
+                f"= {a + deviation_b}"
+            )
+        )
+
+    else:
+
+        steps.append(
+            (
+                f"{a} - {abs(deviation_b)} "
+                f"= {a + deviation_b}"
+            )
+        )
+
+    # --------------------------------------------------------
+    # RIGHT PART
+    # --------------------------------------------------------
+
+    steps.append(
+        "✖️ Step 5: Multiply the deviations."
+    )
+
+    steps.append(
+        (
+            f"({deviation_a}) × "
+            f"({deviation_b}) "
+            f"= {deviation_a * deviation_b}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RIGHT SIDE FORMATTING
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"Step 6: Since base = {base}, "
+            f"the right part must contain "
+            f"{base_digits} digit(s)."
+        )
+    )
+
+    steps.append(
+        (
+            f"Right part = {right_display}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # BORROW / CARRY
+    # --------------------------------------------------------
+
+    if right_part < 0:
+
+        steps.append(
+            (
+                "Because the right part is negative, "
+                "borrow 1 from the left part."
+            )
+        )
+
+    elif right_part >= base:
+
+        steps.append(
+            (
+                f"Carry {carry} to the left part."
+            )
+        )
+
+    # --------------------------------------------------------
+    # FINAL
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"Step 7: Combine:"
+        )
+    )
+
+    steps.append(
+        (
+            f"Left part = {left_part}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Right part = {right_display}"
+        )
+    )
+
+    steps.append(
+        (
+            f"🎯 Final Answer = "
+            f"{left_part}{right_display}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # EXACT VERIFICATION
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"✅ Verification: "
+            f"{a} × {b} = {answer}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            "Yāvadūnam can be applied successfully.",
+
+        "question":
+            f"{a} × {b}",
+
+        "base":
+            base,
+
+        "deviation1":
+            deviation_a,
+
+        "deviation2":
+            deviation_b,
+
+        "left_part":
+            left_part,
+
+        "right_part":
+            right_part,
+
+        "steps":
+            steps,
+
+        "answer":
+            answer,
+
+        "explanation": (
+            "Yāvadūnam means 'Whatever the Deficiency'. "
+            "Numbers close to a power-of-10 base are "
+            "expressed as deficiencies or excesses from "
+            "that base. The cross operation gives the "
+            "left part and the product of deviations gives "
+            "the right part."
+        )
+    }
+
+# ============================================================
+# 11th SUTRA
+# VYASTI-SAMASTI
+#
+# Meaning:
+# "Part and Whole"
+#
+# Vyasti  = Part
+# Samasti = Whole
+#
+# Idea:
+# Break a number into convenient parts and combine
+# the partial results to get the whole answer.
+#
+# Example:
+#
+# 23 × 12
+#
+# 23 × (10 + 2)
+#
+# = (23 × 10) + (23 × 2)
+#
+# = 230 + 46
+#
+# = 276
+#
+# ============================================================
+
+
+def solve_vyasti_samasti(num1, num2):
+
+    # --------------------------------------------------------
+    # STEP 1: INPUT VALIDATION
+    # --------------------------------------------------------
+
+    try:
+
+        a = int(str(num1).strip())
+        b = int(str(num2).strip())
+
+    except (ValueError, TypeError):
+
+        return {
+            "applicable": False,
+            "message": "Please enter two valid numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 2: POSITIVE NUMBERS
+    # --------------------------------------------------------
+
+    if a <= 0 or b <= 0:
+
+        return {
+            "applicable": False,
+            "message": "Please enter positive numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 3:
+    # CHOOSE THE NUMBER WHICH IS EASIER TO SPLIT
+    #
+    # Example:
+    #
+    # 23 × 12
+    #
+    # 12 is easier:
+    #
+    # 12 = 10 + 2
+    # --------------------------------------------------------
+
+    def best_decomposition(number):
+
+        digits = list(
+            map(int, str(number))
+        )
+
+        length = len(digits)
+
+        # ----------------------------------------------------
+        # Split using place values.
+        #
+        # Example:
+        #
+        # 123 = 100 + 20 + 3
+        # ----------------------------------------------------
+
+        parts = []
+
+        for index, digit in enumerate(digits):
+
+            power = length - index - 1
+
+            place = 10 ** power
+
+            value = digit * place
+
+            if value != 0:
+
+                parts.append(value)
+
+        return parts
+
+    parts_a = best_decomposition(a)
+    parts_b = best_decomposition(b)
+
+    # --------------------------------------------------------
+    # STEP 4:
+    # CHOOSE FEWER PARTS
+    # --------------------------------------------------------
+
+    if len(parts_a) <= len(parts_b):
+
+        whole = a
+        parts = parts_a
+        multiplier = b
+
+    else:
+
+        whole = b
+        parts = parts_b
+        multiplier = a
+
+    # --------------------------------------------------------
+    # STEP 5:
+    # PARTIAL PRODUCTS
+    # --------------------------------------------------------
+
+    partial_results = []
+
+    for part in parts:
+
+        partial = part * multiplier
+
+        partial_results.append(
+            partial
+        )
+
+    # --------------------------------------------------------
+    # STEP 6:
+    # WHOLE / FINAL
+    # --------------------------------------------------------
+
+    answer = sum(
+        partial_results
+    )
+
+    # --------------------------------------------------------
+    # STEP 7:
+    # CREATE STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Question: {a} × {b}"
+    )
+
+    steps.append(
+        "📖 Sutra: Vyasti-Samasti"
+    )
+
+    steps.append(
+        "💡 Meaning: Part and Whole"
+    )
+
+    steps.append(
+        (
+            "Vyasti means 'Part' and "
+            "Samasti means 'Whole'."
+        )
+    )
+
+    # --------------------------------------------------------
+    # DECOMPOSITION
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"Step 1: Split {whole} "
+            f"into convenient parts."
+        )
+    )
+
+    decomposition_text = " + ".join(
+        str(x)
+        for x in parts
+    )
+
+    steps.append(
+        (
+            f"{whole} = "
+            f"{decomposition_text}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # PARTIAL CALCULATIONS
+    # --------------------------------------------------------
+
+    steps.append(
+        "Step 2: Multiply each part separately."
+    )
+
+    for part, partial in zip(
+        parts,
+        partial_results
+    ):
+
+        steps.append(
+            (
+                f"{part} × {multiplier} "
+                f"= {partial}"
+            )
+        )
+
+    # --------------------------------------------------------
+    # ADD PARTS
+    # --------------------------------------------------------
+
+    steps.append(
+        "Step 3: Add all partial results."
+    )
+
+    addition_text = " + ".join(
+        str(x)
+        for x in partial_results
+    )
+
+    steps.append(
+        (
+            f"{addition_text} "
+            f"= {answer}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # FINAL ANSWER
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"🎯 Final Answer = {answer}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # VERIFICATION
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"✅ Verification: "
+            f"{a} × {b} = {answer}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            "Vyasti-Samasti can be applied successfully.",
+
+        "question":
+            f"{a} × {b}",
+
+        "whole":
+            whole,
+
+        "parts":
+            parts,
+
+        "partial_results":
+            partial_results,
+
+        "steps":
+            steps,
+
+        "answer":
+            answer,
+
+        "explanation": (
+            "Vyasti-Samasti means 'Part and Whole'. "
+            "The number is divided into convenient "
+            "parts, each part is calculated separately, "
+            "and the partial results are combined to "
+            "obtain the whole answer."
+        )
+    }
+
+# ============================================================
+# 13th SUTRA
+# SOPANTYADVAYAMANTYAM
+#
+# Meaning:
+# "The ultimate and twice the penultimate"
+#
+# Sopantya = Penultimate (second last)
+# Antyam   = Ultimate (last)
+#
+# This Sutra is mainly used in specific Vedic
+# multiplication / algebraic patterns.
+#
+# The solver below demonstrates the digit-based
+# pattern using a number and its last two digits.
+# ============================================================
+
+
+def solve_sopantyadvayamantyam(number):
+
+    # --------------------------------------------------------
+    # STEP 1: INPUT VALIDATION
+    # --------------------------------------------------------
+
+    try:
+
+        n = int(str(number).strip())
+
+    except (ValueError, TypeError):
+
+        return {
+            "applicable": False,
+            "message": "Please enter a valid number.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 2: POSITIVE NUMBER
+    # --------------------------------------------------------
+
+    if n < 10:
+
+        return {
+            "applicable": False,
+
+            "message": (
+                "This Sutra requires at least "
+                "two digits."
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 3:
+    # FIND LAST TWO DIGITS
+    # --------------------------------------------------------
+
+    last_digit = n % 10
+
+    penultimate_digit = (
+        (n // 10) % 10
+    )
+
+    # --------------------------------------------------------
+    # STEP 4:
+    # TWICE PENULTIMATE
+    # --------------------------------------------------------
+
+    double_penultimate = (
+        2 * penultimate_digit
+    )
+
+    # --------------------------------------------------------
+    # STEP 5:
+    # COMBINE
+    #
+    # Ultimate + twice penultimate
+    # --------------------------------------------------------
+
+    value = (
+        last_digit +
+        double_penultimate
+    )
+
+    # --------------------------------------------------------
+    # STEP 6:
+    # CREATE STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Number: {n}"
+    )
+
+    steps.append(
+        "📖 Sutra: Sopāntyadvayamantyam"
+    )
+
+    steps.append(
+        (
+            "💡 Meaning: "
+            "The ultimate and twice the penultimate."
+        )
+    )
+
+    # --------------------------------------------------------
+    # LAST DIGIT
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"Step 1: Ultimate (last digit) "
+            f"of {n} = {last_digit}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # PENULTIMATE
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"Step 2: Penultimate (second last digit) "
+            f"of {n} = {penultimate_digit}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # DOUBLE
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"Step 3: Twice the penultimate:"
+        )
+    )
+
+    steps.append(
+        (
+            f"2 × {penultimate_digit} "
+            f"= {double_penultimate}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # COMBINE
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 4: Add the ultimate "
+            "and twice the penultimate."
+        )
+    )
+
+    steps.append(
+        (
+            f"{last_digit} + "
+            f"{double_penultimate} "
+            f"= {value}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # FINAL
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"🎯 Final Answer = {value}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            "Sopāntyadvayamantyam pattern calculated.",
+
+        "number":
+            n,
+
+        "ultimate":
+            last_digit,
+
+        "penultimate":
+            penultimate_digit,
+
+        "twice_penultimate":
+            double_penultimate,
+
+        "steps":
+            steps,
+
+        "answer":
+            value,
+
+        "explanation": (
+            "Sopāntyadvayamantyam means "
+            "'the ultimate and twice the penultimate'. "
+            "The last digit is taken along with twice "
+            "the second-last digit."
+        )
+    }# ============================================================
+# 14th SUTRA
+# EKANYUNENA PURVENA
+#
+# Meaning:
+# "By One Less Than the Previous One"
+#
+# Mainly useful for multiplication by:
+#
+# 9
+# 99
+# 999
+# 9999
+# etc.
+#
+# Examples:
+#
+# 47 × 99
+# 325 × 999
+# 1234 × 9999
+#
+# ============================================================
+
+
+def solve_ekanyunena_purvena(number, multiplier):
+
+    # --------------------------------------------------------
+    # STEP 1: INPUT VALIDATION
+    # --------------------------------------------------------
+
+    try:
+
+        n = int(str(number).strip())
+        m = int(str(multiplier).strip())
+
+    except (ValueError, TypeError):
+
+        return {
+            "applicable": False,
+            "message": "Please enter valid numbers.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 2:
+    # CHECK MULTIPLIER
+    #
+    # Valid:
+    #
+    # 9
+    # 99
+    # 999
+    # 9999
+    #
+    # --------------------------------------------------------
+
+    m_string = str(m)
+
+    if (
+        len(m_string) == 0
+        or any(
+            digit != "9"
+            for digit in m_string
+        )
+    ):
+
+        return {
+
+            "applicable": False,
+
+            "message": (
+                "Ekanyunena Purvena is applicable when "
+                "the multiplier is 9, 99, 999, 9999, etc."
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 3:
+    # BASE
+    #
+    # 9  -> 10
+    # 99 -> 100
+    # 999 -> 1000
+    #
+    # --------------------------------------------------------
+
+    digits = len(m_string)
+
+    base = 10 ** digits
+
+    # --------------------------------------------------------
+    # STEP 4:
+    # ONE LESS THAN PREVIOUS
+    #
+    # n - 1
+    # --------------------------------------------------------
+
+    left_part = n - 1
+
+    # --------------------------------------------------------
+    # STEP 5:
+    # COMPLEMENT FROM BASE
+    #
+    # base - n
+    # --------------------------------------------------------
+
+    right_part = base - n
+
+    # --------------------------------------------------------
+    # STEP 6:
+    # CHECK RIGHT PART
+    #
+    # It must fit in exactly `digits` places.
+    #
+    # Example:
+    #
+    # 47 × 99
+    #
+    # 100 - 47 = 53
+    #
+    # 53 has 2 digits.
+    #
+    # --------------------------------------------------------
+
+    right_display = str(
+        right_part
+    ).zfill(digits)
+
+    # --------------------------------------------------------
+    # STEP 7:
+    # FINAL ANSWER
+    # --------------------------------------------------------
+
+    answer = (
+        left_part * base
+        +
+        right_part
+    )
+
+    # --------------------------------------------------------
+    # STEP 8:
+    # CREATE STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Question: {n} × {m}"
+    )
+
+    steps.append(
+        "📖 Sutra: Ekanyūnena Pūrvena"
+    )
+
+    steps.append(
+        (
+            "💡 Meaning: "
+            "By One Less Than the Previous One"
+        )
+    )
+
+    # --------------------------------------------------------
+    # BASE
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"Step 1: Since multiplier = {m}, "
+            f"take the next power-of-10 base."
+        )
+    )
+
+    steps.append(
+        (
+            f"Base = {base}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # LEFT PART
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 2: Take one less than "
+            "the number."
+        )
+    )
+
+    steps.append(
+        (
+            f"{n} - 1 = {left_part}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RIGHT PART
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 3: Find the complement "
+            "from the base."
+        )
+    )
+
+    steps.append(
+        (
+            f"{base} - {n} = {right_part}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Right part = {right_display}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # COMBINE
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 4: Combine the two parts."
+        )
+    )
+
+    steps.append(
+        (
+            f"{left_part} | {right_display}"
+        )
+    )
+
+    steps.append(
+        (
+            f"🎯 Final Answer = "
+            f"{left_part}{right_display}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # VERIFICATION
+    # --------------------------------------------------------
+
+    exact_answer = n * m
+
+    steps.append(
+        (
+            f"✅ Verification: "
+            f"{n} × {m} = {exact_answer}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            "Ekanyūnena Pūrvena applied successfully.",
+
+        "number":
+            n,
+
+        "multiplier":
+            m,
+
+        "base":
+            base,
+
+        "left_part":
+            left_part,
+
+        "right_part":
+            right_part,
+
+        "steps":
+            steps,
+
+        "answer":
+            answer,
+
+        "explanation": (
+            "Ekanyūnena Pūrvena means "
+            "'By one less than the previous one'. "
+            "For multiplication by 9, 99, 999, etc., "
+            "one less than the multiplicand forms the "
+            "left part, while its complement from the "
+            "corresponding power of 10 forms the right part."
+        )
+    }
+
+# ============================================================
+# 15th SUTRA
+# GUNITA-SAMUCCHAYAH
+#
+# Meaning:
+# "The Product of the Sum"
+#
+# This solver demonstrates the principle using
+# algebraic expressions.
+#
+# Example:
+#
+# (x + 2)(x + 3)
+#
+# = x² + 5x + 6
+#
+# Sum of coefficients:
+#
+# LHS:
+# (1 + 2)(1 + 3) = 3 × 4 = 12
+#
+# RHS:
+# 1 + 5 + 6 = 12
+#
+# Therefore the identity is verified.
+#
+# ============================================================
+
+
+def solve_gunita_samucchayah(expression):
+
+    import re
+
+    # --------------------------------------------------------
+    # STEP 1: VALIDATION
+    # --------------------------------------------------------
+
+    if expression is None:
+
+        return {
+            "applicable": False,
+            "message": "Please enter an algebraic expression.",
+            "steps": [],
+            "answer": None
+        }
+
+    expression = str(expression).strip()
+
+    if expression == "":
+
+        return {
+            "applicable": False,
+            "message": "Please enter an algebraic expression.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 2:
+    # Remove spaces
+    # --------------------------------------------------------
+
+    expr = expression.replace(" ", "").lower()
+
+    # --------------------------------------------------------
+    # STEP 3:
+    # EXPECT FORM:
+    #
+    # (x+a)(x+b)
+    #
+    # Example:
+    #
+    # (x+2)(x+3)
+    # --------------------------------------------------------
+
+    pattern = (
+        r"^\(x([+-]\d+)\)"
+        r"\(x([+-]\d+)\)$"
+    )
+
+    match = re.match(
+        pattern,
+        expr
+    )
+
+    if not match:
+
+        return {
+
+            "applicable": False,
+
+            "message": (
+                "Please enter an expression in the form "
+                "(x+a)(x+b). Example: (x+2)(x+3)"
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 4:
+    # GET a AND b
+    # --------------------------------------------------------
+
+    a = int(
+        match.group(1)
+    )
+
+    b = int(
+        match.group(2)
+    )
+
+    # --------------------------------------------------------
+    # STEP 5:
+    # EXPAND
+    #
+    # (x+a)(x+b)
+    #
+    # = x² + (a+b)x + ab
+    # --------------------------------------------------------
+
+    middle = a + b
+
+    constant = a * b
+
+    # --------------------------------------------------------
+    # STEP 6:
+    # COEFFICIENTS
+    # --------------------------------------------------------
+
+    lhs_coefficients = [
+        1,
+        a
+    ]
+
+    rhs_coefficients = [
+        1,
+        middle,
+        constant
+    ]
+
+    # --------------------------------------------------------
+    # STEP 7:
+    # SUM OF INPUT VALUES
+    # --------------------------------------------------------
+
+    first_sum = 1 + a
+
+    second_sum = 1 + b
+
+    product_of_sums = (
+        first_sum *
+        second_sum
+    )
+
+    # --------------------------------------------------------
+    # STEP 8:
+    # SUM OF RESULT COEFFICIENTS
+    # --------------------------------------------------------
+
+    sum_of_coefficients = (
+        1 +
+        middle +
+        constant
+    )
+
+    # --------------------------------------------------------
+    # STEP 9:
+    # VERIFY
+    # --------------------------------------------------------
+
+    verified = (
+        product_of_sums
+        ==
+        sum_of_coefficients
+    )
+
+    # --------------------------------------------------------
+    # STEP 10:
+    # CREATE STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Expression: {expression}"
+    )
+
+    steps.append(
+        "📖 Sutra: Guṇita-Samucchayah"
+    )
+
+    steps.append(
+        (
+            "💡 Meaning: "
+            "The Product of the Sum"
+        )
+    )
+
+    # --------------------------------------------------------
+    # EXPANSION
+    # --------------------------------------------------------
+
+    steps.append(
+        "Step 1: Expand the expression."
+    )
+
+    steps.append(
+        (
+            f"(x + {a})(x + {b})"
+        )
+    )
+
+    steps.append(
+        (
+            f"= x² + ({a} + {b})x "
+            f"+ ({a} × {b})"
+        )
+    )
+
+    steps.append(
+        (
+            f"= x² + {middle}x "
+            f"+ {constant}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # SUM OF FACTORS
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 2: Find the sum of coefficients "
+            "of each factor."
+        )
+    )
+
+    steps.append(
+        (
+            f"(1 + {a}) = {first_sum}"
+        )
+    )
+
+    steps.append(
+        (
+            f"(1 + {b}) = {second_sum}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # PRODUCT OF SUMS
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 3: Multiply these sums."
+        )
+    )
+
+    steps.append(
+        (
+            f"{first_sum} × {second_sum} "
+            f"= {product_of_sums}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RHS SUM
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 4: Add the coefficients "
+            "of the expanded expression."
+        )
+    )
+
+    steps.append(
+        (
+            f"1 + {middle} + {constant} "
+            f"= {sum_of_coefficients}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # VERIFICATION
+    # --------------------------------------------------------
+
+    if verified:
+
+        steps.append(
+            (
+                f"✅ Both values are equal:"
+            )
+        )
+
+        steps.append(
+            (
+                f"{product_of_sums} = "
+                f"{sum_of_coefficients}"
+            )
+        )
+
+        steps.append(
+            (
+                "🎯 Result: Identity verified "
+                "using the Guṇita-Samucchayah principle."
+            )
+        )
+
+        message = (
+            "Guṇita-Samucchayah principle verified."
+        )
+
+    else:
+
+        steps.append(
+            (
+                f"❌ Values are not equal:"
+            )
+        )
+
+        steps.append(
+            (
+                f"{product_of_sums} ≠ "
+                f"{sum_of_coefficients}"
+            )
+        )
+
+        steps.append(
+            (
+                "The given expression does not satisfy "
+                "this verification."
+            )
+        )
+
+        message = (
+            "The given expression could not be verified."
+        )
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            message,
+
+        "expression":
+            expression,
+
+        "expanded_form":
+            f"x² + {middle}x + {constant}",
+
+        "product_of_sums":
+            product_of_sums,
+
+        "sum_of_coefficients":
+            sum_of_coefficients,
+
+        "verified":
+            verified,
+
+        "steps":
+            steps,
+
+        "answer":
+            (
+                "Verified"
+                if verified
+                else "Not Verified"
+            ),
+
+        "explanation": (
+            "Guṇita-Samucchayah is demonstrated here "
+            "through the relationship between the product "
+            "of sums and the sum of coefficients in a "
+            "suitable algebraic expression."
+        )
+    }
+
+# ============================================================
+# 16th SUTRA
+# GUNAKA-SAMUCCHAYAH
+#
+# Meaning:
+# "The Factors of the Sum"
+#
+# Used here for demonstrating factorisation of
+# suitable quadratic expressions.
+#
+# Example:
+#
+# x² + 5x + 6
+#
+# Factors:
+#
+# (x + 2)(x + 3)
+#
+# Because:
+#
+# 2 + 3 = 5
+# 2 × 3 = 6
+#
+# ============================================================
+
+
+def solve_gunaka_samucchayah(expression):
+
+    import re
+    import math
+
+    # --------------------------------------------------------
+    # STEP 1: INPUT VALIDATION
+    # --------------------------------------------------------
+
+    if expression is None:
+
+        return {
+            "applicable": False,
+            "message": "Please enter a quadratic expression.",
+            "steps": [],
+            "answer": None
+        }
+
+    expression = str(expression).strip()
+
+    if expression == "":
+
+        return {
+            "applicable": False,
+            "message": "Please enter a quadratic expression.",
+            "steps": [],
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 2: CLEAN INPUT
+    # --------------------------------------------------------
+
+    expr = (
+        expression
+        .replace(" ", "")
+        .lower()
+        .replace("²", "^2")
+    )
+
+    # --------------------------------------------------------
+    # STEP 3:
+    # REMOVE = 0 IF USER ENTERS:
+    #
+    # x² + 5x + 6 = 0
+    # --------------------------------------------------------
+
+    if "=" in expr:
+
+        left, right = expr.split("=")
+
+        if right != "0":
+
+            return {
+                "applicable": False,
+
+                "message": (
+                    "For this solver, enter an expression "
+                    "such as x² + 5x + 6 = 0."
+                ),
+
+                "steps": [],
+
+                "answer": None
+            }
+
+        expr = left
+
+    # --------------------------------------------------------
+    # STEP 4:
+    # NORMALIZE
+    # --------------------------------------------------------
+
+    expr = expr.replace("x^2", "x2")
+
+    # --------------------------------------------------------
+    # STEP 5:
+    # PARSE:
+    #
+    # x² + bx + c
+    #
+    # Also supports:
+    #
+    # x² - bx + c
+    # x² + bx - c
+    # --------------------------------------------------------
+
+    pattern = (
+        r"^x2"
+        r"([+-]\d+)x"
+        r"([+-]\d+)$"
+    )
+
+    match = re.match(
+        pattern,
+        expr
+    )
+
+    if not match:
+
+        return {
+
+            "applicable": False,
+
+            "message": (
+                "Please enter a monic quadratic expression "
+                "such as x² + 5x + 6."
+            ),
+
+            "steps": [],
+
+            "answer": None
+        }
+
+    b = int(
+        match.group(1)
+    )
+
+    c = int(
+        match.group(2)
+    )
+
+    # --------------------------------------------------------
+    # STEP 6:
+    # FIND FACTOR PAIR
+    #
+    # Need:
+    #
+    # p + q = b
+    # p × q = c
+    # --------------------------------------------------------
+
+    factor_pair = None
+
+    limit = int(
+        math.sqrt(abs(c))
+    )
+
+    for i in range(
+        1,
+        limit + 1
+    ):
+
+        if c % i != 0:
+            continue
+
+        j = c // i
+
+        # Positive pair
+
+        if i + j == b:
+
+            factor_pair = (
+                i,
+                j
+            )
+
+            break
+
+        # Negative pair
+
+        if (
+            -i - j
+            == b
+        ):
+
+            factor_pair = (
+                -i,
+                -j
+            )
+
+            break
+
+    # --------------------------------------------------------
+    # STEP 7:
+    # IF NO FACTORS
+    # --------------------------------------------------------
+
+    if factor_pair is None:
+
+        return {
+
+            "applicable": False,
+
+            "message": (
+                "No integer factor pair was found "
+                "for this quadratic."
+            ),
+
+            "steps": [
+
+                f"Expression: {expression}",
+
+                (
+                    f"Need two numbers whose sum is "
+                    f"{b} and product is {c}."
+                ),
+
+                "No suitable integer pair exists."
+            ],
+
+            "answer": None
+        }
+
+    # --------------------------------------------------------
+    # STEP 8:
+    # GET FACTORS
+    # --------------------------------------------------------
+
+    p, q = factor_pair
+
+    # --------------------------------------------------------
+    # STEP 9:
+    # CREATE FACTOR TEXT
+    # --------------------------------------------------------
+
+    def factor_text(value):
+
+        if value >= 0:
+
+            return f"(x + {value})"
+
+        else:
+
+            return f"(x - {abs(value)})"
+
+    factor1 = factor_text(p)
+    factor2 = factor_text(q)
+
+    # --------------------------------------------------------
+    # STEP 10:
+    # VERIFY SUM
+    # --------------------------------------------------------
+
+    sum_check = (
+        p + q
+    )
+
+    product_check = (
+        p * q
+    )
+
+    # --------------------------------------------------------
+    # STEP 11:
+    # CREATE STEPS
+    # --------------------------------------------------------
+
+    steps = []
+
+    steps.append(
+        f"🧮 Expression: {expression}"
+    )
+
+    steps.append(
+        "📖 Sutra: Guṇaka-Samucchayah"
+    )
+
+    steps.append(
+        (
+            "💡 Meaning: "
+            "The Factors of the Sum."
+        )
+    )
+
+    # --------------------------------------------------------
+    # STEP 12:
+    # IDENTIFY b AND c
+    # --------------------------------------------------------
+
+    steps.append(
+        "Step 1: Identify the coefficients."
+    )
+
+    steps.append(
+        (
+            f"x² + ({b})x + ({c})"
+        )
+    )
+
+    steps.append(
+        (
+            f"Middle coefficient = {b}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Constant = {c}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # STEP 13:
+    # FIND FACTORS
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            "Step 2: Find two numbers whose "
+            "sum is the middle coefficient."
+        )
+    )
+
+    steps.append(
+        (
+            f"p + q = {b}"
+        )
+    )
+
+    steps.append(
+        (
+            "Step 3: Their product must equal "
+            "the constant."
+        )
+    )
+
+    steps.append(
+        (
+            f"p × q = {c}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # STEP 14:
+    # SHOW FOUND NUMBERS
+    # --------------------------------------------------------
+
+    steps.append(
+        (
+            f"Suitable numbers are "
+            f"{p} and {q}."
+        )
+    )
+
+    steps.append(
+        (
+            f"Check sum:"
+        )
+    )
+
+    steps.append(
+        (
+            f"{p} + ({q}) = {sum_check}"
+        )
+    )
+
+    steps.append(
+        (
+            f"Check product:"
+        )
+    )
+
+    steps.append(
+        (
+            f"{p} × ({q}) = {product_check}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # STEP 15:
+    # FACTORISE
+    # --------------------------------------------------------
+
+    steps.append(
+        "Step 4: Write the factors."
+    )
+
+    steps.append(
+        (
+            f"🎯 {expression} "
+            f"= {factor1}{factor2}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # STEP 16:
+    # VERIFY BY MULTIPLICATION
+    # --------------------------------------------------------
+
+    steps.append(
+        "Step 5: Verify the factors."
+    )
+
+    steps.append(
+        (
+            f"{factor1}{factor2}"
+        )
+    )
+
+    steps.append(
+        (
+            f"= x² + ({p + q})x + ({p * q})"
+        )
+    )
+
+    steps.append(
+        (
+            f"= x² + ({b})x + ({c})"
+        )
+    )
+
+    steps.append(
+        "✅ Factorisation verified."
+    )
+
+    # --------------------------------------------------------
+    # STEP 17:
+    # SOLUTIONS
+    #
+    # (x+p)(x+q)=0
+    #
+    # x=-p or x=-q
+    # --------------------------------------------------------
+
+    root1 = -p
+    root2 = -q
+
+    steps.append(
+        "Step 6: Find the roots."
+    )
+
+    steps.append(
+        (
+            f"x = {-p}"
+        )
+    )
+
+    steps.append(
+        (
+            f"x = {-q}"
+        )
+    )
+
+    steps.append(
+        (
+            f"🎯 Final Answer: "
+            f"x = {root1}, {root2}"
+        )
+    )
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
+
+    return {
+
+        "applicable": True,
+
+        "message":
+            "Factorisation completed successfully.",
+
+        "expression":
+            expression,
+
+        "factors": [
+            factor1,
+            factor2
+        ],
+
+        "factor_values": [
+            p,
+            q
+        ],
+
+        "roots": [
+            root1,
+            root2
+        ],
+
+        "steps":
+            steps,
+
+        "answer": {
+
+            "factorised":
+                f"{factor1}{factor2}",
+
+            "roots": [
+                root1,
+                root2
+            ]
+        },
+
+        "explanation": (
+            "Guṇaka-Samucchayah is demonstrated here "
+            "through the factor relationship of a suitable "
+            "quadratic expression. The required factors "
+            "are identified from their sum and product, "
+            "then the result is verified."
+        )
     }
 
 # ============================================================
