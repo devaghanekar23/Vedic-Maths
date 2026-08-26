@@ -22,9 +22,19 @@
         </div>
         <div class="nav-right">
             <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
-            <img class="nav-avatar"
-                src="{% if student and student.profile_pic %}{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}{% else %}{{ url_for('static', filename='img/default-avatar.png') }}{% endif %}"
-                alt="avatar">
+            <div class="nav-avatar">
+                {% if student and student.profile_pic %}
+                    {% if student.profile_pic.startswith('http') %}
+                        <img src="{{ student.profile_pic }}" alt="avatar">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="avatar">
+                    {% endif %}
+                {% elif student and student.name %}
+                    {{ student.name[0] | upper }}
+                {% else %}
+                    U
+                {% endif %}
+            </div>
         </div>
     </nav>
 
@@ -46,7 +56,7 @@
             <div class="sidebar-mascot">
                 <img src="{{ url_for('static', filename='images/vedic-math3.png') }}" alt="Vedic Guru">
             </div>
-        </aside
+        </aside>
 
         <!-- MAIN CONTENT -->
         <main class="dashboard-main">
@@ -54,18 +64,23 @@
             <!-- WELCOME CARD -->
             <div class="welcome-card">
                 <div class="profile-avatar-wrapper">
-                    <img id="dashboardProfilePhoto"
-                        src="{% if student and student.profile_pic %}{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}{% else %}{{ url_for('static', filename='img/default-avatar.png') }}{% endif %}"
-                        alt="User Profile" class="welcome-avatar">
+                    <div id="dashboardProfilePhoto" class="welcome-avatar">
+                        {% if student and student.profile_pic %}
+                            <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="User Profile">
+                        {% elif student and student.name %}
+                            {{ student.name[0] | upper }}
+                        {% else %}
+                            U
+                        {% endif %}
+                    </div>
                 </div>
 
                 <h1 class="student-name">
-                    Welcome,<br>
+                    Welcome,
                     <span id="dashboardUserName">{{ student.name }}</span>
                 </h1>
 
-                <p class="student-text" id="dashboardUserEmail">
-                    {{ student.email }}<br>
+                <p class="student-text">
                     Start your Vedic Mathematics learning journey 🚀
                 </p>
             </div>
@@ -141,12 +156,31 @@
                 <li>🤖 AI Scans Used <span>15/50</span></li>
                 <li>⚡ Speed Test Rank <span>Top 10%</span></li>
             </ul>
-        </aside>
 
+            <!-- JAB USER RATING NAHI DIYA HOGA (DEFAULT) -->
+            <div id="ratingForm" class="rating-section">
+                <p class="rating-title">How would you rate our app?</p>
+                <div class="star-rating" id="starContainer">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                </div>
+                <button id="submitRatingBtn" class="btn-submit-rating" disabled>Submit Rating</button>
+            </div>
+        
+            <!-- JAB USER PEHLE SE RATING DE CHUKA HOGA -->
+            <div id="ratedSuccess" class="rating-section" style="display: none;">
+                <p class="your-rating-text">Your Rating <br><span id="savedStars"></span></p>
+                <p class="thank-you-msg">Thank you for sharing your feedback! ❤️</p>
+            </div>
+        </aside>
+        
     </div>
 
     <script>
-function handleSearch(e) {
+    function handleSearch(e) {
     e.preventDefault();
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
     if (!query) return;
@@ -182,122 +216,140 @@ function handleSearch(e) {
 
     const match = pages.find(p => p.name.includes(query));
     window.location.href = match ? match.url : "/sutras";
-}
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+    let selectedRating = 0;
+    const stars = document.querySelectorAll("#starContainer .star");
+    const submitBtn = document.getElementById("submitRatingBtn");
+    const ratingForm = document.getElementById("ratingForm");
+    const ratedSuccess = document.getElementById("ratedSuccess");
+    const savedStarsSpan = document.getElementById("savedStars");
+
+    // 1. Page Load par Check karo ki User ne Rating di hai ya nahi
+    fetch("/get-user-rating")
+        .then(response => response.json())
+        .then(data => {
+            if (data.hasRated) {
+                showRatedState(data.rating);
+            }
+        });
+
+    // 2. Star Selection Logic
+    stars.forEach(star => {
+        star.addEventListener("click", function () {
+            selectedRating = parseInt(this.getAttribute("data-value"));
+            updateStars(selectedRating);
+            submitBtn.disabled = false;
+        });
+    });
+
+    function updateStars(rating) {
+        stars.forEach(star => {
+            let val = parseInt(star.getAttribute("data-value"));
+            if (val <= rating) {
+                star.classList.add("selected");
+                star.innerText = "★";
+            } else {
+                star.classList.remove("selected");
+                star.innerText = "☆";
+            }
+        });
+    }
+
+    // 3. Submit Rating to Backend Database
+    submitBtn.addEventListener("click", function () {
+        if (selectedRating === 0) return;
+
+        fetch("/submit-rating", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rating: selectedRating })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showRatedState(selectedRating);
+            }
+        });
+    });
+
+    // Rating Box Hide karke Success Message dikhane ka Function
+    function showRatedState(ratingValue) {
+        ratingForm.style.display = "none";
+        ratedSuccess.style.display = "block";
+        savedStarsSpan.innerText = "⭐".repeat(ratingValue);
+    }
+    });
 </script>
 <style>
+    /* ============================================================
+   DASHBOARD RESPONSIVE — Sirf chhoti screens ke liye
+   Desktop layout bilkul untouched rahega
+   ============================================================ */
 
-/* ===== DASHBOARD MOBILE RESPONSIVE ===== */
-
+/* ---- Tablet aur chhoti screens (992px se neeche) ---- */
 @media (max-width: 992px) {
 
-    /* Layout — sidebar hide, single column */
+    /* Sidebar aur main content ko stack karo (side-by-side ki jagah upar-neeche) */
     .dashboard-layout {
-        grid-template-columns: 1fr !important;
-        padding: 15px !important;
-        gap: 15px !important;
+        display: flex;
+        flex-direction: column;
     }
 
-    /* Sidebar hide on mobile */
+    /* Sidebar ko full-width banao, hide mat karo — content chhupna nahi chahiye */
     .dashboard-sidebar {
-        display: none !important;
+        width: 100%;
     }
 
-    /* Right panel neeche aayega */
-    .dashboard-right {
-        order: 3;
-    }
-
-    /* Navbar */
-    .dashboard-nav {
-        padding: 10px 15px !important;
+    /* Sidebar menu ko horizontal scroll wali row banao (chhota space mein sab fit ho jaye) */
+    .sidebar-menu {
+        display: flex;
         flex-wrap: wrap;
         gap: 8px;
     }
 
-    /* Search bar chhota */
+    /* Right panel ko neeche le aao, apni width khud rakhe */
+    .dashboard-right {
+        width: 100%;
+    }
+
+    /* Navbar ke andar items wrap ho jayein agar jagah kam pade */
+    .dashboard-nav {
+        flex-wrap: wrap;
+        row-gap: 10px;
+    }
+
+    /* Search box shrink ho sake, lekin cards ko touch na kare */
     .nav-search input {
-        width: 160px !important;
-        font-size: 0.8rem !important;
-        height: 32px !important;
-        padding: 4px 10px !important;
+        max-width: 100%;
     }
 
-    /* Cards grid — 2 per row */
-    .dashboard-cards {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 12px !important;
-    }
 
-    /* Welcome card */
-    .welcome-card {
-        padding: 1.2rem !important;
-    }
-
-    /* Progress ring chhota */
-    .progress-ring {
-        width: 120px !important;
-        height: 120px !important;
-    }
-}
-
+/* ---- Mobile screens (600px se neeche) ---- */
 @media (max-width: 600px) {
 
-    /* Navbar */
-    .dashboard-nav {
-        padding: 8px 12px !important;
-    }
-
-    .logo {
-        font-size: 1rem !important;
-    }
-
-    /* Search hide on very small */
-    .nav-search {
-        display: none !important;
-    }
-
-    /* Cards — 1 per row on small mobile */
+    /* Cards grid ko single column mein le aao — cards ka apna width/padding same rahega */
     .dashboard-cards {
-        grid-template-columns: 1fr !important;
-        gap: 10px !important;
+        grid-template-columns: 1fr;
     }
 
-    /* Dash card */
-    .dash-card {
-        padding: 1rem !important;
-    }
-
-    .dash-card h2 {
-        font-size: 1.5rem !important;
-    }
-
-    .dash-card h3 {
-        font-size: 1rem !important;
-    }
-
-    .dash-card p {
-        font-size: 0.85rem !important;
-    }
-
-    /* Welcome card */
+    /* Welcome card ke andar text zyada bada na lage chhoti screen pe */
     .student-name {
-        font-size: 1.3rem !important;
+        font-size: clamp(1.1rem, 5vw, 1.6rem);
     }
 
-    .welcome-avatar {
-        width: 70px !important;
-        height: 70px !important;
-    }
-
-    /* Right panel */
+    /* Progress ring proportionally chhota ho jaye bina layout todhe */
     .progress-ring-wrapper {
-        transform: scale(0.85);
+        transform: scale(0.9);
+        transform-origin: top center;
     }
 
-    .progress-stats li {
-        font-size: 0.85rem !important;
+    /* Navbar search bahut chhoti screen pe hide ho sakta hai agar jagah na ho */
+    .nav-search {
+        flex-basis: 100%;
+        order: 3;
     }
-}
 </style>
 </body>
 

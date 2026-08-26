@@ -836,7 +836,7 @@ function solvePuranapuranabhyam(a, b, c) {
     if (isNaN(coeffA) || isNaN(coeffB) || isNaN(coeffC) || coeffA === 0) {
         return {
             applicable: false,
-            message: "Please enter valid coefficients with 'a' non-zero (ax² + bx + c = 0).",
+            message: "Please enter a valid multiplication expression (e.g., 12 × 3 = 36).",
             steps: [],
             answer: null
         };
@@ -1317,6 +1317,97 @@ function solveVyastiSamasti(num1, num2) {
 }
 
 // ============================================================
+// 12. SHESANYANKENA CHARAMENA
+// "The remainders by the last digit"
+// ============================================================
+function solveShesanyankenaCharamena(input) {
+    let inputStr = String(input).trim();
+    let num = 1;
+    let d = 1;
+
+    // Numerator aur Denominator extract karo
+    if (inputStr.includes('/')) {
+        let parts = inputStr.split('/');
+        num = parseInt(parts[0].trim(), 10);
+        d = parseInt(parts[1].trim(), 10);
+    } else {
+        d = parseInt(inputStr, 10);
+    }
+
+    if (isNaN(d) || d <= 1 || isNaN(num)) {
+        return {
+            applicable: false,
+            message: "Please enter a valid fraction (e.g., 123/9) or denominator greater than 1.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    let remainder = num % d;
+    let integerPart = Math.floor(num / d);
+    let decimals = [];
+    let seenRemainders = new Map();
+    let stepCount = 0;
+    let isRepeating = false;
+    let repeatStartIndex = -1;
+
+    let steps = [
+        `🧮 Calculating Decimal Expansion for ${num} / ${d}`,
+        "📖 Sutra: Sheṣāṇyaṅkena Charamena",
+        `Step 1: Integer division gives ${integerPart} with initial remainder ${remainder}.`
+    ];
+
+    if (remainder === 0) {
+        return {
+            applicable: true,
+            message: "Exact division result.",
+            denominator: d,
+            steps: [`${num} ÷ ${d} = ${integerPart}`],
+            answer: String(integerPart),
+            explanation: "No decimal remainder."
+        };
+    }
+
+    while (remainder !== 0 && stepCount < d) {
+        if (seenRemainders.has(remainder)) {
+            isRepeating = true;
+            repeatStartIndex = seenRemainders.get(remainder);
+            break;
+        }
+
+        seenRemainders.set(remainder, stepCount);
+
+        let current = remainder * 10;
+        let digit = Math.floor(current / d);
+        let nextRemainder = current % d;
+
+        steps.push(`Step ${stepCount + 1}: (${remainder} × 10) ÷ ${d} = ${digit} with remainder ${nextRemainder}`);
+        decimals.push(digit);
+        remainder = nextRemainder;
+        stepCount++;
+    }
+
+    let decimalStr = "";
+    if (isRepeating) {
+        let nonRepeat = decimals.slice(0, repeatStartIndex).join("");
+        let repeat = decimals.slice(repeatStartIndex).join("");
+        decimalStr = `${integerPart}.${nonRepeat}(${repeat})`;
+    } else {
+        decimalStr = `${integerPart}.` + decimals.join("");
+    }
+
+    steps.push(`✅ Final Answer = ${decimalStr}`);
+
+    return {
+        applicable: true,
+        message: "Sheṣāṇyaṅkena Charamena applied successfully.",
+        denominator: d,
+        steps: steps,
+        answer: decimalStr,
+        explanation: "Evaluates exact decimal places using remainder cycles."
+    };
+}
+// ============================================================
 // 13. SOPANTYADVAYAMANTYAM
 // "The ultimate and twice the penultimate"
 // ============================================================
@@ -1371,4 +1462,185 @@ function solveSopantyadvayamantyam(number) {
     };
 }
 
+// ============================================================
+// 14. EKANYUNENA PURVENA
+// "By one less than the previous one"
+// ============================================================
+function solveEkanyunenaPurvena(num1, num2) {
+    const a = parseInt(String(num1).trim(), 10);
+    const b = parseInt(String(num2).trim(), 10);
+
+    if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
+        return {
+            applicable: false,
+            message: "Please enter valid positive numbers.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    // Check if one of the numbers consists purely of 9s
+    const isNines = (str) => /^9+$/.test(str);
+    let multiplier = 0;
+    let number = 0;
+
+    if (isNines(String(b))) {
+        number = a;
+        multiplier = b;
+    } else if (isNines(String(a))) {
+        number = b;
+        multiplier = a;
+    } else {
+        return {
+            applicable: false,
+            message: "Ekanyunena Purvena requires one of the numbers to consist entirely of 9s (e.g., 9, 99, 999).",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const ninesCount = String(multiplier).length;
+    const numDigits = String(number).length;
+
+    if (numDigits > ninesCount) {
+        return {
+            applicable: false,
+            message: "The number of 9s must be equal to or greater than the digits of the other number.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const leftPart = number - 1;
+    const rightPart = Math.pow(10, ninesCount) - 1 - leftPart;
+    const paddedRight = String(rightPart).padStart(ninesCount, '0');
+    const answer = Number(`${leftPart}${paddedRight}`);
+
+    let steps = [
+        `🧮 Question: ${number} × ${multiplier}`,
+        "📖 Sutra: Ekanyūnena Pūrveṇa",
+        "💡 Meaning: By one less than the previous one",
+        `Step 1: Subtract 1 from the number: ${number} - 1 = ${leftPart} (Left Part)`,
+        `Step 2: Subtract Left Part from 9s: ${multiplier} - ${leftPart} = ${paddedRight} (Right Part)`,
+        `Step 3: Combine Left Part and Right Part: ${leftPart} | ${paddedRight}`,
+        `✅ Final Answer = ${answer}`
+    ];
+
+    return {
+        applicable: true,
+        message: "Ekanyūnena Pūrveṇa applied successfully.",
+        steps: steps,
+        answer: answer,
+        explanation: "Ekanyūnena Pūrveṇa means 'By one less than the previous one'. It simplifies multiplication when multiplying any number by 9, 99, 999, etc."
+    };
+}
+
+// ============================================================
+// 15. GUNITASAMUCCAYAH
+// "The product of the sums is equal to the sum of the product"
+// ============================================================
+function solveGunitasamuccayah(expr1, expr2) {
+    // Verifies algebraic products e.g., (x + a)(x + b)
+    if (!expr1 || !expr2) {
+        return {
+            applicable: false,
+            message: "Please enter two algebraic binomial factors (e.g., x+2 and x+3).",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const clean1 = String(expr1).replace(/\s+/g, "").toLowerCase();
+    const clean2 = String(expr2).replace(/\s+/g, "").toLowerCase();
+
+    // Match forms like x+a or x-a
+    const match1 = clean1.match(/^x([+-]\d+)$/);
+    const match2 = clean2.match(/^x([+-]\d+)$/);
+
+    if (!match1 || !match2) {
+        return {
+            applicable: false,
+            message: "Please enter binomial factors in the format 'x+a' or 'x-a' (e.g., x+2 and x+3).",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const a = parseInt(match1[1], 10);
+    const b = parseInt(match2[1], 10);
+
+    const coeffX2 = 1;
+    const coeffX = a + b;
+    const constant = a * b;
+
+    // Gunita Samuccayah Rule: (Sum of coeffs of F1) * (Sum of coeffs of F2) = Sum of coeffs of Result
+    const sumF1 = 1 + a;
+    const sumF2 = 1 + b;
+    const productOfSums = sumF1 * sumF2;
+    const sumOfProductCoeffs = coeffX2 + coeffX + constant;
+
+    let expandedStr = `x² ${coeffX >= 0 ? '+ ' + coeffX : '- ' + Math.abs(coeffX)}x ${constant >= 0 ? '+ ' + constant : '- ' + Math.abs(constant)}`;
+
+    let steps = [
+        `🧮 Verify Product: (${clean1}) × (${clean2})`,
+        "📖 Sutra: Guṇitasamuccayaḥ",
+        "💡 Meaning: The product of the sums is equal to the sum of the product.",
+        `Step 1: Multiply factors algebraically to get polynomial: ${expandedStr}`,
+        `Step 2: Find Sum of Coefficients of Factor 1 (${clean1}): 1 + (${a}) = ${sumF1}`,
+        `Step 3: Find Sum of Coefficients of Factor 2 (${clean2}): 1 + (${b}) = ${sumF2}`,
+        `Step 4: Product of Sums (S₁ × S₂): ${sumF1} × ${sumF2} = ${productOfSums}`,
+        `Step 5: Sum of Coefficients of Expanded Product: 1 + (${coeffX}) + (${constant}) = ${sumOfProductCoeffs}`,
+        `Step 6: Verification: ${productOfSums} === ${sumOfProductCoeffs} (${productOfSums === sumOfProductCoeffs ? "MATCHED ✅" : "FAILED ❌"})`,
+        `✅ Final Expanded Answer = ${expandedStr}`
+    ];
+
+    return {
+        applicable: true,
+        message: "Guṇitasamuccayaḥ verification successful.",
+        steps: steps,
+        answer: expandedStr,
+        explanation: "Guṇitasamuccayaḥ states that the product of the sums of coefficients of the factors equals the sum of coefficients of the product polynomial."
+    };
+}
+
+// ============================================================
+// 16. GUNAKASAMUCCAYAH
+// "The factor of the sum is equal to the sum of the factors"
+// ============================================================
+function solveGunakasamuccayah(a, b, c) {
+    // Solves quadratic expression coefficients evaluation
+    const coeffA = parseInt(String(a).trim(), 10);
+    const coeffB = parseInt(String(b).trim(), 10);
+    const coeffC = parseInt(String(c).trim(), 10);
+
+    if (isNaN(coeffA) || isNaN(coeffB) || isNaN(coeffC)) {
+        return {
+            applicable: false,
+            message: "Please enter three valid coefficients for ax² + bx + c.",
+            steps: [],
+            answer: null
+        };
+    }
+
+    const sumCoeffs = coeffA + coeffB + coeffC;
+    let quadStr = `${coeffA}x² ${coeffB >= 0 ? '+ ' + coeffB : '- ' + Math.abs(coeffB)}x ${coeffC >= 0 ? '+ ' + coeffC : '- ' + Math.abs(coeffC)}`;
+
+    let steps = [
+        `🧮 Expression: ${quadStr}`,
+        "📖 Sutra: Guṇakasamuccayaḥ",
+        "💡 Meaning: The factor of the sum is equal to the sum of the factors.",
+        `Step 1: Evaluate expression for x = 1.`,
+        `Step 2: ${coeffA}(1)² + ${coeffB}(1) + ${coeffC} = ${coeffA} + ${coeffB} + ${coeffC}`,
+        `Step 3: Sum of Coefficients = ${sumCoeffs}`,
+        `✅ Final Answer = Sum of coefficients is ${sumCoeffs}`
+    ];
+
+    return {
+        applicable: true,
+        message: "Guṇakasamuccayaḥ applied successfully.",
+        steps: steps,
+        answer: sumCoeffs,
+        explanation: "Guṇakasamuccayaḥ evaluates the sum of coefficients of a polynomial by substituting x = 1."
+    };
+}
 

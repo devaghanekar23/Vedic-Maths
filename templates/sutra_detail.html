@@ -300,10 +300,33 @@
         <p class="practice-text">Enter the values below and solve using Vedic Mathematics.</p>
 
         <form method="POST" action="{{ url_for('sutra_detail', id=sutra.id) }}" class="practice-form" id="sutra-form">
-            {% if sutra.id in [1, 12, 13, 14] %}
+            {% if sutra.id == 1 %}
                 <input type="number" id="num1" name="num1" class="practice-input" placeholder="Enter Number" value="{{ request.form.get('num1', '') }}" required>
-            {% elif sutra.id in [5, 8, 9] %}
+            {% elif sutra.id in [5, 9] %}
                 <input type="text" id="eq1" name="eq1" class="practice-input" placeholder="Enter Equation (e.g., 3x + 5 = 2x + 10)" value="{{ request.form.get('eq1', '') }}" required>
+            
+            {% elif sutra.id == 8 %}
+            <input type="text" id="expression" name="expression" class="practice-input" placeholder="Enter multiplication (e.g., 12 × 3 = 36)" value="{{ request.form.get('expression', '') }}" required>
+            
+            {% elif sutra.id == 12 %}
+            <input type="text" id="num1" name="num1" class="practice-input" placeholder="Enter Denominator (e.g. 7, 19, 29)" value="{{ request.form.get('num1', '') }}" min="2" required>
+            
+            {% elif sutra.id == 13 %}
+            <input type="text" id="num1" name="num1" class="practice-input" placeholder="e.g., 47" value="{{ request.form.get('num1', '') }}" required>
+
+            {% elif sutra.id == 14 %}
+            <input type="text" id="num1" name="num1" class="practice-input" placeholder="First Number (e.g. 25)" value="{{ request.form.get('num1', '') }}" required>
+            <input type="text" id="num2" name="num2" class="practice-input" placeholder="Second Number (all 9s, e.g. 99)" value="{{ request.form.get('num2', '') }}" required>
+
+            {% elif sutra.id == 15 %}
+            <input type="text" id="expr1" name="expr1" class="practice-input" placeholder="First Factor (e.g. x+2)" value="{{ request.form.get('expr1', '') }}" required>
+            <input type="text" id="expr2" name="expr2" class="practice-input" placeholder="Second Factor (e.g. x+3)" value="{{ request.form.get('expr2', '') }}" required>
+
+            {% elif sutra.id == 16 %}
+            <input type="number" id="coeffA" name="coeffA" class="practice-input" placeholder="Coefficient a (e.g. 2)" value="{{ request.form.get('coeffA', '') }}" required>
+            <input type="number" id="coeffB" name="coeffB" class="practice-input" placeholder="Coefficient b (e.g. 5)" value="{{ request.form.get('coeffB', '') }}" required>
+            <input type="number" id="coeffC" name="coeffC" class="practice-input" placeholder="Coefficient c (e.g. 3)" value="{{ request.form.get('coeffC', '') }}" required>
+
             {% elif sutra.id == 7 %}
                 <input type="text" id="eq1" name="eq1" class="practice-input" placeholder="Equation 1 (e.g., 2x + 3y = 13)" value="{{ request.form.get('eq1', '') }}" required>
                 <input type="text" id="eq2" name="eq2" class="practice-input" placeholder="Equation 2 (e.g., 3x - y = 3)" value="{{ request.form.get('eq2', '') }}" required>
@@ -327,8 +350,8 @@
                 {% elif sutra.id == 12 %}calculateShesanyankena()
                 {% elif sutra.id == 13 %}calculateSopantya()
                 {% elif sutra.id == 14 %}calculateEkanyunena()
-                {% elif sutra.id == 15 %}calculateGunitasamuchyah()
-                {% elif sutra.id == 16 %}calculateGunakasamuchyah()
+                {% elif sutra.id == 15 %}calculateGunitasamuccayah()
+                {% elif sutra.id == 16 %}calculateGunaka()
                 {% endif %}">
                 🚀 Solve Using Vedic Mathematics
             </button>
@@ -657,21 +680,21 @@
     }
 
     function calculateShesanyankena() {
-        const input1 = document.getElementById("num1");
+    const input1 = document.getElementById("num1");
 
-        if (!input1) {
-            console.error("Input element with ID 'num1' missing!");
-            return;
-        }
+    if (!input1) {
+        console.error("Input element with ID 'num1' missing!");
+        return;
+    }
 
-        const num = input1.value;
+    const num = input1.value;
 
-        // Function safety check
-        if (typeof solveShesanyankena === "function") {
-            renderResult(solveShesanyankena(num));
-        } else {
-            console.error("solveShesanyankena function not found in sutra.js!");
-        }
+    // Corrected function call name:
+    if (typeof solveShesanyankenaCharamena === "function") {
+        renderResult(solveShesanyankenaCharamena(num));
+    } else {
+        console.error("solveShesanyankenaCharamena function not found in sutra.js!");
+    }
     }
 
     function calculateSopantya() {
@@ -693,59 +716,63 @@
     }
 
     function calculateEkanyunena() {
-        const input1 = document.getElementById("num1");
-        const input2 = document.getElementById("num2");
+    const input1 = document.getElementById("num1");
+    const input2 = document.getElementById("num2");
 
-        if (!input1 || !input2) {
-            console.error("Inputs with ID 'num1' or 'num2' missing from HTML!");
-            return;
-        }
-
-        const num1 = input1.value;
-        const num2 = input2.value;
-
-        // Function safety check
-        if (typeof solveEkanyunena === "function") {
-            renderResult(solveEkanyunena(num1, num2));
-        } else {
-            console.error("solveEkanyunena function not found in sutra.js!");
-        }
+    if (!input1 || !input2) {
+        console.error("Inputs with ID 'num1' or 'num2' missing from HTML!");
+        return;
     }
 
-    function calculateGunitasamuchyah() {
-        const input1 = document.getElementById("eq1") || document.getElementById("num1");
+    const num1 = input1.value;
+    const num2 = input2.value;
 
-        if (!input1) {
-            console.error("Input element with ID 'eq1' or 'num1' missing!");
-            return;
-        }
+    // Function safety check
+    if (typeof solveEkanyunenaPurvena === "function") {          // ✅ fixed
+        renderResult(solveEkanyunenaPurvena(num1, num2));         // ✅ fixed
+    } else {
+        console.error("solveEkanyunenaPurvena function not found in sutra.js!");
+    }
+    }
 
-        const eq = input1.value;
+    function calculateGunitasamuccayah() {
+    const input1 = document.getElementById("expr1");
+    const input2 = document.getElementById("expr2");
 
-        // Function safety check
-        if (typeof solveGunitasamuchyah === "function") {
-            renderResult(solveGunitasamuchyah(eq));
-        } else {
-            console.error("solveGunitasamuchyah function not found in sutra.js!");
-        }
+    if (!input1 || !input2) {
+        console.error("Input elements with ID 'expr1' or 'expr2' missing!");
+        return;
+    }
+
+    const expr1 = input1.value;
+    const expr2 = input2.value;
+
+    if (typeof solveGunitasamuccayah === "function") {
+        renderResult(solveGunitasamuccayah(expr1, expr2));
+    } else {
+        console.error("solveGunitasamuccayah function not found in sutra.js!");
+    }
     }
 
     function calculateGunaka() {
-        const input1 = document.getElementById("eq1") || document.getElementById("num1");
+    const inputA = document.getElementById("coeffA");
+    const inputB = document.getElementById("coeffB");
+    const inputC = document.getElementById("coeffC");
 
-        if (!input1) {
-            console.error("Input element with ID 'eq1' or 'num1' missing!");
-            return;
-        }
+    if (!inputA || !inputB || !inputC) {
+        console.error("Input elements 'coeffA', 'coeffB' or 'coeffC' missing!");
+        return;
+    }
 
-        const eq = input1.value;
+    const a = inputA.value;
+    const b = inputB.value;
+    const c = inputC.value;
 
-        // Function safety check
-        if (typeof solveGunakasamuchyah === "function") {
-            renderResult(solveGunakasamuchyah(eq));
-        } else {
-            console.error("solveGunakasamuchyah function not found in sutra.js!");
-        }
+    if (typeof solveGunakasamuccayah === "function") {
+        renderResult(solveGunakasamuccayah(a, b, c));
+    } else {
+        console.error("solveGunakasamuccayah function not found in sutra.js!");
+    }
     }
 </script>
 

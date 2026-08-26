@@ -9,6 +9,7 @@ from PIL import Image
 import google.generativeai as genai
 from dotenv import load_dotenv
 from flask_mail import Mail, Message
+from flask import Flask, jsonify, request, session
 
 load_dotenv()
 
@@ -231,12 +232,12 @@ sutras_list = [
         "name": "Sopantyadvaya-"
         "mantyam",
         "sanskrit": "सोपान्त्यद्वयमन्त्यम्",
-        "meaning": "Ultimate and Twice the Penultimate.",
-        "introduction": "Used here to demonstrate the last and twice the previous quantity.",
-        "rule": "Take the first value and add twice the second value.",
-        "example_question": "10 + 2(5)",
-        "example_answer": "20",
-        "operation": "algebra",
+        "meaning": "The ultimate and twice the penultimate.",
+        "introduction": "Used to combine the last digit of a number with twice its second-last digit.",
+        "rule": "Take the last digit (ultimate) of the number and add twice its second-last digit (penultimate).",
+        "example_question": "47",
+        "example_answer": "15",
+        "operation": "single_number",
     },
     {
         "id": 14,
@@ -267,12 +268,12 @@ sutras_list = [
         "icon": "🏁",
         "name": "Gunakasamuccayah",
         "sanskrit": "गुणकसमुच्चयः",
-        "meaning": "Factors of the Sum.",
-        "introduction": "Used here to demonstrate factorisation of a quadratic expression.",
-        "rule": "Find two numbers whose sum is the middle coefficient and whose product is the constant.",
-        "example_question": "(x + 2)(x + 3)",
-        "example_answer": "x² + 5x + 6",
-        "operation": "factorization",
+        "meaning": "The factor of the sum is equal to the sum of the factors.",
+        "introduction": "Used to find the value of a quadratic expression ax² + bx + c by substituting x = 1, which equals the sum of its coefficients.",
+        "rule": "Add the coefficients a, b, and c of the quadratic expression together. This sum equals the value of the expression when x = 1.",
+        "example_question": "a=1, b=5, c=6",
+        "example_answer": "12",
+        "operation": "coefficient_sum",
     },
 ]
 
@@ -7433,7 +7434,7 @@ def daily_challenge():
             solution = solve_sutra(sutra_id, question["num1"], question["num2"])
             correct_ans = solution.get("result", "")
             is_correct = str(user_ans).strip() == str(correct_ans).strip()
-            points = 10 if is_correct else 2  # try karnyasathi bhi thode points
+            points = 2 if is_correct else 0  
 
             cursor.execute("""
                 INSERT INTO daily_challenges
@@ -7540,6 +7541,48 @@ def certificates():
         if conn:
             conn.close()
 
+@app.route('/submit-rating', methods=['POST'])
+def submit_rating():
+  student_id = session.get('student_id')  # Ya session.get('user_id')
+  if not student_id:
+    return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+
+  data = request.get_json()
+  rating_val = data.get('rating')
+
+  conn = get_db_connection()
+  cursor = conn.cursor()
+
+  cursor.execute(
+      'UPDATE students SET rating = %s WHERE id = %s', (rating_val, student_id)
+  )
+  conn.commit()
+
+  cursor.close()
+  conn.close()
+
+  return jsonify({'success': True})
+
+
+@app.route('/get-user-rating', methods=['GET'])
+def get_user_rating():
+  student_id = session.get('student_id')  # Ya session.get('user_id')
+  if not student_id:
+    return jsonify({'hasRated': False})
+
+  conn = get_db_connection()
+  cursor = conn.cursor(dictionary=True)
+
+  cursor.execute('SELECT rating FROM students WHERE id = %s', (student_id,))
+  student = cursor.fetchone()
+
+  cursor.close()
+  conn.close()
+
+  if student and student['rating']:
+    return jsonify({'hasRated': True, 'rating': student['rating']})
+
+  return jsonify({'hasRated': False})
 
 
 # ============================================================

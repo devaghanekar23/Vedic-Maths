@@ -186,7 +186,11 @@
             <div class="avatar-wrapper">
                 <div class="avatar" id="avatarDisplay" onclick="openPhotoModal()">
                     {% if student and student.profile_pic %}
-                        <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="Profile Picture">
+                        {% if student.profile_pic.startswith('http') %}
+                            <img src="{{ student.profile_pic }}" alt="avatar">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="avatar">
+                        {% endif %}
                     {% elif student and student.name %}
                         {{ student.name[0] | upper }}
                     {% else %}

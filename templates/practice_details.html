@@ -198,6 +198,31 @@
             padding: 6px 0;
             font-size: 0.95rem;
         }
+                .next-sutra-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+
+        .next-sutra-btn {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            font-weight: 700;
+            padding: 14px 36px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(22, 173, 249, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .next-sutra-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 139, 249, 0.5);
+            color: white;
+        }
     </style>
 </head>
 
@@ -289,6 +314,18 @@
 
         </div>
         {% endfor %}
+        <!-- 4. NEXT SUTRA PRACTICE BUTTON -->
+        <div class="next-sutra-container">
+            {% if sutra.id < all_sutras|length %}
+                <a href="{{ url_for('practice', id=sutra.id + 1) }}" class="next-sutra-btn">
+                    Next Sutra Practice ➡
+                </a>
+            {% else %}
+                <a href="{{ url_for('dashboard') }}" class="next-sutra-btn">
+                    🎉 All Sutras Completed — Back to Dashboard
+                </a>
+            {% endif %}
+        </div>
 
     </div>
 

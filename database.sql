@@ -204,3 +204,18 @@ ALTER TABLE students ADD COLUMN total_points INT NOT NULL DEFAULT 0;
 ALTER TABLE students 
 ADD COLUMN reset_token VARCHAR(100) DEFAULT NULL,
 ADD COLUMN reset_token_expiry DATETIME DEFAULT NULL;
+
+ALTER TABLE students 
+ADD COLUMN rating INT DEFAULT NULL;
+
+CREATE TABLE IF NOT EXISTS app_ratings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    feedback_text TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (student_id) REFERENCES students(id) 
+        ON DELETE CASCADE,
+    UNIQUE KEY unique_student_rating (student_id)
+);
