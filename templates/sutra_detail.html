@@ -302,9 +302,12 @@
         <form method="POST" action="{{ url_for('sutra_detail', id=sutra.id) }}" class="practice-form" id="sutra-form">
             {% if sutra.id == 1 %}
                 <input type="number" id="num1" name="num1" class="practice-input" placeholder="Enter Number" value="{{ request.form.get('num1', '') }}" required>
-            {% elif sutra.id in [5, 9] %}
+            {% elif sutra.id == 9 %}
                 <input type="text" id="eq1" name="eq1" class="practice-input" placeholder="Enter Equation (e.g., 3x + 5 = 2x + 10)" value="{{ request.form.get('eq1', '') }}" required>
             
+            {% elif sutra.id == 5 %}
+            <input type="text" id="expression" name="expression" class="practice-input" placeholder="Enter equation (e.g., (x+1) + (x+2) = (x+3) + (x+0))" value="{{ request.form.get('expression', '') }}" required>
+
             {% elif sutra.id == 8 %}
             <input type="text" id="expression" name="expression" class="practice-input" placeholder="Enter multiplication (e.g., 12 × 3 = 36)" value="{{ request.form.get('expression', '') }}" required>
             
@@ -545,22 +548,20 @@
     }
 
     function calculateShunyam() {
-        // Equation input single input element ('eq1' or 'num1') read karta hai
-        const input1 = document.getElementById("eq1") || document.getElementById("num1");
+    const input1 = document.getElementById("eq1") || document.getElementById("num1") || document.getElementById("expression");
 
-        if (!input1) {
-            console.error("Input element with ID 'eq1' or 'num1' missing!");
-            return;
-        }
+    if (!input1) {
+        console.error("Input element missing!");
+        return;
+    }
 
-        const eq = input1.value;
+    const eq = input1.value;
 
-        // Function safety check
-        if (typeof solveShunyamSamyasamuccaye === "function") {
-            renderResult(solveShunyamSamyasamuccaye(eq));
-        } else {
-            console.error("solveShunyamSamyasamuccaye function not found in sutra.js!");
-        }
+    if (typeof solveShunyamSamyasamuccaye === "function") {
+        renderResult(solveShunyamSamyasamuccaye(eq));
+    } else {
+        console.error("solveShunyamSamyasamuccaye function not found in sutra.js!");
+    }
     }
 
     function calculateAnurupyena() {

@@ -353,17 +353,7 @@ function solveParavartya(num1, num2) {
 // "When the Samuccaya is the same, it becomes zero."
 // ============================================================
 function solveShunyamSamyasamuccaye(equation) {
-    if (!equation) {
-        return {
-            applicable: false,
-            message: "Please enter an equation.",
-            steps: [],
-            answer: null
-        };
-    }
-
-    equation = String(equation).trim();
-    if (equation === "") {
+    if (!equation || String(equation).trim() === "") {
         return {
             applicable: false,
             message: "Please enter an equation.",
@@ -383,56 +373,51 @@ function solveShunyamSamyasamuccaye(equation) {
         };
     }
 
-    const parts = cleanEquation.split("=");
-    if (parts.length !== 2) {
-        return {
-            applicable: false,
-            message: "Please enter one equation with one '=' sign.",
-            steps: [],
-            answer: null
-        };
-    }
-
-    const left = parts[0];
-    const right = parts[1];
-
     if (!cleanEquation.toLowerCase().includes("x")) {
         return {
             applicable: false,
-            message: "Please enter an equation containing x.",
+            message: "Please enter an equation containing variable 'x'.",
             steps: [],
             answer: null
         };
     }
 
-    if (left === right) {
+    // Pattern 1: Common Factor Case -> e.g., 5(x+2) = 3(x+2) or (x+5) = 5(x+5)
+    const commonFactorPattern = /^(\d*)\(?x([+-]\d+)\)?=(\d*)\(?x([+-]\d+)\)?$/i;
+    const matchCommon = cleanEquation.match(commonFactorPattern);
+
+    if (matchCommon && matchCommon[2] === matchCommon[4]) {
+        const k = parseInt(matchCommon[2], 10);
+        const ans = -k;
         return {
-            applicable: false,
-            message: "The same expression appears on both sides. Therefore the equation is an identity, not a unique equation to solve.",
+            applicable: true,
+            message: "Solved using Shunyam Samyasamuccaye (Common Factor Pattern)",
+            equation: equation,
             steps: [
-                `Equation: ${equation}`,
-                `Left side = ${left}`,
-                `Right side = ${right}`,
-                "Both sides are exactly equal.",
-                "Therefore every value of x satisfies the equation.",
-                "There is no single value of x."
+                `🧮 Equation: ${equation}`,
+                `📖 Sutra: Shunyam Samyasamuccaye`,
+                `💡 Observation: Common factor (x ${k >= 0 ? '+' : ''}${k}) is present on both sides.`,
+                `Step 1: Equate common factor to zero: x ${k >= 0 ? '+' : ''}${k} = 0`,
+                `Step 2: Solve for x: x = ${ans}`,
+                `✅ Final Answer: x = ${ans}`
             ],
-            answer: "All real values of x"
+            answer: String(ans)
         };
     }
 
-    const pattern = /^([+-]?\d*)x([+-]\d+)?=([+-]?\d*)x([+-]\d+)?$/i;
-    const match = cleanEquation.match(pattern);
+    // Pattern 2: Standard Linear Equations -> e.g., x+5=5, 3x+5=2x+10, etc.
+    const linearPattern = /^([+-]?\d*)x([+-]\d+)?=(([+-]?\d*)x)?([+-]\d+)?$/i;
+    const matchLinear = cleanEquation.match(linearPattern);
 
-    if (match) {
-        const aText = match[1];
-        const bText = match[2];
-        const cText = match[3];
-        const dText = match[4];
+    if (matchLinear) {
+        const aText = matchLinear[1];
+        const bText = matchLinear[2];
+        const cText = matchLinear[4];
+        const dText = matchLinear[5];
 
         let a = (aText === "" || aText === "+") ? 1 : (aText === "-" ? -1 : parseInt(aText, 10));
         let b = bText ? parseInt(bText, 10) : 0;
-        let c = (cText === "" || cText === "+") ? 1 : (cText === "-" ? -1 : parseInt(cText, 10));
+        let c = !matchLinear[3] ? 0 : ((cText === "" || cText === "+") ? 1 : (cText === "-" ? -1 : parseInt(cText, 10)));
         let d = dText ? parseInt(dText, 10) : 0;
 
         const coefficient = a - c;
@@ -443,73 +428,42 @@ function solveShunyamSamyasamuccaye(equation) {
                 return {
                     applicable: false,
                     message: "The equation has infinitely many solutions.",
-                    steps: [
-                        `Equation: ${equation}`,
-                        `Move x terms: ${a}x - ${c}x = ${d} - ${b}`,
-                        `${coefficient}x = ${constant}`,
-                        "This becomes 0 = 0.",
-                        "Therefore every value of x is a solution."
-                    ],
+                    steps: ["0 = 0 (Identity)"],
                     answer: "All real values of x"
                 };
             } else {
                 return {
                     applicable: false,
                     message: "The equation has no solution.",
-                    steps: [
-                        `Equation: ${equation}`,
-                        `Move x terms: ${a}x - ${c}x = ${d} - ${b}`,
-                        `${coefficient}x = ${constant}`,
-                        `0 = ${constant}`,
-                        "This is impossible.",
-                        "Therefore there is no solution."
-                    ],
+                    steps: [`0 = ${constant} (Impossible)`],
                     answer: "No solution"
                 };
             }
         }
 
         const x = constant / coefficient;
-        const xDisplay = Number.isInteger(x) ? String(x) : String(x);
-
-        const steps = [
-            `🧮 Equation: ${equation}`,
-            "📖 Sutra: Shunyam Samyasamuccaye",
-            "💡 Meaning: When the Samuccaya is the same, it becomes zero.",
-            "Step 1: Compare the x terms:",
-            `${a}x and ${c}x`,
-            "Step 2: Compare the constants:",
-            `${b} and ${d}`,
-            "Step 3: Bring x terms together:",
-            `${a}x - ${c}x = ${d} - ${b}`,
-            "Step 4:",
-            `${coefficient}x = ${constant}`,
-            `Step 5: Divide by ${coefficient}:`,
-            `x = ${constant} / ${coefficient}`,
-            `Step 6: Therefore x = ${xDisplay}`,
-            `✅ Final Answer: x = ${xDisplay}`
-        ];
+        const xDisplay = Number.isInteger(x) ? String(x) : x.toFixed(2);
 
         return {
             applicable: true,
             message: "Equation solved successfully.",
             equation: equation,
-            steps: steps,
-            answer: xDisplay,
-            explanation: "Shunyam Samyasamuccaye is used when a common samuccaya appears in a suitable algebraic equation. The common part can be treated as zero, simplifying the equation."
+            steps: [
+                `🧮 Equation: ${equation}`,
+                `📖 Sutra: Shunyam Samyasamuccaye`,
+                `Step 1: Express x terms: ${a}x - ${c}x = ${d} - (${b})`,
+                `Step 2: ${coefficient}x = ${constant}`,
+                `Step 3: Divide by ${coefficient}: x = ${constant} / ${coefficient}`,
+                `✅ Final Answer: x = ${xDisplay}`
+            ],
+            answer: xDisplay
         };
     }
 
     return {
         applicable: false,
-        message: "This equation is not in a form that this Shunyam Samyasamuccaye solver can safely solve. Please enter a suitable algebraic equation.",
-        steps: [
-            `Equation entered: ${equation}`,
-            "The solver could not identify a suitable Shunyam Samyasamuccaye pattern.",
-            "Try a simple equation such as:",
-            "3x + 5 = 2x + 10",
-            "5x + 7 = 3x + 15"
-        ],
+        message: "Unable to parse this equation layout. Try formats like 'x+5=5' or '5(x+2)=3(x+2)'.",
+        steps: [],
         answer: null
     };
 }

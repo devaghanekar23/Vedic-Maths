@@ -86,7 +86,7 @@
             </div>
 
             <!-- DASHBOARD CARDS GRID -->
-            <div class="dashboard-cards">
+            <div class="dashboard-cards-dash">
 
                 <div class="dash-card">
                     <h2>📚</h2>
@@ -156,25 +156,6 @@
                 <li>🤖 AI Scans Used <span>15/50</span></li>
                 <li>⚡ Speed Test Rank <span>Top 10%</span></li>
             </ul>
-
-            <!-- JAB USER RATING NAHI DIYA HOGA (DEFAULT) -->
-            <div id="ratingForm" class="rating-section">
-                <p class="rating-title">How would you rate our app?</p>
-                <div class="star-rating" id="starContainer">
-                    <span class="star" data-value="1">☆</span>
-                    <span class="star" data-value="2">☆</span>
-                    <span class="star" data-value="3">☆</span>
-                    <span class="star" data-value="4">☆</span>
-                    <span class="star" data-value="5">☆</span>
-                </div>
-                <button id="submitRatingBtn" class="btn-submit-rating" disabled>Submit Rating</button>
-            </div>
-        
-            <!-- JAB USER PEHLE SE RATING DE CHUKA HOGA -->
-            <div id="ratedSuccess" class="rating-section" style="display: none;">
-                <p class="your-rating-text">Your Rating <br><span id="savedStars"></span></p>
-                <p class="thank-you-msg">Thank you for sharing your feedback! ❤️</p>
-            </div>
         </aside>
         
     </div>
@@ -218,69 +199,202 @@
     window.location.href = match ? match.url : "/sutras";
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-    let selectedRating = 0;
-    const stars = document.querySelectorAll("#starContainer .star");
-    const submitBtn = document.getElementById("submitRatingBtn");
-    const ratingForm = document.getElementById("ratingForm");
-    const ratedSuccess = document.getElementById("ratedSuccess");
-    const savedStarsSpan = document.getElementById("savedStars");
 
-    // 1. Page Load par Check karo ki User ne Rating di hai ya nahi
+    document.addEventListener("DOMContentLoaded", function () {
+
+    let selectedRating = 0;
+
+    const overlay =
+        document.getElementById("ratingOverlay");
+
+    const stars =
+        document.querySelectorAll(".modal-star");
+
+    const submitBtn =
+        document.getElementById("modalSubmitRating");
+
+    const ratingText =
+        document.getElementById("modalRatingText");
+
+
+    const ratingMessages = {
+        1: "Poor 😞",
+        2: "Could be better 😕",
+        3: "Good 🙂",
+        4: "Very Good 😊",
+        5: "Excellent! 🤩"
+    };
+
+
+    /* ==========================================
+       CHECK USER RATING
+    ========================================== */
+
     fetch("/get-user-rating")
         .then(response => response.json())
         .then(data => {
+
             if (data.hasRated) {
-                showRatedState(data.rating);
+
+                // User already rated
+                overlay.style.display = "none";
+
+            } else {
+
+                // User has NOT rated
+                overlay.style.display = "flex";
+
             }
+
+        })
+        .catch(error => {
+
+            console.error(
+                "Rating check error:",
+                error
+            );
+
         });
 
-    // 2. Star Selection Logic
+
+    /* ==========================================
+       STAR SELECTION
+    ========================================== */
+
     stars.forEach(star => {
+
         star.addEventListener("click", function () {
-            selectedRating = parseInt(this.getAttribute("data-value"));
+
+            selectedRating =
+                parseInt(
+                    this.getAttribute("data-value")
+                );
+
             updateStars(selectedRating);
+
             submitBtn.disabled = false;
+
+            ratingText.textContent =
+                ratingMessages[selectedRating];
+
         });
+
     });
+
 
     function updateStars(rating) {
+
         stars.forEach(star => {
-            let val = parseInt(star.getAttribute("data-value"));
-            if (val <= rating) {
+
+            const value =
+                parseInt(
+                    star.getAttribute("data-value")
+                );
+
+            if (value <= rating) {
+
                 star.classList.add("selected");
-                star.innerText = "★";
+
+                star.textContent = "★";
+
             } else {
+
                 star.classList.remove("selected");
-                star.innerText = "☆";
+
+                star.textContent = "☆";
+
             }
+
         });
+
     }
 
-    // 3. Submit Rating to Backend Database
+
+    /* ==========================================
+       SUBMIT RATING
+    ========================================== */
+
     submitBtn.addEventListener("click", function () {
-        if (selectedRating === 0) return;
+
+        if (selectedRating === 0) {
+            return;
+        }
+
+        submitBtn.disabled = true;
+
+        submitBtn.textContent =
+            "Submitting...";
+
 
         fetch("/submit-rating", {
+
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ rating: selectedRating })
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                rating: selectedRating
+            })
+
         })
+
         .then(response => response.json())
+
         .then(data => {
+
             if (data.success) {
-                showRatedState(selectedRating);
+
+                ratingText.textContent =
+                    "Thank you for your feedback! ❤️";
+
+                submitBtn.textContent =
+                    "Thank You ❤️";
+
+                setTimeout(function () {
+
+                    overlay.style.display = "none";
+
+                }, 1000);
+
+            } else {
+
+                alert(
+                    data.message ||
+                    "Unable to submit rating."
+                );
+
+                submitBtn.disabled = false;
+
+                submitBtn.textContent =
+                    "Submit Rating";
             }
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                "Rating submit error:",
+                error
+            );
+
+            alert(
+                "Something went wrong. Please try again."
+            );
+
+            submitBtn.disabled = false;
+
+            submitBtn.textContent =
+                "Submit Rating";
+
         });
+
     });
 
-    // Rating Box Hide karke Success Message dikhane ka Function
-    function showRatedState(ratingValue) {
-        ratingForm.style.display = "none";
-        ratedSuccess.style.display = "block";
-        savedStarsSpan.innerText = "⭐".repeat(ratingValue);
-    }
-    });
+});
+
 </script>
 <style>
     /* ============================================================
@@ -351,6 +465,54 @@
         order: 3;
     }
 </style>
+
+<!-- =========================================================
+     MANDATORY RATING MODAL
+========================================================= -->
+
+<div id="ratingOverlay" class="rating-overlay">
+
+    <div class="rating-modal">
+
+        <div class="rating-icon">
+            ⭐
+        </div>
+
+        <h2>Rate Your Experience</h2>
+
+        <p class="rating-subtitle">
+            How was your experience with VedicMath?
+        </p>
+
+        <p class="rating-description">
+            Your feedback helps us improve the application.
+        </p>
+
+        <div class="modal-stars" id="modalStarContainer">
+
+            <span class="modal-star" data-value="1">☆</span>
+            <span class="modal-star" data-value="2">☆</span>
+            <span class="modal-star" data-value="3">☆</span>
+            <span class="modal-star" data-value="4">☆</span>
+            <span class="modal-star" data-value="5">☆</span>
+
+        </div>
+
+        <p id="modalRatingText" class="modal-rating-text">
+            Select your rating
+        </p>
+
+        <button
+            type="button"
+            id="modalSubmitRating"
+            class="modal-submit-rating"
+            disabled>
+            Submit Rating
+        </button>
+
+    </div>
+
+</div>
 </body>
 
 </html>

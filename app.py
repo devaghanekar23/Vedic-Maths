@@ -7543,46 +7543,86 @@ def certificates():
 
 @app.route('/submit-rating', methods=['POST'])
 def submit_rating():
-  student_id = session.get('student_id')  # Ya session.get('user_id')
-  if not student_id:
-    return jsonify({'success': False, 'message': 'Unauthorized'}), 401
 
-  data = request.get_json()
-  rating_val = data.get('rating')
+    student_id = session.get('student_id')
 
-  conn = get_db_connection()
-  cursor = conn.cursor()
+    if not student_id:
+        return jsonify({
+            'success': False,
+            'message': 'Unauthorized'
+        }), 401
 
-  cursor.execute(
-      'UPDATE students SET rating = %s WHERE id = %s', (rating_val, student_id)
-  )
-  conn.commit()
+    data = request.get_json() or {}
 
-  cursor.close()
-  conn.close()
+    rating_val = data.get('rating')
 
-  return jsonify({'success': True})
+    try:
+        rating_val = int(rating_val)
+    except (TypeError, ValueError):
+        return jsonify({
+            'success': False,
+            'message': 'Invalid rating'
+        }), 400
+
+    if rating_val not in [1, 2, 3, 4, 5]:
+        return jsonify({
+            'success': False,
+            'message': 'Rating must be between 1 and 5'
+        }), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        'UPDATE students SET rating = %s WHERE id = %s',
+        (rating_val, student_id)
+    )
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({
+        'success': True,
+        'rating': rating_val
+    })
 
 
 @app.route('/get-user-rating', methods=['GET'])
 def get_user_rating():
-  student_id = session.get('student_id')  # Ya session.get('user_id')
-  if not student_id:
-    return jsonify({'hasRated': False})
 
-  conn = get_db_connection()
-  cursor = conn.cursor(dictionary=True)
+    student_id = session.get('student_id')
 
-  cursor.execute('SELECT rating FROM students WHERE id = %s', (student_id,))
-  student = cursor.fetchone()
+    if not student_id:
+        return jsonify({
+            'hasRated': False
+        })
 
-  cursor.close()
-  conn.close()
+    conn = get_db_connection()
 
-  if student and student['rating']:
-    return jsonify({'hasRated': True, 'rating': student['rating']})
+    cursor = conn.cursor(dictionary=True)
 
-  return jsonify({'hasRated': False})
+    cursor.execute(
+        'SELECT rating FROM students WHERE id = %s',
+        (student_id,)
+    )
+
+    student = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if student and student['rating']:
+
+        return jsonify({
+            'hasRated': True,
+            'rating': student['rating']
+        })
+
+    return jsonify({
+        'hasRated': False
+    })
 
 
 # ============================================================
