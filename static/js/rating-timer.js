@@ -94,86 +94,90 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-    /* =========================================================
-       START / CONTINUE 7 MINUTE TIMER
-    ========================================================= */
+/* =========================================================
+   START / CONTINUE 5 MINUTE TIMER
+========================================================= */
 
-    function startRatingTimer() {
+function startRatingTimer() {
 
-        let startTime =
-            localStorage.getItem("appStartTime");
+    // AGAR NAYA LOGIN HAI TO PURANA TIMER RESET KAREIN (Fix for Instant Popup)
+    if (document.referrer.includes('google') || !sessionStorage.getItem("sessionActive")) {
+        localStorage.removeItem("appStartTime");
+        sessionStorage.setItem("sessionActive", "true");
+    }
 
-
-        /* -------------------------------------------------
-           FIRST TIME
-        ------------------------------------------------- */
-
-        if (!startTime) {
-
-            startTime = Date.now();
-
-            localStorage.setItem(
-                "appStartTime",
-                startTime
-            );
-
-            console.log(
-                "Rating timer started."
-            );
-        }
+    let startTime = localStorage.getItem("appStartTime");
 
 
-        /* -------------------------------------------------
-           CALCULATE ELAPSED TIME
-        ------------------------------------------------- */
+    /* -------------------------------------------------
+        FIRST TIME
+    ------------------------------------------------- */
 
-        const elapsedTime =
-            Date.now() - parseInt(startTime);
+    if (!startTime) {
 
+        startTime = Date.now();
 
-        /* -------------------------------------------------
-           CALCULATE REMAINING TIME
-        ------------------------------------------------- */
-
-        const remainingTime =
-            RATING_TIME - elapsedTime;
-
-
-        console.log(
-            "Rating timer remaining:",
-            Math.max(
-                0,
-                Math.ceil(
-                    remainingTime / 1000
-                )
-            ),
-            "seconds"
+        localStorage.setItem(
+            "appStartTime",
+            startTime
         );
 
-
-        /* -------------------------------------------------
-           7 MINUTES ALREADY COMPLETED
-        ------------------------------------------------- */
-
-        if (remainingTime <= 0) {
-
-            showRatingPopup();
-
-            return;
-        }
-
-
-        /* -------------------------------------------------
-           WAIT UNTIL 7 MINUTES COMPLETE
-        ------------------------------------------------- */
-
-        setTimeout(function () {
-
-            showRatingPopup();
-
-        }, remainingTime);
-
+        console.log(
+            "Rating timer started fresh."
+        );
     }
+
+    /* -------------------------------------------------
+        CALCULATE ELAPSED TIME
+    ------------------------------------------------- */
+
+    const elapsedTime =
+        Date.now() - parseInt(startTime);
+
+
+    /* -------------------------------------------------
+        CALCULATE REMAINING TIME
+    ------------------------------------------------- */
+
+    const remainingTime =
+        RATING_TIME - elapsedTime;
+
+
+    console.log(
+        "Rating timer remaining:",
+        Math.max(
+            0,
+            Math.ceil(
+                remainingTime / 1000
+            )
+        ),
+        "seconds"
+    );
+
+
+    /* -------------------------------------------------
+        5 MINUTES ALREADY COMPLETED
+    ------------------------------------------------- */
+
+    if (remainingTime <= 0) {
+
+        showRatingPopup();
+
+        return;
+    }
+
+
+    /* -------------------------------------------------
+        WAIT UNTIL 5 MINUTES COMPLETE
+    ------------------------------------------------- */
+
+    setTimeout(function () {
+
+        showRatingPopup();
+
+    }, remainingTime);
+
+}
 
 
     /* =========================================================
