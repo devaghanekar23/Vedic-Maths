@@ -315,7 +315,7 @@
             <input type="text" id="num1" name="num1" class="practice-input" placeholder="Enter Denominator (e.g. 7, 19, 29)" value="{{ request.form.get('num1', '') }}" min="2" required>
             
             {% elif sutra.id == 13 %}
-            <input type="text" id="num1" name="num1" class="practice-input" placeholder="e.g., 47" value="{{ request.form.get('num1', '') }}" required>
+            <input type="text" id="num1" name="num1" class="practice-input" placeholder="e.g., 1/(x+2) + 1/(x+3) = 1/(x+1) + 1/(x+4)" value="{{ request.form.get('num1', '') }}" required>
 
             {% elif sutra.id == 14 %}
             <input type="text" id="num1" name="num1" class="practice-input" placeholder="First Number (e.g. 25)" value="{{ request.form.get('num1', '') }}" required>
@@ -605,21 +605,19 @@
     }
 
     function calculatePuranapuranabhyam() {
-        const input1 = document.getElementById("eq1") || document.getElementById("num1");
+    const inputField = document.getElementById("num1") || document.getElementById("expression");
+    if (!inputField) {
+        console.error("Input element missing!");
+        return;
+    }
 
-        if (!input1) {
-            console.error("Input element missing from HTML!");
-            return;
-        }
+    const val = inputField.value;
 
-        const eq = input1.value;
-
-        // Function safety check
-        if (typeof solvePuranapuranabhyam === "function") {
-            renderResult(solvePuranapuranabhyam(eq));
-        } else {
-            console.error("solvePuranapuranabhyam function not found in sutra.js!");
-        }
+    if (typeof solvePuranapuranabhyam === "function") {
+        renderResult(solvePuranapuranabhyam(val));
+    } else {
+        console.error("solvePuranapuranabhyam function not found!");
+    }
     }
 
     function calculateChalana() {
@@ -641,23 +639,22 @@
     }
 
     function calculateYavadunam() {
-        const input1 = document.getElementById("num1");
-        const input2 = document.getElementById("num2");
+    const input1 = document.getElementById("num1");
+    const input2 = document.getElementById("num2");
 
-        if (!input1) {
-            console.error("Input element with ID 'num1' missing!");
-            return;
-        }
+    if (!input1) return;
 
-        const num1 = input1.value;
-        const num2 = input2 ? input2.value : 2;
+    const val1 = input1.value.trim();
+    const val2 = input2 ? input2.value.trim() : "";
 
-        // Function safety check
-        if (typeof solveYavadunam === "function") {
-            renderResult(solveYavadunam(num1, num2));
-        } else {
-            console.error("solveYavadunam function not found in sutra.js!");
-        }
+    // Prevents error box rendering when both fields are blank on initial load
+    if (val1 === "" && val2 === "") {
+        return;
+    }
+
+    if (typeof solveYavadunam === "function") {
+        renderResult(solveYavadunam(val1, val2));
+    }
     }
 
     function calculateVyasti() {
@@ -699,21 +696,15 @@
     }
 
     function calculateSopantya() {
-        const input1 = document.getElementById("eq1") || document.getElementById("num1");
+    const input = document.getElementById("num1") || document.getElementById("expression");
+    if (!input) return;
 
-        if (!input1) {
-            console.error("Input element with ID 'eq1' or 'num1' missing!");
-            return;
-        }
+    const val = input.value.trim();
+    if (val === "") return; // Stops showing default red warning box on load
 
-        const num = input1.value;
-
-        // Function safety check
-        if (typeof solveSopantyadvayamantyam === "function") {
-            renderResult(solveSopantyadvayamantyam(num));
-        } else {
-            console.error("solveSopantyadvayamantyam function not found in sutra.js!");
-        }
+    if (typeof solveSopantyadvayamantyam === "function") {
+        renderResult(solveSopantyadvayamantyam(val));
+    }
     }
 
     function calculateEkanyunena() {

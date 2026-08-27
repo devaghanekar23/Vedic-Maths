@@ -219,3 +219,19 @@ CREATE TABLE IF NOT EXISTS app_ratings (
         ON DELETE CASCADE,
     UNIQUE KEY unique_student_rating (student_id)
 );
+
+
+-- USE vedic_math;
+
+-- -- Step 1: Foreign key checks temporarily disable karein
+--    SET FOREIGN_KEY_CHECKS = 0;
+
+-- -- Step 2: Apni saari tables ko TRUNCATE (Empty) karein
+--    TRUNCATE TABLE students;
+--    TRUNCATE TABLE app_ratings;
+
+-- -- Agar aur koi tables hain (e.g., users, scores), unhe bhi yahan add karein:
+--     TRUNCATE TABLE table_name;
+
+-- -- Step 3: Foreign key checks wapas enable karein
+--    SET FOREIGN_KEY_CHECKS = 1;   
