@@ -1,0 +1,348 @@
+<!-- =========================================================
+     RATING OVERLAY
+========================================================= -->
+
+<div id="ratingOverlay" class="rating-overlay">
+
+    <div class="rating-modal">
+
+        <div class="rating-icon">⭐</div>
+
+        <h2>Rate Your Experience</h2>
+
+        <p class="rating-subtitle">
+            How was your experience with VedicMath?
+        </p>
+
+        <p class="rating-description">
+            Your feedback helps us improve the application.
+        </p>
+
+        <div class="modal-stars">
+
+            <span class="modal-star" data-value="1">☆</span>
+            <span class="modal-star" data-value="2">☆</span>
+            <span class="modal-star" data-value="3">☆</span>
+            <span class="modal-star" data-value="4">☆</span>
+            <span class="modal-star" data-value="5">☆</span>
+
+        </div>
+
+        <p id="modalRatingText" class="modal-rating-text">
+            Select your rating
+        </p>
+
+        <button
+            type="button"
+            id="modalSubmitRating"
+            class="modal-submit-rating"
+            disabled>
+            Submit Rating
+        </button>
+
+    </div>
+
+</div>
+
+
+<style>
+
+/* =========================================================
+   RATING FULL SCREEN OVERLAY
+========================================================= */
+
+.rating-overlay {
+
+    display: none;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.75);
+
+    backdrop-filter: blur(6px);
+
+    z-index: 999999;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   RATING MODAL
+========================================================= */
+
+.rating-modal {
+
+    width: 100%;
+    max-width: 480px;
+
+    background: #111827;
+
+    border-radius: 24px;
+
+    padding: 35px 30px;
+
+    text-align: center;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.55);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    animation: ratingPopup 0.35s ease;
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.rating-icon {
+
+    font-size: 50px;
+
+    margin-bottom: 10px;
+
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.rating-modal h2 {
+
+    margin: 0 0 10px;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    color: #ffffff;
+
+}
+
+
+/* =========================================================
+   SUBTITLE
+========================================================= */
+
+.rating-subtitle {
+
+    margin: 0 0 8px;
+
+    font-size: 16px;
+
+    color: #e5e7eb;
+
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.rating-description {
+
+    margin: 0 0 25px;
+
+    font-size: 14px;
+
+    color: #9ca3af;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================================================
+   STARS
+========================================================= */
+
+.modal-stars {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    margin: 15px 0;
+
+}
+
+
+.modal-star {
+
+    font-size: 45px;
+
+    color: #64748b;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+
+    user-select: none;
+
+}
+
+
+.modal-star:hover {
+
+    transform: scale(1.15);
+
+}
+
+
+.modal-star.selected {
+
+    color: #fbbf24;
+
+}
+
+
+/* =========================================================
+   RATING TEXT
+========================================================= */
+
+.modal-rating-text {
+
+    min-height: 24px;
+
+    margin: 10px 0 20px;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: #fbbf24;
+
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+========================================================= */
+
+.modal-submit-rating {
+
+    width: 100%;
+
+    padding: 13px 20px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
+}
+
+
+.modal-submit-rating:hover:not(:disabled) {
+
+    transform: translateY(-2px);
+
+}
+
+
+.modal-submit-rating:disabled {
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =========================================================
+   POPUP ANIMATION
+========================================================= */
+
+@keyframes ratingPopup {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(0.9);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .rating-modal {
+
+        max-width: 95%;
+
+        padding: 28px 20px;
+
+    }
+
+    .rating-modal h2 {
+
+        font-size: 23px;
+
+    }
+
+    .modal-star {
+
+        font-size: 36px;
+
+    }
+
+    .rating-icon {
+
+        font-size: 42px;
+
+    }
+
+}
+
+</style>

@@ -7559,12 +7559,14 @@ def submit_rating():
     try:
         rating_val = int(rating_val)
     except (TypeError, ValueError):
+
         return jsonify({
             'success': False,
             'message': 'Invalid rating'
         }), 400
 
     if rating_val not in [1, 2, 3, 4, 5]:
+
         return jsonify({
             'success': False,
             'message': 'Rating must be between 1 and 5'
@@ -7574,7 +7576,11 @@ def submit_rating():
     cursor = conn.cursor()
 
     cursor.execute(
-        'UPDATE students SET rating = %s WHERE id = %s',
+        '''
+        UPDATE students
+        SET rating = %s
+        WHERE id = %s
+        ''',
         (rating_val, student_id)
     )
 
@@ -7595,6 +7601,7 @@ def get_user_rating():
     student_id = session.get('student_id')
 
     if not student_id:
+
         return jsonify({
             'hasRated': False
         })
@@ -7604,7 +7611,11 @@ def get_user_rating():
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute(
-        'SELECT rating FROM students WHERE id = %s',
+        '''
+        SELECT rating
+        FROM students
+        WHERE id = %s
+        ''',
         (student_id,)
     )
 
@@ -7613,17 +7624,18 @@ def get_user_rating():
     cursor.close()
     conn.close()
 
-    if student and student['rating']:
+
+    if student and student['rating'] is not None:
 
         return jsonify({
             'hasRated': True,
             'rating': student['rating']
         })
 
+
     return jsonify({
         'hasRated': False
     })
-
 
 # ============================================================
 # RUN APPLICATION
