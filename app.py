@@ -6591,7 +6591,17 @@ def google_login():
 
         if student:
             student_id = student["id"]
+            
+            # 🟢 MAIN FIX HERE:
+            # Existing user ki latest Google DP (aur Name) update karo DB mein
+            cursor.execute(
+                "UPDATE students SET profile_pic = %s, name = %s WHERE id = %s",
+                (photo, name, student_id)
+            )
+            conn.commit()
+
         else:
+            # New user entry
             cursor.execute(
                 "INSERT INTO students (name, email, password, profile_pic) VALUES (%s, %s, %s, %s)",
                 (name, email, "", photo)
@@ -6615,7 +6625,6 @@ def google_login():
             cursor.close()
         if conn:
             conn.close()
-
 @app.route("/forgot-password", methods=["GET", "POST"])
 def forgot_password():
     if request.method == "POST":

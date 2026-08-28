@@ -3,20 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
 
     <title>My Profile | Vedic Maths</title>
 
     <!-- Bootstrap 5 -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         * { box-sizing: border-box; }
@@ -187,7 +182,7 @@
                 <div class="avatar" id="avatarDisplay" onclick="openPhotoModal()">
                     {% if student and student.profile_pic %}
                         {% if student.profile_pic.startswith('http') %}
-                            <img src="{{ student.profile_pic }}" alt="avatar">
+                            <img src="{{ student.profile_pic }}" alt="avatar" referrerpolicy="no-referrer">
                         {% else %}
                             <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="avatar">
                         {% endif %}
@@ -207,7 +202,7 @@
                 Level 3 • Fast Learner
             </div>
 
-            <!-- EDIT PROFILE - ab modal open karega, kahin navigate nahi karega -->
+            <!-- EDIT PROFILE - modal trigger -->
             <div class="mt-3">
                 <button
                     type="button"
@@ -220,7 +215,7 @@
                 </button>
             </div>
 
-            <!-- ================= STATS (real backend data) ================= -->
+            <!-- ================= STATS ================= -->
             <div class="stats-grid">
 
                 <div class="stat-card">
@@ -349,7 +344,7 @@
 
 
 <!-- =====================================================
-     EDIT PROFILE MODAL (Name + Photo only - matches backend)
+     EDIT PROFILE MODAL (FIXED GOOGLE PHOTO CHECK)
 ===================================================== -->
 <div class="modal fade" id="editProfileModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -372,7 +367,11 @@
                         <div class="avatar-wrapper" style="width:90px;height:90px;">
                             <div class="avatar" id="modalAvatar" style="width:90px;height:90px;font-size:2rem;">
                                 {% if student and student.profile_pic %}
-                                    <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="Profile Picture">
+                                    {% if student.profile_pic.startswith('http') %}
+                                        <img src="{{ student.profile_pic }}" alt="Profile Picture" referrerpolicy="no-referrer">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='uploads/' ~ student.profile_pic) }}" alt="Profile Picture">
+                                    {% endif %}
                                 {% elif student and student.name %}
                                     {{ student.name[0] | upper }}
                                 {% else %}
@@ -439,7 +438,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-
     function previewPhoto(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -471,7 +469,7 @@
         const image = avatar.querySelector("img");
 
         if (image) {
-            container.innerHTML = `<img src="${image.src}" alt="Profile Picture" style="max-width:100%;max-height:65vh;border-radius:18px;box-shadow:0 0 35px rgba(168,85,247,.35);">`;
+            container.innerHTML = `<img src="${image.src}" alt="Profile Picture" referrerpolicy="no-referrer" style="max-width:100%;max-height:65vh;border-radius:18px;box-shadow:0 0 35px rgba(168,85,247,.35);">`;
         } else {
             const letter = avatar.innerText.trim() || "U";
             container.innerHTML = `<div style="width:180px;height:180px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:5rem;font-weight:800;background:linear-gradient(135deg,#6366f1,#a855f7);box-shadow:0 0 35px rgba(168,85,247,.35);">${letter}</div>`;
@@ -480,10 +478,9 @@
         const modal = new bootstrap.Modal(document.getElementById("previewImageModal"));
         modal.show();
     }
-
 </script>
-{% include 'rating_modal.html' %}
 
+{% include 'rating_modal.html' %}
 <script src="{{ url_for('static', filename='js/rating-timer.js') }}"></script>
 </body>
 </html>
