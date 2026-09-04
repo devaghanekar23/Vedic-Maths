@@ -778,52 +778,140 @@
         }
 
         /* =====================================================
-           RESPONSIVE
+           RESPONSIVE MEDIA QUERIES
         ===================================================== */
 
-        @media (max-width: 768px) {
-
+        @media (max-width: 991.98px) {
             .profile-container {
-                padding:
-                    25px 15px 50px;
+                padding: 30px 15px 60px;
+            }
+
+            .glass-card, .goal-card {
+                padding: 20px 16px;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .navbar .container {
+                padding: 8px 12px;
+            }
+
+            .navbar-brand {
+                font-size: 1.15rem;
             }
 
             .profile-hero {
-                padding: 25px 15px;
+                padding: 24px 16px;
+                border-radius: 20px;
+            }
+
+            .avatar-wrapper, .avatar {
+                width: 110px;
+                height: 110px;
+            }
+
+            .avatar {
+                font-size: 2.6rem;
+            }
+
+            .camera-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 0.9rem;
+            }
+
+            .profile-name {
+                font-size: 1.6rem;
+                margin-top: 15px;
             }
 
             .stats-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-top: 24px;
+            }
+
+            .stat-card {
+                padding: 16px 8px;
+                border-radius: 14px;
+            }
+
+            .stat-number {
+                font-size: 1.4rem;
             }
 
             .achievement-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
             }
 
+            .achievement {
+                padding: 12px 6px;
+            }
+
+            .info-row {
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .info-value {
+                word-break: break-word;
+                text-align: right;
+            }
+
+            .modal-body {
+                padding: 18px 14px !important;
+            }
         }
 
-        @media (max-width: 450px) {
+        @media (max-width: 575.98px) {
+            .navbar .container {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .profile-hero {
+                padding: 20px 12px;
+            }
 
             .profile-name {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
             }
 
             .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
             }
 
             .stat-card {
-                padding: 15px 5px;
+                padding: 14px 6px;
             }
 
             .stat-number {
-                font-size: 1.35rem;
+                font-size: 1.25rem;
             }
 
-        }
+            .stat-label {
+                font-size: 0.72rem;
+            }
 
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+
+            .streak-number {
+                font-size: 2rem;
+            }
+        }
     </style>
 
 </head>

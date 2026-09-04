@@ -12,10 +12,10 @@
 
     <nav class="dashboard-nav">
         <div class="logo">🧮 VedicMath</div>
-        <div class="nav-search">
-            <input type="text" placeholder="🔍 Search for Sutras, practice sets...">
-        </div>
         <div class="nav-right">
+            <button class="mobile-sidebar-toggle" onclick="toggleDashboardSidebar()" type="button" aria-label="Toggle Menu">
+                ☰ Menu
+            </button>
             <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
         </div>
     </nav>
@@ -43,52 +43,66 @@
             </div>
 
             {% if my_rank %}
-            <div class="dash-card" style="text-align:left; padding:18px 24px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between;">
+            <div class="dash-card my-rank-card">
                 <div>
-                    <p style="color:#a5a6c9; font-size:12px; margin:0;">Your Rank</p>
-                    <h3 style="margin:4px 0;">#{{ my_rank.rank }} — {{ my_rank.total_correct }} correct ({{ my_rank.accuracy }}%)</h3>
+                    <p class="my-rank-label">Your Rank</p>
+                    <h3 class="my-rank-value">#{{ my_rank.rank }} — {{ my_rank.total_correct }} correct ({{ my_rank.accuracy }}%)</h3>
                 </div>
-                <div style="font-size:26px;">🔥 {{ my_rank.streak }} day streak</div>
+                <div class="my-rank-streak">🔥 {{ my_rank.streak }} day streak</div>
             </div>
             {% endif %}
 
-            <div class="dash-card" style="text-align:left; padding:0; overflow:hidden;">
-                <table style="width:100%; border-collapse:collapse; color:#fff;">
-                    <thead>
-                        <tr style="background:#1e1f42; text-align:left;">
-                            <th style="padding:14px 18px;">Rank</th>
-                            <th style="padding:14px 18px;">Student</th>
-                            <th style="padding:14px 18px;">Correct</th>
-                            <th style="padding:14px 18px;">Accuracy</th>
-                            <th style="padding:14px 18px;">Streak</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for entry in leaderboard %}
-                        <tr style="border-bottom:1px solid #2a2b55; {% if entry.id == my_rank.id %}background:#2a2b55;{% endif %}">
-                            <td style="padding:12px 18px; font-weight:700;">
-                                {% if entry.rank == 1 %}🥇
-                                {% elif entry.rank == 2 %}🥈
-                                {% elif entry.rank == 3 %}🥉
-                                {% else %}#{{ entry.rank }}
-                                {% endif %}
-                            </td>
-                            <td style="padding:12px 18px; display:flex; align-items:center; gap:10px;">
-                                <img src="{% if entry.profile_pic %}{{ url_for('static', filename='uploads/' ~ entry.profile_pic) }}{% else %}{{ url_for('static', filename='img/default-avatar.png') }}{% endif %}"
-                                     style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
-                                {{ entry.name }}
-                            </td>
-                            <td style="padding:12px 18px;">{{ entry.total_correct }}</td>
-                            <td style="padding:12px 18px;">{{ entry.accuracy }}%</td>
-                            <td style="padding:12px 18px;">🔥 {{ entry.streak }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="dash-card leaderboard-table-card">
+                <div class="table-responsive">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Student</th>
+                                <th>Correct</th>
+                                <th>Accuracy</th>
+                                <th>Streak</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in leaderboard %}
+                            <tr class="{% if entry.id == my_rank.id %}my-row{% endif %}">
+                                <td class="rank-cell">
+                                    {% if entry.rank == 1 %}🥇
+                                    {% elif entry.rank == 2 %}🥈
+                                    {% elif entry.rank == 3 %}🥉
+                                    {% else %}#{{ entry.rank }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="student-cell">
+                                        <img src="{% if entry.profile_pic and entry.profile_pic.startswith('http') %}{{ entry.profile_pic }}{% elif entry.profile_pic %}{{ url_for('static', filename='uploads/' ~ entry.profile_pic) }}{% else %}{{ url_for('static', filename='images/default-avatar.png') }}{% endif %}"
+                                            class="table-avatar" alt="Avatar"
+                                            onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/default-avatar.png') }}';">  
+                                        <span>{{ entry.name }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ entry.total_correct }}</td>
+                                <td>{{ entry.accuracy }}%</td>
+                                <td>🔥 {{ entry.streak }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         </main>
     </div>
+
+    <script>
+        function toggleDashboardSidebar() {
+            const sidebar = document.querySelector('.dashboard-sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
+        }
+    </script>
 {% include 'rating_modal.html' %}
 
 <script src="{{ url_for('static', filename='js/rating-timer.js') }}"></script>

@@ -21,6 +21,9 @@
             </form>
         </div>
         <div class="nav-right">
+            <button class="mobile-sidebar-toggle" onclick="toggleDashboardSidebar()" type="button" aria-label="Toggle Menu">
+                ☰ Menu
+            </button>
             <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
             <div class="nav-avatar">
                 {% if student and student.profile_pic %}
@@ -165,6 +168,13 @@
     </div>
 
     <script>
+    function toggleDashboardSidebar() {
+        const sidebar = document.querySelector('.dashboard-sidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('active');
+        }
+    }
+
     function handleSearch(e) {
     e.preventDefault();
     const query = document.getElementById('searchInput').value.trim().toLowerCase();

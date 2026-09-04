@@ -11,6 +11,9 @@
     <nav class="dashboard-nav">
         <div class="logo">🧮 VedicMath</div>
         <div class="nav-right">
+            <button class="mobile-sidebar-toggle" onclick="toggleDashboardSidebar()" type="button" aria-label="Toggle Menu">
+                ☰ Menu
+            </button>
             <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
         </div>
     </nav>
@@ -62,34 +65,65 @@
         <div class="cert-modal">
             <button class="cert-close-btn" onclick="closeCertificate(event)">✕</button>
 
-            <div class="cert-paper">
+            <div class="cert-paper" id="certPaper">
+                <div class="cert-frame-line"></div>
+                <div class="cert-frame-line inner"></div>
+
+                <div class="cert-corner top-left"><svg viewBox="0 0 46 46"><path d="M2 2 L2 30 M2 2 L30 2" stroke="#8B2635" stroke-width="3" fill="none"/></svg></div>
+                <div class="cert-corner top-right"><svg viewBox="0 0 46 46"><path d="M2 2 L2 30 M2 2 L30 2" stroke="#8B2635" stroke-width="3" fill="none"/></svg></div>
+                <div class="cert-corner bottom-left"><svg viewBox="0 0 46 46"><path d="M2 2 L2 30 M2 2 L30 2" stroke="#8B2635" stroke-width="3" fill="none"/></svg></div>
+                <div class="cert-corner bottom-right"><svg viewBox="0 0 46 46"><path d="M2 2 L2 30 M2 2 L30 2" stroke="#8B2635" stroke-width="3" fill="none"/></svg></div>
+
                 <div class="cert-border">
-                    <p class="cert-header">🧮 VedicMath Academy</p>
+                    <p class="cert-header">VedicMath Academy</p>
+                    <div class="cert-gold-divider"></div>
                     <p class="cert-subheader">Certificate of Achievement</p>
+                    <p class="cert-program">Vedic Mathematics Mastery Program</p>
 
                     <div class="cert-icon" id="certIcon">🏆</div>
 
                     <p class="cert-presented">This certificate is proudly presented to</p>
                     <h2 class="cert-name">{{ student.name }}</h2>
+                    <div class="cert-name-divider"></div>
 
                     <p class="cert-desc" id="certDesc">
-                        for achieving <strong id="certTitle">Gold Achiever</strong>
-                        (<span id="certPercent">75</span>% Sutra Mastery)
-                        in Vedic Mathematics
+                        for successfully achieving the distinction of
+                        <strong id="certTitle">Gold Achiever</strong>,
+                        completing <strong><span id="certPercent">75</span>%</strong> Sutra Mastery
+                        in the ancient art of Vedic Mathematics
                     </p>
 
-                    <p class="cert-date" id="certDate"></p>
-
-                    <div class="cert-signature">
-                        <span>____________________</span>
-                        <p>VedicMath Academy</p>
+                    <div class="cert-footer-row">
+                        <div class="cert-footer-block">
+                            <div class="cert-footer-line"></div>
+                            <p class="cert-footer-label">Date</p>
+                            <p class="cert-footer-value" id="certDate"></p>
+                        </div>
+                        <div class="cert-medallion">🏅</div>
+                        <div class="cert-footer-block">
+                            <div class="cert-footer-line"></div>
+                            <p class="cert-footer-label">Signature</p>
+                            <p class="cert-footer-value">VedicMath Academy</p>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <button class="cert-download-btn" onclick="downloadCertificate()">
+                ⬇️ Download Certificate
+            </button>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
+        function toggleDashboardSidebar() {
+            const sidebar = document.querySelector('.dashboard-sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
+        }
+
         function openCertificate(icon, title, percent) {
             document.getElementById('certIcon').innerText = icon;
             document.getElementById('certTitle').innerText = title;
@@ -97,7 +131,7 @@
 
             const today = new Date();
             const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('certDate').innerText = "Awarded on " + dateStr;
+            document.getElementById('certDate').innerText = dateStr;
 
             document.getElementById('certModalOverlay').style.display = 'flex';
         }
@@ -106,6 +140,27 @@
             if (event.target.id === 'certModalOverlay' || event.target.classList.contains('cert-close-btn')) {
                 document.getElementById('certModalOverlay').style.display = 'none';
             }
+        }
+
+        function downloadCertificate() {
+            const certElement = document.getElementById('certPaper');
+
+            html2canvas(certElement, {
+                scale: 2,
+                backgroundColor: "#fffdf7",
+                useCORS: true
+            }).then(function(canvas) {
+                const link = document.createElement('a');
+                const studentName = "{{ student.name }}".replace(/\s+/g, '_');
+                const certTitle = document.getElementById('certTitle').innerText.replace(/\s+/g, '_');
+
+                link.download = `VedicMath_Certificate_${studentName}_${certTitle}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(function(error) {
+                console.error("Certificate download failed:", error);
+                alert("Sorry, certificate download failed. Please try again.");
+            });
         }
     </script>
 {% include 'rating_modal.html' %}

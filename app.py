@@ -7403,7 +7403,6 @@ def daily_challenge():
     student_id = session["student_id"]
     today = date.today()
 
-    # Aajcha sutra decide karnyasathi date-based rotation (16 sutras madhun)
     day_number = today.toordinal()
     sutra_id = (day_number % 16) + 1
     sutra = next((s for s in sutras_list if s["id"] == sutra_id), None)
@@ -7416,7 +7415,6 @@ def daily_challenge():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # Aaj already solve kela ka check kar
         cursor.execute("""
             SELECT * FROM daily_challenges
             WHERE student_id = %s AND challenge_date = %s
@@ -7431,19 +7429,31 @@ def daily_challenge():
                 attempt=existing
             )
 
-        # Student-specific random question (student_id + date seed)
         seed_value = student_id * 1000 + day_number
         random.seed(seed_value)
         questions = generate_20_questions(sutra_id)
-        random.seed()  # reset global seed
+        random.seed()
         question = random.choice(questions)
 
         if request.method == "POST":
             user_ans = request.form.get("user_ans", "").strip()
             solution = solve_sutra(sutra_id, question["num1"], question["num2"])
-            correct_ans = solution.get("result", "")
-            is_correct = str(user_ans).strip() == str(correct_ans).strip()
-            points = 2 if is_correct else 0  
+
+            is_applicable = solution.get("success", solution.get("applicable", False))
+
+            if not is_applicable:
+                correct_ans = None
+                is_correct = False
+                points = 0
+                condition_message = solution.get(
+                    "message",
+                    "This sutra's condition is not satisfied for this question."
+                )
+            else:
+                correct_ans = solution.get("result", solution.get("answer", ""))
+                is_correct = str(user_ans).strip() == str(correct_ans).strip()
+                points = 2 if is_correct else 0
+                condition_message = ""   # ✅ fixed
 
             cursor.execute("""
                 INSERT INTO daily_challenges
@@ -7461,7 +7471,8 @@ def daily_challenge():
                 "is_correct": is_correct,
                 "correct_ans": correct_ans,
                 "points": points,
-                "steps": solution.get("steps", [])
+                "steps": solution.get("steps", []),
+                "condition_message": condition_message
             }
 
             return render_template(
@@ -7472,7 +7483,8 @@ def daily_challenge():
                     "user_answer": user_ans,
                     "correct_answer": correct_ans,
                     "is_correct": is_correct,
-                    "points_earned": points
+                    "points_earned": points,
+                    "condition_message": condition_message
                 },
                 result=result
             )
@@ -7653,6 +7665,6 @@ def get_user_rating():
 if __name__ == "__main__":
     app.run(
         debug=True,
-        host="127.0.0.1",
+        host="0.0.0.0",
         port=5000,
     )

@@ -169,6 +169,7 @@ Learn Sutras, practice problems and improve your mathematical skills.
 </p>
 
 
+<div class="hero-buttons">
 <a href="{{ url_for('register') }}" class="start-btn">
 
 Start Learning →
@@ -180,6 +181,7 @@ Start Learning →
 Explore Sutras
 
 </a>
+</div>
 
 
 </div>
@@ -328,7 +330,7 @@ Vedic Mathematics encourages students to understand patterns and relationships b
         <div class="carousel-item {% if loop.first %}active{% endif %}">
           <div class="row g-4">
             {% for sutra in group %}
-            <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
               <div class="card-box-sutraa">
                 <h3>📘 {{ sutra }}</h3>
                 <p>Learn Vedic technique with explanation and examples.</p>

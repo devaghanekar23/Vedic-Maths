@@ -11,6 +11,9 @@
     <nav class="dashboard-nav">
         <div class="logo">🧮 VedicMath</div>
         <div class="nav-right">
+            <button class="mobile-sidebar-toggle" onclick="toggleDashboardSidebar()" type="button" aria-label="Toggle Menu">
+                ☰ Menu
+            </button>
             <a href="{{ url_for('profile') }}" class="view-profile-link">👤 View Profile</a>
         </div>
     </nav>
@@ -37,34 +40,39 @@
 
             {% if already_done %}
             <div class="dash-card challenge-result-card">
-                <h2>{% if attempt.is_correct %}✅ Solved Correctly!{% else %}❌ Attempted{% endif %}</h2>
-                <p>Your answer: <strong>{{ attempt.user_answer }}</strong></p>
-                <p>Correct answer: <strong>{{ attempt.correct_answer }}</strong></p>
-                <p class="points-earned">+{{ attempt.points_earned }} points earned today 🏅</p>
+                {% if attempt.condition_message %}
+                    <h2>⚠️ Condition Not Satisfied</h2>
+                    <p class="challenge-note">{{ attempt.condition_message }}</p>
+                    <p>Your answer: <strong>{{ attempt.user_answer }}</strong></p>
+                    <p class="points-earned">+0 points earned today</p>
+                {% else %}
+                    <h2>{% if attempt.is_correct %}✅ Solved Correctly!{% else %}❌ Attempted{% endif %}</h2>
+                    <p>Your answer: <strong>{{ attempt.user_answer }}</strong></p>
+                    <p>Correct answer: <strong>{{ attempt.correct_answer }}</strong></p>
+                    <p class="points-earned">+{{ attempt.points_earned }} points earned today 🏅</p>
+                {% endif %}
                 <p class="challenge-note">Come back tomorrow for a new challenge!</p>
             </div>
             {% else %}
             <div class="dash-card challenge-question-card">
                 <h2 class="challenge-question-text">{{ question.q_text }}</h2>
-                <form method="POST">
-                    <input type="text" name="user_ans" placeholder="Your Answer"
-                            style="background: #1e1f3b;
-                                   border: 2px solid rgba(255,255,255,0.15);
-                                   border-radius: 12px;
-                                   color: #ffffff;
-                                   padding: 6px 20px;
-                                   font-size: 1.1rem;
-                                   width: 179px;
-                                   outline: none;
-                                   transition: all 0.3s ease;"
-                            onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 10px rgba(99,102,241,0.4)'"
-                            onblur="this.style.borderColor='rgba(255,255,255,0.15)'; this.style.boxShadow='none'">
+                <form method="POST" class="challenge-form">
+                    <input type="text" name="user_ans" placeholder="Your Answer" class="challenge-input" required autocomplete="off">
                     <button type="submit" class="btn">Submit Answer →</button>
                 </form>
             </div>
             {% endif %}
         </main>
     </div>
+
+    <script>
+        function toggleDashboardSidebar() {
+            const sidebar = document.querySelector('.dashboard-sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
+        }
+    </script>
 {% include 'rating_modal.html' %}
 
 <script src="{{ url_for('static', filename='js/rating-timer.js') }}"></script>
