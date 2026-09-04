@@ -1,0 +1,11 @@
+<div id="logoutModalOverlay" class="logout-modal-overlay">
+    <div class="logout-modal">
+        <div class="logout-modal-icon">⚠️</div>
+        <h2>Log out?</h2>
+        <p>Are you sure you want to log out of your VedicMath account?</p>
+        <div class="logout-modal-buttons">
+            <button type="button" class="logout-cancel-btn" onclick="closeLogoutModal()">Cancel</button>
+            <a href="{{ url_for('logout') }}" class="logout-confirm-btn">Log Out</a>
+        </div>
+    </div>
+</div>

@@ -53,7 +53,7 @@
                 <li><a href="{{ url_for('vedic_formulas') }}">🧮 Vedic Formulas</a></li>
                 <li><a href="{{ url_for('certificates') }}">📜 My Certificates</a></li>
                 <li><a href="{{ url_for('profile') }}">⚙️ Account Settings</a></li>
-                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+                <li><a href="{{ url_for('logout') }}" onclick="openLogoutModal(event)">🚪 Logout</a></li>
             </ul>
 
             <div class="sidebar-mascot">
@@ -215,6 +215,8 @@
 
 </script>
 {% include 'rating_modal.html' %}
+{% include 'logout_modal.html' %}
+<script src="{{ url_for('static', filename='js/logout-modal.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/rating-timer.js') }}"></script>
 </body>

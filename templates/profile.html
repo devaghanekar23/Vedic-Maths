@@ -148,6 +148,111 @@
             .stat-card { padding: 15px 5px; }
             .stat-number { font-size: 1.3rem; }
         }
+        /* ===== LOGOUT CONFIRMATION MODAL ===== */
+        .logout-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+        }
+        .logout-modal {
+            width: 380px;
+            max-width: 100%;
+            background: #151b2b;
+            border-radius: 19px;
+            padding: 35px 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .logout-modal-icon {
+            font-size: 46px;
+            margin-bottom: 12px;
+        }
+
+        .logout-modal h2 {
+            color: #fff;
+            font-size: 22px;
+            margin-bottom: 10px;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .logout-modal p {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 26px;
+        }
+
+        .logout-modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .logout-cancel-btn,
+        .logout-confirm-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.25s;
+        }
+
+        .logout-cancel-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .logout-cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .logout-confirm-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+        }
+
+        .logout-confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 25px rgba(239, 68, 68, 0.35);
+        }
+
+        @media (max-width: 380px) {
+            .logout-modal {
+                padding: 28px 20px;
+                border-radius: 16px;
+            }
+
+            .logout-modal h2 {
+                font-size: 19px;
+            }
+
+            .logout-modal p {
+                font-size: 13px;
+                margin-bottom: 20px;
+            }
+
+            .logout-modal-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 
@@ -164,7 +269,7 @@
             <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light btn-sm rounded-pill me-1">
                 <i class="fa-solid fa-house me-1"></i> Dashboard
             </a>
-            <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm rounded-pill">
+            <a href="{{ url_for('logout') }}" onclick="openLogoutModal(event)" class="btn btn-danger btn-sm rounded-pill">
                 <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
             </a>
         </div>
@@ -481,6 +586,8 @@
 </script>
 
 {% include 'rating_modal.html' %}
+{% include 'logout_modal.html' %}
+<script src="{{ url_for('static', filename='js/logout-modal.js') }}"></script>
 <script src="{{ url_for('static', filename='js/rating-timer.js') }}"></script>
 </body>
 </html>
